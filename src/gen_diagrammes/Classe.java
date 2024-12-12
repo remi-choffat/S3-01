@@ -33,12 +33,20 @@ public class Classe {
      */
     private final String type;
 
+    /**
+     * Liste des classes parentes
+     */
     private ArrayList<Classe> parents;
 
+    /**
+     * Liste des attributs de la classe
+     */
     private ArrayList<Attribut> attributs;
 
+    /**
+     * Liste des méthodes de la classe
+     */
     private ArrayList<Methode> methodes;
-
 
 
     /**
@@ -94,46 +102,29 @@ public class Classe {
             this.type = CLASS;
         }
 
-        for( Field m : classe.getDeclaredFields()) {
-            String acces = "";
-            switch (m.getModifiers()) {
-
-                case Modifier.PUBLIC:
-                    acces = "public";
-                    break;
-
-                case Modifier.PROTECTED:
-                    acces = "protected";
-                    break;
-                case Modifier.PRIVATE:
-                    acces = "private";
-                    break;
-                case Modifier.ABSTRACT:
-                    acces = "abstract";
-                    break;
-            }
-            this.attributs.add( new Attribut(m.getName(), acces, m.getType().getName()));
+        // Remplit la liste des attributs
+        for (Field a : classe.getDeclaredFields()) {
+            // Modifier.toString(m.getModifiers())
+            String acces = switch (a.getModifiers()) {
+                case Modifier.PUBLIC -> PUBLIC;
+                case Modifier.PROTECTED -> PROTECTED;
+                case Modifier.PRIVATE -> PRIVATE;
+                case Modifier.ABSTRACT -> ABSTRACT;
+                default -> "";
+            };
+            this.attributs.add(new Attribut(a.getName(), acces, a.getType().getSimpleName()));
         }
 
-        for( Method m : classe.getDeclaredMethods()) {
-            String acces = "";
-            switch (m.getModifiers()) {
-
-                case Modifier.PUBLIC:
-                    acces = "public";
-                    break;
-
-                case Modifier.PROTECTED:
-                    acces = "protected";
-                    break;
-                case Modifier.PRIVATE:
-                    acces = "private";
-                    break;
-                case Modifier.ABSTRACT:
-                    acces = "abstract";
-                    break;
-            }
-            this.methodes.add( new Methode(m.getName(), acces, m.getReturnType().getName()));
+        // Remplit la liste des méthodes
+        for (Method m : classe.getDeclaredMethods()) {
+            String acces = switch (m.getModifiers()) {
+                case Modifier.PUBLIC -> PUBLIC;
+                case Modifier.PROTECTED -> PROTECTED;
+                case Modifier.PRIVATE -> PRIVATE;
+                case Modifier.ABSTRACT -> ABSTRACT;
+                default -> "";
+            };
+            this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName()));
         }
 
     }
@@ -172,20 +163,25 @@ public class Classe {
         return methodes;
     }
 
-    public void addMethode(Methode m){
+    public void addMethode(Methode m) {
         methodes.add(m);
     }
 
-    public void addAttribut(Attribut a){
+    public void addAttribut(Attribut a) {
         attributs.add(a);
     }
 
-    public void addParent(Classe c){
-        //vérifie si il est encore possible d'ajouter un parent à la classe
-        if(this.parents.isEmpty()){
+    /**
+     * Ajoute un parent à la classe
+     *
+     * @param c Classe parente
+     */
+    public void addParent(Classe c) {
+        // Vérifie s'il est encore possible d'ajouter un parent à la classe
+        if (this.parents.isEmpty()) {
             parents.add(c);
-        } else if (this.parents.size() == 1){
-            if(! this.parents.getFirst().getType().equals(c.getType())){
+        } else if (this.parents.size() == 1) {
+            if (!this.parents.getFirst().getType().equals(c.getType())) {
                 parents.add(c);
             }
         }
@@ -195,20 +191,20 @@ public class Classe {
      * Affiche les propriétés de la classe
      */
     public String toString() {
-        String res = this.acces + " " + this.type + " " + this.nom ;
-        res += "( " ;
-        for(Classe c : this.parents) {
+        String res = this.acces + " " + this.type + " " + this.nom;
+        res += "( ";
+        for (Classe c : this.parents) {
             res += c.getNom() + " ";
         }
         res += ")\n";
 
         res += " - Attributs\n";
-        for(Attribut at : this.attributs) {
-            res += "\t"+ at.getTypeAcces() + at.getType() + at.getNom() + "\n";
+        for (Attribut at : this.attributs) {
+            res += at.toString();
         }
         res += "\n - Méthodes\n";
-        for(Methode m : this.methodes) {
-            res += "\t"+m.getAcces() + " " + m.getTypeRetour() + " " +m.getNom() + "()\n";
+        for (Methode m : this.methodes) {
+            res += "\t" + m.getAcces() + " " + m.getTypeRetour() + " " + m.getNom() + "()\n";
         }
 
         return res;

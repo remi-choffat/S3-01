@@ -2,19 +2,38 @@ package gen_diagrammes;
 
 import java.util.ArrayList;
 
+/**
+ * Représente un diagramme de classes
+ */
 public class Diagramme {
+
     private String nomPackage;
+
+    /**
+     * Liste des classes du diagramme
+     */
     private ArrayList<Classe> listeClasses;
 
+
+    /**
+     * Constructeur d'un diagramme à partir d'un package existant
+     * @param nomPackage nom du package
+     * @param listeClasses liste des classes du package
+     */
     public Diagramme(String nomPackage, ArrayList<Classe> listeClasses) {
         this.nomPackage = nomPackage;
         this.listeClasses = listeClasses;
     }
 
+
+    /**
+     * Constructeur d'un diagramme vide
+     */
     public Diagramme() {
         this.nomPackage = "Inconnu";
         this.listeClasses = new ArrayList<>();
     }
+
 
     public String getNomPackage() {
         return nomPackage;
@@ -49,7 +68,7 @@ public class Diagramme {
     }
 
     public String toString() {
-        String texte = "Nom du package : " + nomPackage + "\n";
+        String texte = "Nom du package : " + nomPackage + "\n\n";
         for (Classe c : this.listeClasses) {
             texte += c.toString() + "\n";
         }

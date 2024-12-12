@@ -1,6 +1,10 @@
 package gen_diagrammes;
 
+/**
+ * Représente un attribut d'une classe du diagramme
+ */
 public class Attribut {
+
     private String nom;
     private String typeAcces;
     private String type;
@@ -42,7 +46,6 @@ public class Attribut {
     }
 
     public String toString() {
-        String texte = "Nom : "+ nom + ", type d'acces : " + typeAcces + ", type :  " + type + "\n";
-        return texte;
+        return typeAcces + " " + type + " " + nom + "\n";
     }
 }

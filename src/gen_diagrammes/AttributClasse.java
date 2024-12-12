@@ -1,20 +1,24 @@
 package gen_diagrammes;
 
+/**
+ * Représente un attribut ayant pour type une classe du diagramme
+ */
 public class AttributClasse extends Attribut {
+
     private String cardinalitePointeur;
     private String cardinalitePointee;
-    private Classe attribut;
+    private final Classe attribut;
 
     public AttributClasse(String nom, String typeAcces, String type, String cardPointeur, String cardPointee, Classe classe) {
         super(nom, typeAcces, type);
-        this.cardinalitePointee = cardPointeur;
+        this.cardinalitePointeur = cardPointeur;
         this.cardinalitePointee = cardPointee;
         this.attribut = classe;
     }
 
     public AttributClasse() {
         super();
-        this.cardinalitePointee = "Inconnu";
+        this.cardinalitePointeur = "Inconnu";
         this.cardinalitePointee = "Inconnu";
         this.attribut = null;
     }
@@ -36,7 +40,6 @@ public class AttributClasse extends Attribut {
     }
 
     public String toString() {
-        String texte = super.toString() + "Cardinalite de la classe qui pointe : " + this.cardinalitePointeur + ", cardinalite de la classe pointee : " + this.cardinalitePointee + "\n Classe pointee : " + this.attribut;
-        return texte;
+        return super.toString() + "Cardinalite de la classe qui pointe : " + this.cardinalitePointeur + ", cardinalite de la classe pointee : " + this.cardinalitePointee + "\n Classe pointee : " + this.attribut;
     }
 }

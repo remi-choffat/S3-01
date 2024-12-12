@@ -1,6 +1,10 @@
 package gen_diagrammes;
 
+/**
+ * Représente une méthode d'une classe du diagramme
+ */
 public class Methode {
+
     private String nom;
     private String acces;
     private String typeRetour;
@@ -42,7 +46,6 @@ public class Methode {
     }
 
     public String toString() {
-        String texte = "Nom : " + nom + ", acces : " + acces + ", type de retour : " + typeRetour;
-        return texte;
+        return "Nom : " + nom + ", accès : " + acces + ", type de retour : " + typeRetour;
     }
 }
