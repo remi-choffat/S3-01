@@ -25,13 +25,29 @@ public class testClasse {
 
     @Test
     public void testConstructeurVide() {
+        Classe classe = new Classe();
 
-            Classe classe = new Classe();
-            //System.out.println(p);
-            assertEquals("Classe", classe.getNom());
+        assertEquals("Classe", classe.getNom());
         assertEquals("public", classe.getAcces());
         assertEquals("class", classe.getType());
-
     }
 
+    @Test
+    public void testConstructeurNonVide() {
+        Classe classe = new Classe("test1","test2","test3");
+
+        assertEquals("test1", classe.getNom());
+        assertEquals("test2", classe.getAcces());
+        assertEquals("test3", classe.getType());
+    }
+
+    @Test
+    public void testConstructeurFichier() throws ClassNotFoundException {
+        Classe classe = new Classe("gen_diagrammes.Classe");
+
+        assertEquals("Classe", classe.getNom());
+        assertEquals("public", classe.getAcces());
+        assertEquals("class", classe.getType());
+    }
+    
 }
