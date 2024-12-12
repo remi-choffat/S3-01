@@ -1,1 +1,14 @@
 Itération 1 : Fonctionnalités et cas d’utilisations développés
+
+Fonctionnalités : 
+
+	-création des classes internes :
+		- classe Attribut - attribut d'une classe
+		- classe AttributClasse - attribut d'une classe de type Classe
+		- classe Methode - méthode d'une classe
+		- classe Classe - représentation d'une classe .class donnée, contient une liste d'objets de type Methode, une liste d'objets de type Attribut et une liste d'objets de type Classe pour représenter les parents
+		- classe Diagramme - a pour attribut une liste de type Classe
+
+	-exportation du diagramme sous format UML :
+		-le diagramme contient les noms, attributs et méthodes des classes
+		-le diagramme contient les relations entre les classes
