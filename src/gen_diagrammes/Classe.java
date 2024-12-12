@@ -93,16 +93,32 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
 
-        // Charge le fichier (chemin absolu sur le disque)
-        File file = new File(cheminFichier);
-        URL url = file.getParentFile().toURI().toURL();
-        URL[] urls = new URL[]{url};
-        URLClassLoader classLoader = new URLClassLoader(urls);
+        Class<?> classe = null;
+        int state = -1;
+        boolean isValid = false;
+        while(!isValid) {
+            try{
+                if(state > -1){
+                    cheminFichier = Classe.adjustPath(cheminFichier, state);
+                }
+                // Charge le fichier (chemin absolu sur le disque)
+                File file = new File(cheminFichier);
+                URL url = file.getParentFile().toURI().toURL();
+                URL[] urls = new URL[]{url};
+                URLClassLoader classLoader = new URLClassLoader(urls);
 
-        // Charge la classe
-        String className = file.getName().replace(".class", "");
-        Class<?> classe = classLoader.loadClass(className);
-
+                // Charge la classe
+                String className = file.getName().replace(".class", "");
+                classe = classLoader.loadClass(className);
+                isValid = true;
+            } catch(ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
+                state++;
+            } catch (Exception e){
+                System.out.println("chemin : " + cheminFichier);
+                e.printStackTrace();
+                isValid = true;
+            }
+        }
 
         // Récupère le nom de la classe
         this.nom = classe.getSimpleName();
@@ -239,6 +255,21 @@ public class Classe {
         }
 
         return res;
+
+    }
+
+    private static String adjustPath(String path, int state){
+        String[] folds = path.split("[/\\\\]");
+        if(state >= folds.length){
+            throw new ArrayIndexOutOfBoundsException("état dépassé");
+        } else {
+            String res = "";
+            for(int i = 0; i < folds.length -1 ; i++){
+                res += folds[i] + "\\\\";
+            }
+            res += folds[folds.length - state -2] + "." +folds[folds.length -1];
+            return res;
+        }
 
     }
 
