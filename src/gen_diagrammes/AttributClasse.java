@@ -36,10 +36,14 @@ public class AttributClasse extends Attribut {
     }
 
     public void setCardinalitePointeur(String cardPointeur) {
-        this.cardinalitePointee = cardPointeur;
+        this.cardinalitePointeur = cardPointeur;
     }
 
     public String toString() {
         return super.toString() + "Cardinalite de la classe qui pointe : " + this.cardinalitePointeur + ", cardinalite de la classe pointee : " + this.cardinalitePointee + "\n Classe pointee : " + this.attribut;
+    }
+
+    public Classe getAttribut() {
+        return attribut;
     }
 }
