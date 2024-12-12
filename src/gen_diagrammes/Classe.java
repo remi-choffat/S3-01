@@ -1,8 +1,12 @@
 package gen_diagrammes;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 
 /**
@@ -86,18 +90,22 @@ public class Classe {
      * @param cheminFichier Chemin du fichier de la classe
      * @throws ClassNotFoundException Erreur si la classe n'est pas trouvée
      */
-    public Classe(String cheminFichier) throws ClassNotFoundException {
+    public Classe(String cheminFichier) throws ClassNotFoundException, MalformedURLException {
 
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
 
         // Charge le fichier (chemin absolu sur le disque)
-        ClassLoader classLoader = getClass().getClassLoader();
-        classLoader.getResourceAsStream(cheminFichier);
+        File file = new File(cheminFichier);
+        URL url = file.getParentFile().toURI().toURL();
+        URL[] urls = new URL[]{url};
+        URLClassLoader classLoader = new URLClassLoader(urls);
 
-        // Crée un objet Class à partir du ClassLoader
-        Class<?> classe = classLoader.loadClass(cheminFichier);
+        // Charge la classe
+        String className = file.getName().replace(".class", "");
+        Class<?> classe = classLoader.loadClass(className);
+
 
         // Récupère le nom de la classe
         this.nom = classe.getSimpleName();
