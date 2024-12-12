@@ -1,5 +1,7 @@
 package gen_diagrammes;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
@@ -57,6 +59,10 @@ public class Classe {
      */
     public Classe(String cheminFichier) throws ClassNotFoundException {
 
+        this.parents = new ArrayList<Classe>();
+        this.methodes = new ArrayList<Methode>();
+        this.attributs = new ArrayList<Attribut>();
+
         // Charge le fichier (chemin absolu sur le disque)
         ClassLoader classLoader = getClass().getClassLoader();
         classLoader.getResourceAsStream(cheminFichier);
@@ -86,6 +92,48 @@ public class Classe {
             this.type = ABSTRACT;
         } else {
             this.type = CLASS;
+        }
+
+        for( Field m : classe.getDeclaredFields()) {
+            String acces = "";
+            switch (m.getModifiers()) {
+
+                case Modifier.PUBLIC:
+                    acces = "public";
+                    break;
+
+                case Modifier.PROTECTED:
+                    acces = "protected";
+                    break;
+                case Modifier.PRIVATE:
+                    acces = "private";
+                    break;
+                case Modifier.ABSTRACT:
+                    acces = "abstract";
+                    break;
+            }
+            this.attributs.add( new Attribut(m.getName(), acces, m.getType().getName()));
+        }
+
+        for( Method m : classe.getDeclaredMethods()) {
+            String acces = "";
+            switch (m.getModifiers()) {
+
+                case Modifier.PUBLIC:
+                    acces = "public";
+                    break;
+
+                case Modifier.PROTECTED:
+                    acces = "protected";
+                    break;
+                case Modifier.PRIVATE:
+                    acces = "private";
+                    break;
+                case Modifier.ABSTRACT:
+                    acces = "abstract";
+                    break;
+            }
+            this.methodes.add( new Methode(m.getName(), acces, m.getReturnType().getName()));
         }
 
     }
@@ -158,9 +206,9 @@ public class Classe {
         for(Attribut at : this.attributs) {
             res += "\t"+ at.getTypeAcces() + at.getType() + at.getNom() + "\n";
         }
-        res += "\nMéthodes\n";
+        res += "\n - Méthodes\n";
         for(Methode m : this.methodes) {
-            res += "\t"+m.getAcces() + " " + m.getTypeRetour() + " " +m.getNom() + "\n";
+            res += "\t"+m.getAcces() + " " + m.getTypeRetour() + " " +m.getNom() + "()\n";
         }
 
         return res;

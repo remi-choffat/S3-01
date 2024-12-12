@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        
         //diagramme d;
         if(args.length == 0) {
             //d = new Diagramme(args[0]);
@@ -21,7 +22,7 @@ public class Main {
                 try{
                     d.addClasse(res);
                 }catch (Exception e) {
-                    System.out.println("error whil loading class " + res);
+                    System.out.println("error while loading class " + res);
                     e.printStackTrace();
                 }*/
 
@@ -35,6 +36,13 @@ public class Main {
             System.out.println("enter a class path, or type *export to export diagram : ");
             res = sc.nextLine();
         }
+        /*
+        try { //pour tester si une classe affiche tout bien
+            Classe c = new Classe("gen_diagrammes.Classe");
+            System.out.println(c.toString());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }*/
 
     }
 
