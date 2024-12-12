@@ -1,11 +1,20 @@
 package gen_diagrammes;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
 /**
  * Représente une classe du diagramme
  */
 public class Classe {
+
+    public static final String PUBLIC = "public";
+    public static final String PRIVATE = "private";
+    public static final String PROTECTED = "protected";
+
+    public static final String CLASS = "class";
+    public static final String INTERFACE = "interface";
+    public static final String ABSTRACT = "abstract";
 
     /**
      * Nom de la classe
@@ -22,13 +31,12 @@ public class Classe {
      */
     private final String type;
 
-    public static final String PUBLIC = "public";
-    public static final String PRIVATE = "private";
-    public static final String PROTECTED = "protected";
+    private ArrayList<Classe> parents;
 
-    public static final String CLASS = "class";
-    public static final String INTERFACE = "interface";
-    public static final String ABSTRACT = "abstract";
+    private ArrayList<Attribut> attributs;
+
+    private ArrayList<Methode> methodes;
+
 
 
     /**
@@ -104,12 +112,59 @@ public class Classe {
         return type;
     }
 
+    public ArrayList<Classe> getParents() {
+        return parents;
+    }
+
+    public ArrayList<Attribut> getAttributs() {
+        return attributs;
+    }
+
+    public ArrayList<Methode> getMethodes() {
+        return methodes;
+    }
+
+    public void addMethode(Methode m){
+        methodes.add(m);
+    }
+
+    public void addAttribut(Attribut a){
+        attributs.add(a);
+    }
+
+    public void addParent(Classe c){
+        //vérifie si il est encore possible d'ajouter un parent à la classe
+        if(this.parents.isEmpty()){
+            parents.add(c);
+        } else if (this.parents.size() == 1){
+            if(! this.parents.getFirst().getType().equals(c.getType())){
+                parents.add(c);
+            }
+        }
+    }
 
     /**
      * Affiche les propriétés de la classe
      */
     public String toString() {
-        return acces + " " + type + " " + nom;
+        String res = this.acces + " " + this.type + " " + this.nom ;
+        res += "( " ;
+        for(Classe c : this.parents) {
+            res += c.getNom() + " ";
+        }
+        res += ")\n";
+
+        res += " - Attributs\n";
+        for(Attribut at : this.attributs) {
+            res += "\t"+ at.getTypeAcces() + at.getType() + at.getNom() + "\n";
+        }
+        res += "\nMéthodes\n";
+        for(Methode m : this.methodes) {
+            res += "\t"+m.getAcces() + " " + m.getTypeRetour() + " " +m.getNom() + "\n";
+        }
+
+        return res;
+
     }
 
 }
