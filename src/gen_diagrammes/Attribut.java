@@ -42,7 +42,7 @@ public class Attribut {
     }
 
     public String toString() {
-        String texte = "Nom : "+ nom + ", type d'acces : " + typeAcces + ", type :  " + type;
+        String texte = "Nom : "+ nom + ", type d'acces : " + typeAcces + ", type :  " + type + "\n";
         return texte;
     }
 }
