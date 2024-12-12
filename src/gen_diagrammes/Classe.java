@@ -60,6 +60,9 @@ public class Classe {
         this.nom = "Classe";
         this.acces = PUBLIC;
         this.type = CLASS;
+        this.parents = new ArrayList<Classe>();
+        this.methodes = new ArrayList<Methode>();
+        this.attributs = new ArrayList<Attribut>();
     }
 
 
