@@ -49,5 +49,5 @@ public class testClasse {
         assertEquals("public", classe.getAcces());
         assertEquals("class", classe.getType());
     }
-    
+
 }
