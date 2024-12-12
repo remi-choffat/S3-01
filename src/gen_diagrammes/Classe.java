@@ -60,6 +60,24 @@ public class Classe {
 
 
     /**
+     * Constructeur avec nom, acces et type
+     * Crée directement une classe, sans passer par un fichier
+     *
+     * @param nom   nom de la classe
+     * @param acces visibilité de la classe
+     * @param type  type de la classe
+     */
+    public Classe(String nom, String acces, String type) {
+        this.nom = nom;
+        this.acces = acces;
+        this.type = type;
+        this.parents = new ArrayList<Classe>();
+        this.methodes = new ArrayList<Methode>();
+        this.attributs = new ArrayList<Attribut>();
+    }
+
+
+    /**
      * Constructeur avec nom de la classe
      *
      * @param cheminFichier Chemin du fichier de la classe
@@ -104,15 +122,20 @@ public class Classe {
 
         // Remplit la liste des attributs
         for (Field a : classe.getDeclaredFields()) {
-            // Modifier.toString(m.getModifiers())
-            String acces = switch (a.getModifiers()) {
-                case Modifier.PUBLIC -> PUBLIC;
-                case Modifier.PROTECTED -> PROTECTED;
-                case Modifier.PRIVATE -> PRIVATE;
-                case Modifier.ABSTRACT -> ABSTRACT;
-                default -> "";
-            };
-            this.attributs.add(new Attribut(a.getName(), acces, a.getType().getSimpleName()));
+            String type = a.getType().getSimpleName();
+
+            boolean isClassPresent = false;
+            for (Classe c : Diagramme.getInstance().getListeClasses()) {
+                if (c.getNom().equals(type)) {
+                    this.attributs.add(new AttributClasse(a.getName(), acces, type, "", "", c));
+                    isClassPresent = true;
+                    break;
+                }
+            }
+
+            if (!isClassPresent) {
+                this.attributs.add(new Attribut(a.getName(), acces, type));
+            }
         }
 
         // Remplit la liste des méthodes

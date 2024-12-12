@@ -8,11 +8,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Diagramme d;
+        Diagramme d = Diagramme.getInstance();
         if (args.length == 1) {
-            d = new Diagramme(args[0], null);
-        } else {
-            d = new Diagramme();
+            Diagramme.initialize(args[0], null);
         }
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter a class path (absolute path if no selected package) : ");

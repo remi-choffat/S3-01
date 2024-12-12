@@ -14,26 +14,39 @@ public class Diagramme {
      */
     private ArrayList<Classe> listeClasses;
 
+    private static Diagramme instance;
 
     /**
-     * Constructeur d'un diagramme à partir d'un package existant
-     * @param nomPackage nom du package
-     * @param listeClasses liste des classes du package
+     * Constructeur privé pour empêcher l'instanciation directe
      */
-    public Diagramme(String nomPackage, ArrayList<Classe> listeClasses) {
-        this.nomPackage = nomPackage;
-        this.listeClasses = listeClasses;
-    }
-
-
-    /**
-     * Constructeur d'un diagramme vide
-     */
-    public Diagramme() {
+    private Diagramme() {
         this.nomPackage = "Inconnu";
         this.listeClasses = new ArrayList<>();
     }
 
+    /**
+     * Méthode pour obtenir l'instance unique de Diagramme
+     * @return instance unique de Diagramme
+     */
+    public static Diagramme getInstance() {
+        if (instance == null) {
+            instance = new Diagramme();
+        }
+        return instance;
+    }
+
+    /**
+     * Méthode pour initialiser l'instance unique de Diagramme avec des paramètres
+     * @param nomPackage nom du package
+     * @param listeClasses liste des classes du package
+     */
+    public static void initialize(String nomPackage, ArrayList<Classe> listeClasses) {
+        if (instance == null) {
+            instance = new Diagramme();
+            instance.nomPackage = nomPackage;
+            instance.listeClasses = listeClasses;
+        }
+    }
 
     public String getNomPackage() {
         return nomPackage;
@@ -52,16 +65,16 @@ public class Diagramme {
     }
 
     /**
-     * methode qui permet d'ajouter une classe au diagramme
-     * @param c, classe a ajouter au diagramme
+     * Méthode qui permet d'ajouter une classe au diagramme
+     * @param c classe à ajouter au diagramme
      */
     public void ajouterClasse(Classe c) {
         this.listeClasses.add(c);
     }
 
     /**
-     * methode qui permet de supprimer une classe du diagramme
-     * @param c, classe a supprimer
+     * Méthode qui permet de supprimer une classe du diagramme
+     * @param c classe à supprimer
      */
     public void supprimerClasse(Classe c) {
         this.listeClasses.remove(c);
@@ -74,5 +87,4 @@ public class Diagramme {
         }
         return texte;
     }
-
 }
