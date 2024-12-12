@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class TestClasse {
     }
 
     @Test
-    public void testConstructeurFichier() throws ClassNotFoundException {
+    public void testConstructeurFichier() throws ClassNotFoundException, MalformedURLException {
         Classe classe = new Classe("gen_diagrammes.Classe");
 
         assertEquals("Classe", classe.getNom());
