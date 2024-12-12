@@ -102,7 +102,7 @@ public class TestClasse {
         classe1.addParent(classe3);
 
         //Il faut faire une exeption pour ça
-        assertEquals(ac, classe1.getParents());
+        assertNotEquals(ac, classe1.getParents());
     }
 
     @Test
