@@ -26,8 +26,7 @@ public class Main {
 
                 System.out.println(d);
             } else {
-                System.out.println("Enter a file path and name to export your diagram : ");
-                res = sc.nextLine();
+
                 //Exporter exp = new Exporter();
                 //exp.export(d,res)
             }
