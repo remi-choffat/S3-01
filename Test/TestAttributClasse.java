@@ -1,4 +1,3 @@
-import gen_diagrammes.Attribut;
 import gen_diagrammes.AttributClasse;
 import gen_diagrammes.Classe;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +10,7 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class testAttributClasse {
+public class TestAttributClasse {
 
 
     @BeforeAll

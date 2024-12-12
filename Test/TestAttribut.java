@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class testAttribut {
+public class TestAttribut {
 
 
     @BeforeAll
