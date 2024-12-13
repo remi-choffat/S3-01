@@ -73,10 +73,14 @@ public class Methode {
                 break;
         }
         resultat = texteAcces + " " + nom + "(";
+        boolean aParametres = false;
         for (String parametre : parametres) {
             resultat += parametre + ", ";
+            aParametres = true;
         }
-        resultat = resultat.substring(0, resultat.length() - 2);
+        if (aParametres) {
+            resultat = resultat.substring(0, resultat.length() - 2);
+        }
         resultat = resultat + ") : " + typeRetour;
         return resultat;
     }
