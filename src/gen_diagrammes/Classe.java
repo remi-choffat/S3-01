@@ -167,14 +167,25 @@ public class Classe {
 
         // Remplit la liste des méthodes
         for (Method m : classe.getDeclaredMethods()) {
-            String acces = switch (m.getModifiers()) {
-                case Modifier.PUBLIC -> PUBLIC;
-                case Modifier.PROTECTED -> PROTECTED;
-                case Modifier.PRIVATE -> PRIVATE;
-                case Modifier.ABSTRACT -> ABSTRACT;
-                default -> "";
-            };
-            this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName()));
+
+            String acces;
+            int mod = m.getModifiers();
+            if (Modifier.isAbstract(mod)) {
+                acces = ABSTRACT;
+            } else if (Modifier.isPublic(mod)) {
+                acces = PUBLIC;
+            } else if (Modifier.isProtected(mod)) {
+                acces = PROTECTED;
+            } else if (Modifier.isPrivate(mod)) {
+                acces = PRIVATE;
+            } else {
+                acces = "";
+            }
+            ArrayList<String> parametres = new ArrayList<>();
+            for (Class<?> c : m.getParameterTypes()) {
+                parametres.add(c.getSimpleName());
+            }
+            this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
         }
 
     }
@@ -237,6 +248,14 @@ public class Classe {
         }
     }
 
+
+    /**
+     * Ajuste le chemin du fichier pour trouver la classe
+     *
+     * @param path  chemin du fichier
+     * @param state état de l'ajustement
+     * @return String
+     */
     private static String adjustPath(String path, int state) {
         String[] folds = path.split("[/\\\\]");
         if (state >= folds.length) {
@@ -253,6 +272,11 @@ public class Classe {
     }
 
 
+    /**
+     * Affichage (PlantUML) de la classe
+     *
+     * @return String
+     */
     public String toString() {
         StringBuilder uml = new StringBuilder();
         StringBuilder relations = new StringBuilder();
