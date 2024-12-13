@@ -46,6 +46,23 @@ public class Attribut {
     }
 
     public String toString() {
-        return typeAcces + " " + type + " " + nom + "\n";
+        String res = "";
+        switch (typeAcces) {
+            case Classe.PUBLIC:
+                res += "+";
+                break;
+            case Classe.PRIVATE:
+                res += "-";
+                break;
+            case Classe.PROTECTED:
+                res += "#";
+                break;
+            default:
+                res += "~";
+                break;
+        }
+        res += nom + " : " + type;
+        return res;
     }
+
 }

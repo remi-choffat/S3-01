@@ -25,8 +25,8 @@ public class Main {
 
                 System.out.println(d);
             } else {
-                //Exporter exp = new Exporter();
-                //exp.export(d,res)
+                Exporter exp = new Exporter(d);
+                exp.exportUML();
             }
             System.out.println("Enter a class path, or type *export to export diagram : ");
             res = sc.nextLine();

@@ -99,9 +99,9 @@ public class Classe {
         Class<?> classe = null;
         int state = -1;
         boolean isValid = false;
-        while(!isValid) {
-            try{
-                if(state > -1){
+        while (!isValid) {
+            try {
+                if (state > -1) {
                     cheminFichier = Classe.adjustPath(cheminFichier, state);
                 }
                 // Charge le fichier (chemin absolu sur le disque)
@@ -114,9 +114,9 @@ public class Classe {
                 String className = file.getName().replace(".class", "");
                 classe = classLoader.loadClass(className);
                 isValid = true;
-            } catch(ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
+            } catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
                 state++;
-            } catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("chemin : " + cheminFichier);
                 e.printStackTrace();
                 isValid = true;
@@ -237,43 +237,39 @@ public class Classe {
         }
     }
 
-    /**
-     * Affiche les propriétés de la classe
-     */
-    public String toString() {
-        String res = this.acces + " " + this.type + " " + this.nom;
-        res += "( ";
-        for (Classe c : this.parents) {
-            res += c.getNom() + " ";
-        }
-        res += ")\n";
-
-        res += " - Attributs\n";
-        for (Attribut at : this.attributs) {
-            res += at.toString();
-        }
-        res += "\n - Méthodes\n";
-        for (Methode m : this.methodes) {
-            res += "\t" + m.getAcces() + " " + m.getTypeRetour() + " " + m.getNom() + "()\n";
-        }
-
-        return res;
-
-    }
-
-    private static String adjustPath(String path, int state){
+    private static String adjustPath(String path, int state) {
         String[] folds = path.split("[/\\\\]");
-        if(state >= folds.length){
+        if (state >= folds.length) {
             throw new ArrayIndexOutOfBoundsException("état dépassé");
         } else {
             String res = "";
-            for(int i = 0; i < folds.length -1 ; i++){
+            for (int i = 0; i < folds.length - 1; i++) {
                 res += folds[i] + "\\\\";
             }
-            res += folds[folds.length - state -2] + "." +folds[folds.length -1];
+            res += folds[folds.length - state - 2] + "." + folds[folds.length - 1];
             return res;
         }
 
+    }
+
+
+    public String toString() {
+        StringBuilder uml = new StringBuilder();
+        StringBuilder relations = new StringBuilder();
+        uml.append("class ").append(this.nom).append(" {\n");
+        for (Attribut a : this.attributs) {
+            if (a instanceof AttributClasse) {
+                relations.append(this.nom).append(" --> ").append(((AttributClasse) a).getAttribut().getNom()).append(" : ").append(a.getNom()).append("\n");
+            } else {
+                uml.append(a).append("\n");
+            }
+        }
+        for (Methode m : this.methodes) {
+            uml.append(m).append("\n");
+        }
+        uml.append("}\n");
+        uml.append(relations);
+        return uml.toString();
     }
 
 }
