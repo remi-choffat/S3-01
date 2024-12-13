@@ -163,19 +163,31 @@ public class Classe {
 
         // Remplit la liste des attributs
         for (Field a : classe.getDeclaredFields()) {
+
             String type = a.getType().getSimpleName();
+            int modAttribut = a.getModifiers();
+            String accesAttribut;
+            if (Modifier.isPublic(modAttribut)) {
+                accesAttribut = PUBLIC;
+            } else if (Modifier.isProtected(modAttribut)) {
+                accesAttribut = PROTECTED;
+            } else if (Modifier.isPrivate(modAttribut)) {
+                accesAttribut = PRIVATE;
+            } else {
+                accesAttribut = "";
+            }
 
             boolean isClassPresent = false;
             for (Classe c : Diagramme.getInstance().getListeClasses()) {
                 if (c.getNom().equals(type)) {
-                    this.attributs.add(new AttributClasse(a.getName(), acces, type, "", "", c));
+                    this.attributs.add(new AttributClasse(a.getName(), accesAttribut, type, "", "", c));
                     isClassPresent = true;
                     break;
                 }
             }
 
             if (!isClassPresent) {
-                this.attributs.add(new Attribut(a.getName(), acces, type));
+                this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
             }
         }
 
@@ -313,19 +325,21 @@ public class Classe {
     public void updateAttributs() {
         ArrayList<Attribut> res = new ArrayList<>();
         for (Attribut a : this.attributs) {
+
             String type = a.getType();
+            String accesAttribut = a.getTypeAcces();
 
             boolean isClassPresent = false;
             for (Classe c : Diagramme.getInstance().getListeClasses()) {
                 if (c.getNom().equals(type)) {
-                    res.add(new AttributClasse(a.getNom(), acces, type, "", "", c));
+                    res.add(new AttributClasse(a.getNom(), accesAttribut, type, "", "", c));
                     isClassPresent = true;
                     break;
                 }
             }
 
             if (!isClassPresent) {
-                res.add(new Attribut(a.getNom(), acces, type));
+                res.add(new Attribut(a.getNom(), accesAttribut, type));
             }
         }
         this.attributs = res;

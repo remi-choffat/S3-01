@@ -16,12 +16,12 @@ class Classe {
 + getMethodes() : ArrayList
 + addAttribut(Attribut) : void
 + updateAttributs() : void
-+ addMethode(Methode) : void
 + getParents() : ArrayList
-+ addParent(Classe) : void
-+ getNom() : String
++ addMethode(Methode) : void
 + getAcces() : String
++ addParent(Classe) : void
 - adjustPath(String, int) : String
++ getNom() : String
 + toString() : String
 + getType() : String
 }
@@ -29,10 +29,10 @@ class AttributClasse {
 +cardinalitePointeur : String
 +cardinalitePointee : String
 + getAttribut() : Classe
-+ getCardinalitePointee() : String
++ setCardinalitePointeur(String) : void
 + setCardinalitePointee(String) : void
 + getCardinalitePointeur() : String
-+ setCardinalitePointeur(String) : void
++ getCardinalitePointee() : String
 + toString() : String
 }
 AttributClasse --> Classe : attribut
@@ -41,8 +41,8 @@ class Attribut {
 +typeAcces : String
 +type : String
 + setType(String) : void
-+ setTypeAcces(String) : void
 + getTypeAcces() : String
++ setTypeAcces(String) : void
 + getNom() : String
 + setNom(String) : void
 + toString() : String
@@ -53,34 +53,34 @@ class Methode {
 +acces : String
 +typeRetour : String
 +parametres : ArrayList
-+ getTypeRetour() : String
-+ setTypeRetour(String) : void
-+ getParametres() : ArrayList
 + setParametres(ArrayList) : void
-+ getNom() : String
++ setTypeRetour(String) : void
++ getTypeRetour() : String
++ getParametres() : ArrayList
 + getAcces() : String
++ getNom() : String
 + setNom(String) : void
 + setAcces(String) : void
 + toString() : String
 }
-class Diagramme {
-+nomPackage : String
-+listeClasses : ArrayList
-+ supprimerClasse(Classe) : void
-+ updateClasses() : void
-+ ajouterClasse(Classe) : void
-+ getNomPackage() : String
-+ getListeClasses() : ArrayList
-+ setListeClasses(ArrayList) : void
-+ setNomPackage(String) : void
-+ toString() : String
-+ getInstance() : Diagramme
-+ initialize(String, ArrayList) : void
-}
-Diagramme --> Diagramme : instance
 class Exporter {
 + getDiagramme() : Diagramme
 + exportUML() : void
 }
 Exporter --> Diagramme : diagramme
+class Diagramme {
++nomPackage : String
++listeClasses : ArrayList
++ ajouterClasse(Classe) : void
++ updateClasses() : void
++ getNomPackage() : String
++ setListeClasses(ArrayList) : void
++ setNomPackage(String) : void
++ getListeClasses() : ArrayList
++ supprimerClasse(Classe) : void
++ toString() : String
++ getInstance() : Diagramme
++ initialize(String, ArrayList) : void
+}
+Diagramme --> Diagramme : instance
 @enduml
