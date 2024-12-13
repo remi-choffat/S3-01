@@ -188,6 +188,8 @@ public class Classe {
             this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
         }
 
+        Diagramme.getInstance().updateClasses();
+
     }
 
 
@@ -294,6 +296,22 @@ public class Classe {
         uml.append("}\n");
         uml.append(relations);
         return uml.toString();
+    }
+
+    public void updateAttributs(){
+        ArrayList<Classe> arr = Diagramme.getInstance().getListeClasses();
+        for(Attribut a : this.attributs){
+            if ( ! (a instanceof AttributClasse)){
+                //si le type existe dans la liste des classes :
+                for(Classe c : arr){
+                    if (a.getType().equals(c.getClass().getSimpleName())) {
+                        AttributClasse att = new AttributClasse(a.getNom(), a.getTypeAcces(), a.getType(), "*", "1", c);
+                        this.attributs.add(att);
+                        this.attributs.remove(a);
+                    }
+                }
+            }
+        }
     }
 
 }
