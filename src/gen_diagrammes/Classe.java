@@ -188,8 +188,6 @@ public class Classe {
             this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
         }
 
-        Diagramme.getInstance().updateClasses();
-
     }
 
 
@@ -299,19 +297,24 @@ public class Classe {
     }
 
     public void updateAttributs(){
-        ArrayList<Classe> arr = Diagramme.getInstance().getListeClasses();
-        for(Attribut a : this.attributs){
-            if ( ! (a instanceof AttributClasse)){
-                //si le type existe dans la liste des classes :
-                for(Classe c : arr){
-                    if (a.getType().equals(c.getClass().getSimpleName())) {
-                        AttributClasse att = new AttributClasse(a.getNom(), a.getTypeAcces(), a.getType(), "*", "1", c);
-                        this.attributs.add(att);
-                        this.attributs.remove(a);
-                    }
+        ArrayList<Attribut> res = new ArrayList<>();
+        for (Attribut a : this.attributs) {
+            String type = a.getType();
+
+            boolean isClassPresent = false;
+            for (Classe c : Diagramme.getInstance().getListeClasses()) {
+                if (c.getNom().equals(type)) {
+                    res.add(new AttributClasse(a.getNom(), acces, type, "", "", c));
+                    isClassPresent = true;
+                    break;
                 }
             }
+
+            if (!isClassPresent) {
+                res.add(new Attribut(a.getNom(), acces, type));
+            }
         }
+        this.attributs = res;
     }
 
 }

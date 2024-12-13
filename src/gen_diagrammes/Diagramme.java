@@ -70,6 +70,7 @@ public class Diagramme {
      */
     public void ajouterClasse(Classe c) {
         this.listeClasses.add(c);
+        this.updateClasses();
     }
 
     /**
@@ -91,6 +92,7 @@ public class Diagramme {
 
     public void updateClasses(){
         for(Classe c : this.listeClasses){
+            System.out.println("a");
             c.updateAttributs();
         }
     }
