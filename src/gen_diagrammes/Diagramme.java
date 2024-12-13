@@ -87,4 +87,11 @@ public class Diagramme {
         }
         return texte;
     }
+
+
+    public void updateClasses(){
+        for(Classe c : this.listeClasses){
+            c.updateAttributs();
+        }
+    }
 }
