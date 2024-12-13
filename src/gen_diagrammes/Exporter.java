@@ -11,6 +11,9 @@ public class Exporter {
         this.diagramme = diagramme;
     }
 
+    public Diagramme getDiagramme() {
+        return diagramme;
+    }
 
     /**
      * Exporte le diagramme dans un fichier au format UML
