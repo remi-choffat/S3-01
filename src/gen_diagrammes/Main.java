@@ -13,22 +13,21 @@ public class Main {
             Diagramme.initialize(args[0], null);
         }
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter a class path (absolute path if no selected package) : ");
+        System.out.println("Entrez un chemin de classe (chemin absolu si aucun package sélectionné) : ");
         String res = sc.nextLine();
         while (!res.equals("q")) {
             if (!res.equals("*export")) {
                 try {
                     d.ajouterClasse(new Classe(res));
+                    System.out.println(d);
                 } catch (Exception e) {
-                    System.err.println("Error while loading class " + res);
+                    System.err.println(e.getMessage());
                 }
-
-                System.out.println(d);
             } else {
                 Exporter exp = new Exporter(d);
                 exp.exportUML();
             }
-            System.out.println("Enter a class path, or type *export to export diagram : ");
+            System.out.println("Entrez un chemin de classe, ou tapez *export pour exporter le diagramme : ");
             res = sc.nextLine();
         }
 

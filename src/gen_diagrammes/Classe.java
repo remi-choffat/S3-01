@@ -96,9 +96,17 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
 
+        String nomClasse = cheminFichier.substring(cheminFichier.lastIndexOf("\\") + 1, cheminFichier.length() - 6);
+
         Class<?> classe = null;
         int state = -1;
         boolean isValid = false;
+
+        // Si le fichier n'est pas un .class, on renvoie une erreur
+        if (!cheminFichier.endsWith(".class")) {
+            throw new ClassNotFoundException("Le fichier sélectionné n'est pas une classe Java (.class)");
+        }
+
         while (!isValid) {
             try {
                 if (state > -1) {
@@ -116,11 +124,17 @@ public class Classe {
                 isValid = true;
             } catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
                 state++;
+                if (state > 10) {
+                    throw new ClassNotFoundException("Erreur lors du chargement de la classe " + nomClasse);
+                }
             } catch (Exception e) {
-                System.out.println("chemin : " + cheminFichier);
                 e.printStackTrace();
                 isValid = true;
             }
+        }
+
+        if (classe == null) {
+            throw new ClassNotFoundException("Erreur lors du chargement de la classe " + nomClasse);
         }
 
         // Récupère le nom de la classe
@@ -296,7 +310,7 @@ public class Classe {
         return uml.toString();
     }
 
-    public void updateAttributs(){
+    public void updateAttributs() {
         ArrayList<Attribut> res = new ArrayList<>();
         for (Attribut a : this.attributs) {
             String type = a.getType();

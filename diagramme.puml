@@ -1,15 +1,4 @@
 @startuml
-class AttributClasse {
-+cardinalitePointeur : String
-+cardinalitePointee : String
-+ getAttribut() : Classe
-+ setCardinalitePointee(String) : void
-+ getCardinalitePointee() : String
-+ setCardinalitePointeur(String) : void
-+ getCardinalitePointeur() : String
-+ toString() : String
-}
-AttributClasse --> Classe : attribut
 class Classe {
 +PUBLIC : String
 +PRIVATE : String
@@ -23,17 +12,75 @@ class Classe {
 +parents : ArrayList
 +attributs : ArrayList
 +methodes : ArrayList
-+ updateAttributs() : void
 + getAttributs() : ArrayList
 + getMethodes() : ArrayList
 + addAttribut(Attribut) : void
-- adjustPath(String, int) : String
-+ getParents() : ArrayList
++ updateAttributs() : void
 + addMethode(Methode) : void
++ getParents() : ArrayList
 + addParent(Classe) : void
 + getNom() : String
 + getAcces() : String
+- adjustPath(String, int) : String
 + toString() : String
 + getType() : String
 }
+class AttributClasse {
++cardinalitePointeur : String
++cardinalitePointee : String
++ getAttribut() : Classe
++ getCardinalitePointee() : String
++ setCardinalitePointee(String) : void
++ getCardinalitePointeur() : String
++ setCardinalitePointeur(String) : void
++ toString() : String
+}
+AttributClasse --> Classe : attribut
+class Attribut {
++nom : String
++typeAcces : String
++type : String
++ setType(String) : void
++ setTypeAcces(String) : void
++ getTypeAcces() : String
++ getNom() : String
++ setNom(String) : void
++ toString() : String
++ getType() : String
+}
+class Methode {
++nom : String
++acces : String
++typeRetour : String
++parametres : ArrayList
++ getTypeRetour() : String
++ setTypeRetour(String) : void
++ getParametres() : ArrayList
++ setParametres(ArrayList) : void
++ getNom() : String
++ getAcces() : String
++ setNom(String) : void
++ setAcces(String) : void
++ toString() : String
+}
+class Diagramme {
++nomPackage : String
++listeClasses : ArrayList
++ supprimerClasse(Classe) : void
++ updateClasses() : void
++ ajouterClasse(Classe) : void
++ getNomPackage() : String
++ getListeClasses() : ArrayList
++ setListeClasses(ArrayList) : void
++ setNomPackage(String) : void
++ toString() : String
++ getInstance() : Diagramme
++ initialize(String, ArrayList) : void
+}
+Diagramme --> Diagramme : instance
+class Exporter {
++ getDiagramme() : Diagramme
++ exportUML() : void
+}
+Exporter --> Diagramme : diagramme
 @enduml
