@@ -47,7 +47,8 @@ public class TestClasse {
 
     @Test
     public void testConstructeurFichier() throws ClassNotFoundException, MalformedURLException {
-        Classe classe = new Classe("gen_diagrammes.Classe");
+        //Il faut un chemin absolut, donc le test ne peut pas marcher pour tout le monde, le chemin doit être ajouter pour chaque utilisateur
+        Classe classe = new Classe("CHEMIN_DE_CLASS_ABSOLUT");
 
         assertEquals("Classe", classe.getNom());
         assertEquals("public", classe.getAcces());
