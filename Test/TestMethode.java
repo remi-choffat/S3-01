@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,11 +35,17 @@ public class TestMethode {
 
     @Test
     public void testAttributNonVide() {
-        Methode methode = new Methode("test1","test2","test3");
+        ArrayList<String> liste = new ArrayList<String>();
+        liste.add("test4");
+        liste.add("test5");
+        Methode methode = new Methode("test1","test2","test3",liste);
 
         assertEquals("test1", methode.getNom());
         assertEquals("test2", methode.getAcces());
         assertEquals("test3", methode.getTypeRetour());
+        assertEquals("test4", methode.getParametres().get(0));
+        assertEquals("test5", methode.getParametres().get(1));
+        assertEquals(2, methode.getParametres().size());
     }
 
     @Test
