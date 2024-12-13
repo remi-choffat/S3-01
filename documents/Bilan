@@ -1,4 +1,12 @@
 Compte rendu itération 1 :
+Répartition :
+    Rémi : crétation classe Classe + gestion relations entre les classes + chargement fichiers .class + génération diagrammes UML
+    Tuline : création classes Methode + Attribut + Diagramme + diagrammes de séquence de l'application + génération digrammes UML
+    Gabin : modification classe Classe + chargement des fichiers .class
+    Noah : test de chaque classe de l'application + correction des classes
+
+Bilan : Notre application peut récupérer une classe et l'exporter au format UML. Il ne nous reste plus que l'interface graphique.
+
 
 Compte rendu itération 2 :
 
