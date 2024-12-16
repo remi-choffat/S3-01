@@ -14,6 +14,9 @@ public class Diagramme {
      */
     private ArrayList<Classe> listeClasses;
 
+    /**
+     * Instance unique de Diagramme
+     */
     private static Diagramme instance;
 
     /**
@@ -92,7 +95,6 @@ public class Diagramme {
 
     public void updateClasses(){
         for(Classe c : this.listeClasses){
-            System.out.println("a");
             c.updateAttributs();
         }
     }

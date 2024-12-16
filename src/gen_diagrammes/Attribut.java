@@ -13,6 +13,7 @@ public class Attribut {
         this.nom = nom;
         this.typeAcces = typeAcces;
         this.type = type;
+        System.out.println("Attribut créé : " + nom + " " + typeAcces);
     }
 
     public Attribut() {
