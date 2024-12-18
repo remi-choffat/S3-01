@@ -54,6 +54,11 @@ public class Classe {
      */
     private ArrayList<Methode> methodes;
 
+    /**
+     * Si la classe est visible ou non
+     */
+    private boolean estVisible;
+
 
     /**
      * Constructeur par défaut
@@ -65,6 +70,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
+        this.estVisible = true;
     }
 
 
@@ -83,6 +89,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
+        this.estVisible = true;
     }
 
 
@@ -97,6 +104,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
+        this.estVisible = true;
 
         String nomClasse = cheminFichier.substring(cheminFichier.lastIndexOf("\\") + 1, cheminFichier.length() - 6);
 
