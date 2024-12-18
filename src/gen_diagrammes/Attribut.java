@@ -60,16 +60,16 @@ public class Attribut {
         String res = "";
         switch (typeAcces) {
             case Classe.PUBLIC:
-                res += "+";
+                res += "+ ";
                 break;
             case Classe.PRIVATE:
-                res += "-";
+                res += "- ";
                 break;
             case Classe.PROTECTED:
-                res += "#";
+                res += "# ";
                 break;
             default:
-                res += "~";
+                res += "~ ";
                 break;
         }
         res += nom + " : " + type;

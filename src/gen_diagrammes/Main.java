@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -158,11 +159,6 @@ public class Main extends Application {
                 vbox.setVisible(false);
                 vbox.getChildren().clear();  // Effacer les nouveaux boutons lorsqu'on cache la VBox
             }
-        });
-
-        btnAffichage.setOnAction(e -> {
-            Diagramme diagramme = Diagramme.getInstance();
-            borderPane.getChildren().setAll()
         });
     }
 }

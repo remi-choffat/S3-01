@@ -1,7 +1,10 @@
 package gen_diagrammes;
 
-import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
+import javafx.scene.text.Text;
 
 public class VueClasse extends VBox implements Observateur {
 
@@ -14,6 +17,9 @@ public class VueClasse extends VBox implements Observateur {
 
     public VueClasse(Classe c) {
         this.classe = c;
+        this.actualiser();
+        this.setSpacing(10);
+        this.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
     }
 
     @Override
@@ -33,7 +39,22 @@ public class VueClasse extends VBox implements Observateur {
                     texteMethodes = texteMethodes + methode.toString() + "\n";
                 }
             }
-            this.getChildren().addAll(new Label(texteEnTete), new Label(texteAttributs), new Label(texteMethodes));
+            HBox h1 = new HBox();
+            HBox h2 = new HBox();
+            HBox h3 = new HBox();
+
+            Text l1 = new Text(texteEnTete);
+            h1.getChildren().add(l1);
+            Text l2 = new Text(texteAttributs);
+            h2.getChildren().add(l2);
+            Text l3 = new Text(texteMethodes);
+            h3.getChildren().add(l3);
+
+            h1.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+            h2.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+            h3.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+
+            this.getChildren().addAll(h1, h2, h3);
         }
     }
 }
