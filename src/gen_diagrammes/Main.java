@@ -3,22 +3,20 @@ package gen_diagrammes;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.*;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.util.Scanner;
-
 
 /**
  * Classe principale de l'application
  */
 public class Main extends Application {
-
-
 
     /**
      * Méthode principale
@@ -56,52 +54,101 @@ public class Main extends Application {
         }
     }
 
-
     /**
      * Affiche l'interface graphique
      *
-     * @param stage Stage
+     * @param primaryStage Stage
      */
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Plante UML");
 
-        Scene scene = new Scene(new Group(), 800, 600);
+        // création des boutons
+        Button btnAjouter = new Button("Ajouter");
+        Button btnSupprimer = new Button("Supprimer");
+        Button btnExporter = new Button("Exporter");
+        Button btnGenerer = new Button("Générer");
+        Button btnAffichage = new Button("Affichage");
 
-        // Affichage manuel d'une classe (exemple)
+        // création d'une HBox pour les boutons de base
+        HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
+        hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
 
-        VBox hb = new VBox();
-        hb.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        hb.setAlignment(Pos.CENTER);
+        // création d'une VBox pour les nouveaux boutons
+        VBox vbox = new VBox(10);
+        vbox.setVisible(false);  // Initialement caché
 
-        Label l1 = new Label("(C) public Classe");
-        hb.getChildren().add(l1);
+        // création de la mise en page principale
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(hbox);
+        borderPane.setCenter(vbox);
 
-        VBox vb = new VBox();
-        vb.setPadding(new Insets(10));
-        vb.setAlignment(Pos.CENTER_LEFT);
-        vb.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        // création de la scène et l'ajouter à la fenêtre principale
+        Scene scene = new Scene(borderPane, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
-        Label l2 = new Label("O String nom");
-        Label l3 = new Label("O int val");
-        vb.getChildren().addAll(l2, l3);
-        hb.getChildren().add(vb);
+        // gestionnaire d'événements pour le bouton "Ajouter"
+        btnAjouter.setOnAction(e -> {
+            if (!vbox.isVisible()) {
+                Button btnPackage = new Button("Ajouter un package");
+                Button btnClasse = new Button("Ajouter une classe");
+                vbox.getChildren().setAll(btnPackage, btnClasse);
+                vbox.setVisible(true);
 
-        VBox vb2 = new VBox();
-        vb2.setPadding(new Insets(10));
-        vb2.setAlignment(Pos.CENTER_LEFT);
-        vb2.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                // Gestionnaire d'événements pour le bouton "Ajouter une classe"
+                btnClasse.setOnAction(event -> {
+                    Button btnCenter = new Button("Sélectionner un fichier");
+                    ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
+                    imageView.setFitWidth(150);
+                    imageView.setFitHeight(150);
+                    VBox content = new VBox(10, imageView, btnCenter);
+                    content.setPadding(new Insets(20));
+                    content.setAlignment(Pos.CENTER); // Centrer le contenu
 
-        Label l4 = new Label("O getNom() : String");
-        Label l5 = new Label("O setVal(int)");
-        vb2.getChildren().addAll(l4, l5);
-        hb.getChildren().add(vb2);
+                    StackPane rectangle = new StackPane(content);
+                    rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+                    rectangle.setPrefSize(300, 200);  // Taille fixe pour le rectangle
+                    rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);  // Limite la taille maximale à la taille préférée
+                    // Ajouter le gestionnaire d'événements de glisser-déposer
+                    rectangle.setOnDragOver(eventDragOver -> {
+                        if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
+                            eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                        }
+                        eventDragOver.consume();
+                    });
 
-        ((Group) scene.getRoot()).getChildren().add(hb);
+                    rectangle.setOnDragDropped(eventDrop -> {
+                        var db = eventDrop.getDragboard();
+                        boolean success = false;
+                        if (db.hasFiles()) {
+                            success = true;
+                            String filePath = db.getFiles().get(0).getAbsolutePath();
+                            System.out.println("Fichier glissé-déposé: " + filePath);
+                        }
+                        eventDrop.setDropCompleted(success);
+                        eventDrop.consume();
+                    });
+                    StackPane wrapper = new StackPane(rectangle);
+                    wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
+                    StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
 
-        stage.setScene(scene);
-        stage.setTitle("Plante UML");
-        stage.show();
-
+                    borderPane.setCenter(wrapper);
+                    // Gestionnaire d'événements pour le bouton central
+                    btnCenter.setOnAction(fileEvent -> {
+                        FileChooser fileChooser = new FileChooser();
+                        fileChooser.setTitle("Sélectionner un fichier");
+                        Stage fileStage = (Stage) btnCenter.getScene().getWindow();
+                        java.io.File file = fileChooser.showOpenDialog(fileStage);
+                        if (file != null) {
+                            System.out.println("Fichier sélectionné: " + file.getAbsolutePath());
+                        }
+                    });
+                });
+            } else {
+                vbox.setVisible(false);
+                vbox.getChildren().clear();  // Effacer les nouveaux boutons lorsqu'on cache la VBox
+            }
+        });
     }
-
 }
