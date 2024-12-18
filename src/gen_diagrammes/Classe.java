@@ -309,6 +309,14 @@ public class Classe {
         return methodes;
     }
 
+    public boolean estVisible() {
+        return estVisible;
+    }
+
+    public void setEstVisible(boolean estVisible) {
+        this.estVisible = estVisible;
+    }
+
     public void addMethode(Methode m) {
         methodes.add(m);
     }
