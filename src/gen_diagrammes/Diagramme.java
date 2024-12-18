@@ -105,9 +105,11 @@ public class Diagramme {
     }
 
 
+
     /**
      * Met à jour les attributs des classes du diagramme
      */
+
     public void updateClasses() {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();

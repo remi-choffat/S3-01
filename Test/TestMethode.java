@@ -38,7 +38,7 @@ public class TestMethode {
         ArrayList<String> liste = new ArrayList<String>();
         liste.add("test4");
         liste.add("test5");
-        Methode methode = new Methode("test1","test2","test3",liste);
+        Methode methode = new Methode("test1", "test2", "test3", liste);
 
         assertEquals("test1", methode.getNom());
         assertEquals("test2", methode.getAcces());

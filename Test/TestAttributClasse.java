@@ -40,7 +40,7 @@ public class TestAttributClasse {
     @Test
     public void testAttributClasseNonVide() {
         Classe classe = new Classe();
-        AttributClasse attributClasse = new AttributClasse("test1","test2","test3","test4","test5",classe);
+        AttributClasse attributClasse = new AttributClasse("test1", "test2", "test3", "test4", "test5", classe);
 
         assertEquals(classe, attributClasse.getAttribut());
         assertEquals("test1", attributClasse.getNom());

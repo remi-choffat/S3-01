@@ -12,10 +12,12 @@ import javafx.stage.Stage;
 
 import java.util.Scanner;
 
+
 /**
  * Classe principale de l'application
  */
 public class Main extends Application {
+
 
 
     /**

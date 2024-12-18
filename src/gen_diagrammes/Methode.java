@@ -50,9 +50,13 @@ public class Methode {
         this.typeRetour = typeRetour;
     }
 
-    public ArrayList<String> getParametres() { return parametres; }
+    public ArrayList<String> getParametres() {
+        return parametres;
+    }
 
-    public void setParametres(ArrayList<String> parametres) { this.parametres = parametres; }
+    public void setParametres(ArrayList<String> parametres) {
+        this.parametres = parametres;
+    }
 
 
     public String toString() {
