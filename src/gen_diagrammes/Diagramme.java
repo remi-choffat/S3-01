@@ -69,6 +69,7 @@ public class Diagramme {
         this.listeClasses = listeClasses;
     }
 
+
     /**
      * Méthode qui permet d'ajouter une classe au diagramme
      *
@@ -79,6 +80,7 @@ public class Diagramme {
         this.updateClasses();
     }
 
+
     /**
      * Méthode qui permet de supprimer une classe du diagramme
      *
@@ -88,14 +90,25 @@ public class Diagramme {
         this.listeClasses.remove(c);
     }
 
+
+    /**
+     * Affiche le diagramme de classes
+     *
+     * @return texte du diagramme
+     */
     public String toString() {
-        String texte = "Nom du package : " + nomPackage + "\n\n";
+        StringBuilder texte = new StringBuilder("Nom du package : " + nomPackage + "\n\n");
         for (Classe c : this.listeClasses) {
-            texte += c.toString() + "\n";
+            texte.append(c.toString()).append("\n");
         }
-        return texte;
+        return texte.toString();
     }
 
+
+
+    /**
+     * Met à jour les attributs des classes du diagramme
+     */
 
     public void updateClasses() {
         for (Classe c : this.listeClasses) {

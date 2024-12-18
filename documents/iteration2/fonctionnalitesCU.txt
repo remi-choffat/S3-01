@@ -1,0 +1,8 @@
+Itération 1 : Fonctionnalités et cas d’utilisation développés
+
+Fonctionnalités : 
+
+    - Mise en place du patron MVC :
+        - création de l’interface graphique (barre de menu, zone du diagramme)
+        - création de vues (vue d’une classe (change en fonction des visibilités),
+        vue d’une relation, vue du package (pour voir les différentes classes du package et celles mises dans le diagramme))
