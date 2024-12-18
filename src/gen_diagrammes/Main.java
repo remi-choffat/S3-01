@@ -11,6 +11,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.net.MalformedURLException;
 import java.util.Scanner;
 
 /**
@@ -142,6 +144,13 @@ public class Main extends Application {
                         java.io.File file = fileChooser.showOpenDialog(fileStage);
                         if (file != null) {
                             System.out.println("Fichier sélectionné: " + file.getAbsolutePath());
+                            Classe classe;
+                            try {
+                                classe = new Classe(file.getAbsolutePath());
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            Diagramme.getInstance().ajouterClasse(classe);
                         }
                     });
                 });
@@ -149,6 +158,11 @@ public class Main extends Application {
                 vbox.setVisible(false);
                 vbox.getChildren().clear();  // Effacer les nouveaux boutons lorsqu'on cache la VBox
             }
+        });
+
+        btnAffichage.setOnAction(e -> {
+            Diagramme diagramme = Diagramme.getInstance();
+            borderPane.getChildren().setAll()
         });
     }
 }

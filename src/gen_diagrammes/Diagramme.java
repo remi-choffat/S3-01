@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Représente un diagramme de classes
  */
-public class Diagramme {
+public class Diagramme implements Sujet {
 
     private String nomPackage;
 
@@ -18,6 +18,11 @@ public class Diagramme {
      * Instance unique de Diagramme
      */
     private static Diagramme instance;
+
+    /**
+     * Liste des observateurs
+     */
+    private ArrayList<Observateur> listeObservateurs;
 
     /**
      * Constructeur privé pour empêcher l'instanciation directe
@@ -113,6 +118,23 @@ public class Diagramme {
     public void updateClasses() {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();
+        }
+    }
+
+    @Override
+    public void ajouterObservateur(Observateur v) {
+        this.listeObservateurs.add(v);
+    }
+
+    @Override
+    public void supprimerObservateur(Observateur v) {
+        this.listeObservateurs.remove(v);
+    }
+
+    @Override
+    public void notifierObservateurs() {
+        for (Observateur v : this.listeObservateurs) {
+            v.actualiser();
         }
     }
 }
