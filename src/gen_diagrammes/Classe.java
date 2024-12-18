@@ -21,6 +21,7 @@ public class Classe {
     public static final String CLASS = "class";
     public static final String INTERFACE = "interface";
     public static final String ABSTRACT = "abstract";
+    public static final String ABSTRACT_CLASS = "abstract class";
 
     /**
      * Nom de la classe
@@ -156,7 +157,7 @@ public class Classe {
         if (classe.isInterface()) {
             this.type = INTERFACE;
         } else if (Modifier.isAbstract(classe.getModifiers())) {
-            this.type = ABSTRACT;
+            this.type = ABSTRACT_CLASS;
         } else {
             this.type = CLASS;
         }
@@ -164,7 +165,7 @@ public class Classe {
         // Remplit la liste des attributs
         for (Field a : classe.getDeclaredFields()) {
 
-            String type = a.getType().getSimpleName();
+            String type = a.getGenericType().getTypeName().replaceAll("\\b[a-zA-Z_]+\\.", "");
             int modAttribut = a.getModifiers();
             String accesAttribut;
             if (Modifier.isPublic(modAttribut)) {
@@ -179,7 +180,9 @@ public class Classe {
 
             boolean isClassPresent = false;
             for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                if (c.getNom().equals(type)) {
+                // Vérifie si le type de l'attribut est une classe du diagramme
+                // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
+                if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
                     this.attributs.add(new AttributClasse(a.getName(), accesAttribut, type, "", "", c));
                     isClassPresent = true;
                     break;
@@ -306,7 +309,7 @@ public class Classe {
     public String toString() {
         StringBuilder uml = new StringBuilder();
         StringBuilder relations = new StringBuilder();
-        uml.append("class ").append(this.nom).append(" {\n");
+        uml.append(this.type).append(" ").append(this.nom).append(" {\n");
         for (Attribut a : this.attributs) {
             if (a instanceof AttributClasse) {
                 relations.append(this.nom).append(" --> ").append(((AttributClasse) a).getAttribut().getNom()).append(" : ").append(a.getNom()).append("\n");
@@ -322,6 +325,10 @@ public class Classe {
         return uml.toString();
     }
 
+
+    /**
+     * Met à jour les attributs de la classe
+     */
     public void updateAttributs() {
         ArrayList<Attribut> res = new ArrayList<>();
         for (Attribut a : this.attributs) {
@@ -331,7 +338,9 @@ public class Classe {
 
             boolean isClassPresent = false;
             for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                if (c.getNom().equals(type)) {
+                // Vérifie si le type de l'attribut est une classe du diagramme
+                // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
+                if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
                     res.add(new AttributClasse(a.getNom(), accesAttribut, type, "", "", c));
                     isClassPresent = true;
                     break;
