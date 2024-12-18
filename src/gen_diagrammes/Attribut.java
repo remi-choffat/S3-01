@@ -59,18 +59,10 @@ public class Attribut {
     public String toString() {
         String res = "";
         switch (typeAcces) {
-            case Classe.PUBLIC:
-                res += "+";
-                break;
-            case Classe.PRIVATE:
-                res += "-";
-                break;
-            case Classe.PROTECTED:
-                res += "#";
-                break;
-            default:
-                res += "~";
-                break;
+            case Classe.PUBLIC -> res += "+";
+            case Classe.PRIVATE -> res += "-";
+            case Classe.PROTECTED -> res += "#";
+            case Classe.PACKAGE_PRIVATE -> res += "~";
         }
         res += nom + " : " + type;
         return res;
