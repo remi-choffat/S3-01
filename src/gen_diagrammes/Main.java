@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -13,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.net.MalformedURLException;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -125,8 +127,15 @@ public class Main extends Application {
                         boolean success = false;
                         if (db.hasFiles()) {
                             success = true;
-                            String filePath = db.getFiles().get(0).getAbsolutePath();
-                            System.out.println("Fichier glissé-déposé: " + filePath);
+                            String filePath = db.getFiles().getFirst().getAbsolutePath();
+                            System.out.println("Fichier déposé : " + filePath);
+                            Classe classe;
+                            try {
+                                classe = new Classe(filePath);
+                            } catch (Exception ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            Diagramme.getInstance().ajouterClasse(classe);
                         }
                         eventDrop.setDropCompleted(success);
                         eventDrop.consume();
@@ -143,7 +152,7 @@ public class Main extends Application {
                         Stage fileStage = (Stage) btnCenter.getScene().getWindow();
                         java.io.File file = fileChooser.showOpenDialog(fileStage);
                         if (file != null) {
-                            System.out.println("Fichier sélectionné: " + file.getAbsolutePath());
+                            System.out.println("Fichier sélectionné : " + file.getAbsolutePath());
                             Classe classe;
                             try {
                                 classe = new Classe(file.getAbsolutePath());
@@ -161,21 +170,23 @@ public class Main extends Application {
         });
 
         btnAffichage.setOnAction(e -> {
-            Classe classe, classe2;
-            try {
-                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
-                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-            Diagramme.getInstance().ajouterClasse(classe);
-            Diagramme.getInstance().ajouterClasse(classe2);
+//            Classe classe, classe2;
+//            try {
+//                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
+//                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
+//            } catch (Exception ex) {
+//                throw new RuntimeException(ex);
+//            }
+//            Diagramme.getInstance().ajouterClasse(classe);
+//            Diagramme.getInstance().ajouterClasse(classe2);
             Diagramme diagramme = Diagramme.getInstance();
-            //VBox ligneClasse =
+            Pane ligneClasse = new Pane();
             for (Classe c : diagramme.getListeClasses()) {
                 VueClasse vueClasse = new VueClasse(c);
-                borderPane.setCenter(vueClasse);
+                vueClasse.relocate((int) (Math.random() * 600), (int) (Math.random() * 300));
+                ligneClasse.getChildren().add(vueClasse);
             }
+            borderPane.setCenter(ligneClasse);
         });
     }
 }

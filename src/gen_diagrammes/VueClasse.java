@@ -18,8 +18,6 @@ public class VueClasse extends VBox implements Observateur {
     public VueClasse(Classe c) {
         this.classe = c;
         this.actualiser();
-        this.setSpacing(10);
-        this.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
     }
 
     @Override
