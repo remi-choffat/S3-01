@@ -53,6 +53,11 @@ public class Classe {
      */
     private ArrayList<Methode> methodes;
 
+    /**
+     * Si la classe est cachée ou non sur le diagramme
+     */
+    private boolean estVisible;
+
 
     /**
      * Constructeur par défaut
@@ -64,6 +69,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
+        this.estVisible = true;
     }
 
 
@@ -82,6 +88,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
+        this.estVisible = true;
     }
 
 
@@ -96,6 +103,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
+        this.estVisible = true;
 
         String nomClasse = cheminFichier.substring(cheminFichier.lastIndexOf("\\") + 1, cheminFichier.length() - 6);
 
@@ -250,6 +258,14 @@ public class Classe {
 
     public ArrayList<Methode> getMethodes() {
         return methodes;
+    }
+
+    public boolean estVisible() {
+        return estVisible;
+    }
+
+    public void setEstVisible(boolean estVisible) {
+        this.estVisible = estVisible;
     }
 
     public void addMethode(Methode m) {
