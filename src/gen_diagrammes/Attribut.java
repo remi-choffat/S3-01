@@ -65,5 +65,4 @@ public class Attribut {
         res += nom + " : " + type;
         return res;
     }
-
 }

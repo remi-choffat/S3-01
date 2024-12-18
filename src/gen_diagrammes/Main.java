@@ -2,6 +2,7 @@ package gen_diagrammes;
 
 import java.util.Scanner;
 
+
 // Fonctionnement théorique de l'application à la fin de l'itération 1
 
 public class Main {

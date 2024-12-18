@@ -213,7 +213,6 @@ public class Classe {
             }
             this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
         }
-
     }
 
 
@@ -294,7 +293,6 @@ public class Classe {
             res += folds[folds.length - state - 2] + "." + folds[folds.length - 1];
             return res;
         }
-
     }
 
 
@@ -344,5 +342,4 @@ public class Classe {
         }
         this.attributs = res;
     }
-
 }

@@ -38,7 +38,7 @@ public class TestClasse {
 
     @Test
     public void testConstructeurNonVide() {
-        Classe classe = new Classe("test1","test2","test3");
+        Classe classe = new Classe("test1", "test2", "test3");
 
         assertEquals("test1", classe.getNom());
         assertEquals("test2", classe.getAcces());
@@ -113,7 +113,7 @@ public class TestClasse {
         ArrayList<Classe> ac = new ArrayList<>();
 
         Classe classe2 = new Classe();
-        Classe classe3 = new Classe("test1","test2","test3");
+        Classe classe3 = new Classe("test1", "test2", "test3");
 
         ac.add(classe2);
         classe1.addParent(classe2);

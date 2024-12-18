@@ -36,7 +36,5 @@ public class Exporter {
         } catch (java.io.IOException e) {
             System.err.println("Error while exporting diagram");
         }
-
     }
-
 }

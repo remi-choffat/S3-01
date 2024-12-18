@@ -29,6 +29,7 @@ public class Diagramme {
 
     /**
      * Méthode pour obtenir l'instance unique de Diagramme
+     *
      * @return instance unique de Diagramme
      */
     public static Diagramme getInstance() {
@@ -40,7 +41,8 @@ public class Diagramme {
 
     /**
      * Méthode pour initialiser l'instance unique de Diagramme avec des paramètres
-     * @param nomPackage nom du package
+     *
+     * @param nomPackage   nom du package
      * @param listeClasses liste des classes du package
      */
     public static void initialize(String nomPackage, ArrayList<Classe> listeClasses) {
@@ -69,6 +71,7 @@ public class Diagramme {
 
     /**
      * Méthode qui permet d'ajouter une classe au diagramme
+     *
      * @param c classe à ajouter au diagramme
      */
     public void ajouterClasse(Classe c) {
@@ -78,6 +81,7 @@ public class Diagramme {
 
     /**
      * Méthode qui permet de supprimer une classe du diagramme
+     *
      * @param c classe à supprimer
      */
     public void supprimerClasse(Classe c) {
@@ -93,8 +97,8 @@ public class Diagramme {
     }
 
 
-    public void updateClasses(){
-        for(Classe c : this.listeClasses){
+    public void updateClasses() {
+        for (Classe c : this.listeClasses) {
             c.updateAttributs();
         }
     }

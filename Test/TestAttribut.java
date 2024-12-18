@@ -34,7 +34,7 @@ public class TestAttribut {
 
     @Test
     public void testAttributNonVide() {
-        Attribut attribut = new Attribut("test1","test2","test3");
+        Attribut attribut = new Attribut("test1", "test2", "test3");
 
         assertEquals("test1", attribut.getNom());
         assertEquals("test2", attribut.getTypeAcces());

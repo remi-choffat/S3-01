@@ -36,7 +36,7 @@ public class TestDiagramme {
     public void testDiagrammeInitialize() {
         ArrayList<Classe> test2 = new ArrayList<>();
 
-        Diagramme.initialize("test1",test2);
+        Diagramme.initialize("test1", test2);
 
         assertEquals("test1", Diagramme.getInstance().getNomPackage());
         assertEquals(test2, Diagramme.getInstance().getListeClasses());
