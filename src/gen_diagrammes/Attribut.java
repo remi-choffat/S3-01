@@ -8,17 +8,20 @@ public class Attribut {
     private String nom;
     private String typeAcces;
     private String type;
+    private boolean estVisible;
 
     public Attribut(String nom, String typeAcces, String type) {
         this.nom = nom;
         this.typeAcces = typeAcces;
         this.type = type;
+        this.estVisible = true;
     }
 
     public Attribut() {
         this.nom = "Inconnu";
         this.typeAcces = "Inconnu";
         this.type = "Inconnu";
+        this.estVisible = true;
     }
 
     public String getNom() {
@@ -43,6 +46,14 @@ public class Attribut {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean estVisible() {
+        return estVisible;
+    }
+
+    public void setEstVisible(boolean estVisible) {
+        this.estVisible = estVisible;
     }
 
     public String toString() {
