@@ -64,32 +64,33 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Plante UML");
-        // création des boutons
+
+        // Création des boutons
         Button btnAjouter = new Button("Ajouter");
         Button btnSupprimer = new Button("Supprimer");
         Button btnExporter = new Button("Exporter");
         Button btnGenerer = new Button("Générer");
         Button btnAffichage = new Button("Affichage");
 
-        // création d'une HBox pour les boutons de base
+        // Création d'une HBox pour les boutons de base
         HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
         hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
 
-        // création d'une VBox pour les nouveaux boutons
+        // Création d'une VBox pour les nouveaux boutons
         VBox vbox = new VBox(10);
         vbox.setVisible(false);  // Initialement caché
 
         // Créer la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(hbox);
-        borderPane.setCenter(vbox);
+        borderPane.setLeft(vbox);
 
-        // création de la scène et l'ajouter à la fenêtre principale
+        // Création de la scène et ajout à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // gestionnaire d'événements pour le bouton "Ajouter"
+        // Gestionnaire d'événements pour le bouton "Ajouter"
         btnAjouter.setOnAction(e -> {
             if (!vbox.isVisible()) {
                 Button btnPackage = new Button("Ajouter un package");
@@ -102,7 +103,7 @@ public class Main extends Application {
                     Button btnCenter = new Button("Sélectionner un fichier");
                     ImageView imageView = new ImageView(new Image("https://images.daznservices.com/di/library/DAZN_News/30/21/francis-ngannoumarch2021_al6jp8bmie1m1hcbv34mo6qz8.jpg?t=1692569707"));
                     imageView.setFitWidth(150);
-                    imageView.setFitHeight(150);
+                    imageView.setFitHeight(75);
                     VBox content = new VBox(10, imageView, btnCenter);
                     content.setPadding(new Insets(20));
                     content.setAlignment(Pos.CENTER); // Centrer le contenu
@@ -128,15 +129,25 @@ public class Main extends Application {
                             String filePath = db.getFiles().get(0).getAbsolutePath();
                             System.out.println("Fichier glissé-déposé: " + filePath);
                             borderPane.setCenter(null);  // Déafficher le rectangle
+
+                            // Ajouter la classe au diagramme
+                            try {
+                                Diagramme.getInstance().ajouterClasse(new Classe(filePath));
+                            } catch (Exception ex) {
+                                System.err.println(ex.getMessage());
+                            }
                         }
                         eventDrop.setDropCompleted(success);
                         eventDrop.consume();
                     });
+
+                    // Emballer le rectangle dans un StackPane et le centrer
                     StackPane wrapper = new StackPane(rectangle);
                     wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
                     StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
 
                     borderPane.setCenter(wrapper);
+
                     // Gestionnaire d'événements pour le bouton central
                     btnCenter.setOnAction(fileEvent -> {
                         FileChooser fileChooser = new FileChooser();
@@ -147,13 +158,12 @@ public class Main extends Application {
                             System.out.println("Fichier sélectionné: " + file.getAbsolutePath());
                             borderPane.setCenter(null);  // Déafficher le rectangle
 
-                            Classe classe;
+                            // Ajouter la classe au diagramme
                             try {
-                                classe = new Classe(file.getAbsolutePath());
+                                Diagramme.getInstance().ajouterClasse(new Classe(file.getAbsolutePath()));
                             } catch (Exception ex) {
-                                throw new RuntimeException(ex);
+                                System.err.println(ex.getMessage());
                             }
-                            Diagramme.getInstance().ajouterClasse(classe);
                         }
                     });
                 });
@@ -165,8 +175,10 @@ public class Main extends Application {
 
         btnAffichage.setOnAction(e -> {
             Diagramme diagramme = Diagramme.getInstance();
-            borderPane.getChildren().setAll()
+            // Mettre à jour la vue du diagramme ici
+            System.out.println(diagramme);
         });
     }
+
 }
 
