@@ -72,21 +72,13 @@ public class Methode {
 
     public String toString() {
         String resultat = "";
-        String texteAcces = "";
-        switch (this.acces) {
-            case Classe.PRIVATE:
-                texteAcces = "-";
-                break;
-            case Classe.PUBLIC:
-                texteAcces = "+";
-                break;
-            case Classe.PROTECTED:
-                texteAcces = "#";
-                break;
-            default:
-                texteAcces = "~";
-                break;
-        }
+        String texteAcces = switch (this.acces) {
+            case Classe.PRIVATE -> "-";
+            case Classe.PUBLIC -> "+";
+            case Classe.PROTECTED -> "#";
+            case Classe.PACKAGE_PRIVATE -> "~";
+            default -> "";
+        };
         resultat = texteAcces + " " + nom + "(";
         boolean aParametres = false;
         for (String parametre : parametres) {

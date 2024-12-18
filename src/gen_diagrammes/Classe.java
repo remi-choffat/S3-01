@@ -17,10 +17,11 @@ public class Classe {
     public static final String PUBLIC = "public";
     public static final String PRIVATE = "private";
     public static final String PROTECTED = "protected";
+    public static final String PACKAGE_PRIVATE = "package";
 
     public static final String CLASS = "class";
     public static final String INTERFACE = "interface";
-    public static final String ABSTRACT = "abstract";
+    public static final String ABSTRACT = "{abstract}";
     public static final String ABSTRACT_CLASS = "abstract class";
 
     /**
@@ -53,11 +54,6 @@ public class Classe {
      */
     private ArrayList<Methode> methodes;
 
-    /**
-     * Si la classe est cachée ou non sur le diagramme
-     */
-    private boolean estVisible;
-
 
     /**
      * Constructeur par défaut
@@ -69,7 +65,6 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
-        this.estVisible = true;
     }
 
 
@@ -88,7 +83,6 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
-        this.estVisible = true;
     }
 
 
@@ -103,7 +97,6 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
-        this.estVisible = true;
 
         String nomClasse = cheminFichier.substring(cheminFichier.lastIndexOf("\\") + 1, cheminFichier.length() - 6);
 
@@ -183,7 +176,11 @@ public class Classe {
             } else if (Modifier.isPrivate(modAttribut)) {
                 accesAttribut = PRIVATE;
             } else {
-                accesAttribut = "";
+                if (this.type.equals(INTERFACE)) {
+                    accesAttribut = "";
+                } else {
+                    accesAttribut = PACKAGE_PRIVATE;
+                }
             }
 
             boolean isClassPresent = false;
@@ -216,7 +213,11 @@ public class Classe {
             } else if (Modifier.isPrivate(mod)) {
                 acces = PRIVATE;
             } else {
-                acces = "";
+                if (this.type.equals(INTERFACE)) {
+                    acces = "";
+                } else {
+                    acces = PACKAGE_PRIVATE;
+                }
             }
             ArrayList<String> parametres = new ArrayList<>();
             for (Class<?> c : m.getParameterTypes()) {
@@ -224,6 +225,46 @@ public class Classe {
             }
             this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
         }
+
+        // Remplit la liste des classes parentes
+
+        // Interfaces
+        for (Class<?> c : classe.getInterfaces()) {
+            // Vérifie si l'interface est déjà présente
+            boolean isPresent = false;
+            for (Classe p : this.parents) {
+                if (p.getNom().equals(c.getSimpleName())) {
+                    isPresent = true;
+                    break;
+                }
+            }
+            if (!isPresent) {
+                this.parents.add(new Classe(c.getSimpleName(), c.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", INTERFACE));
+            } else {
+                // Associe la classe parente à la classe actuelle dans la liste parents
+                this.parents.add(Diagramme.getInstance().getClasse(c.getSimpleName()));
+            }
+        }
+
+        // Classe parente
+        Class<?> superClass = classe.getSuperclass();
+        if (superClass != null && !superClass.getSimpleName().equals("Object")) {
+            // Vérifie si la classe parente est déjà présente
+            boolean isPresent = false;
+            for (Classe p : this.parents) {
+                if (p.getNom().equals(superClass.getSimpleName())) {
+                    isPresent = true;
+                    break;
+                }
+            }
+            if (!isPresent) {
+                this.parents.add(new Classe(superClass.getSimpleName(), superClass.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", CLASS));
+            } else {
+                // Associe la classe parente à la classe actuelle dans la liste parents
+                this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName()));
+            }
+        }
+
     }
 
 
@@ -258,14 +299,6 @@ public class Classe {
 
     public ArrayList<Methode> getMethodes() {
         return methodes;
-    }
-
-    public boolean estVisible() {
-        return estVisible;
-    }
-
-    public void setEstVisible(boolean estVisible) {
-        this.estVisible = estVisible;
     }
 
     public void addMethode(Methode m) {
@@ -315,17 +348,31 @@ public class Classe {
     }
 
 
-
-
     /**
      * Affichage (PlantUML) de la classe
      *
      * @return String
      */
     public String toString() {
+
         StringBuilder uml = new StringBuilder();
         StringBuilder relations = new StringBuilder();
+
+        // Si la classe implémente une interface ou hérite d'une classe
+        // on ajoute les relations
+        if (!this.parents.isEmpty()) {
+            for (Classe c : this.parents) {
+                if (c.getType().equals(INTERFACE)) {
+                    relations.append(this.nom).append(" ..|> ").append(c.getNom()).append("\n");
+                } else {
+                    relations.append(this.nom).append(" --|> ").append(c.getNom()).append("\n");
+                }
+            }
+        }
+
         uml.append(this.type).append(" ").append(this.nom).append(" {\n");
+
+        // Affiche les attributs soit en texte, soit en relation (flèche)
         for (Attribut a : this.attributs) {
             if (a instanceof AttributClasse) {
                 relations.append(this.nom).append(" --> ").append(((AttributClasse) a).getAttribut().getNom()).append(" : ").append(a.getNom()).append("\n");
@@ -333,9 +380,12 @@ public class Classe {
                 uml.append(a).append("\n");
             }
         }
+
+        // Affiche les méthodes
         for (Methode m : this.methodes) {
             uml.append(m).append("\n");
         }
+
         uml.append("}\n");
         uml.append(relations);
         return uml.toString();
@@ -369,6 +419,5 @@ public class Classe {
         }
         this.attributs = res;
     }
-
 
 }

@@ -110,7 +110,6 @@ public class Diagramme implements Sujet {
     }
 
 
-
     /**
      * Met à jour les attributs des classes du diagramme
      */
@@ -136,5 +135,21 @@ public class Diagramme implements Sujet {
         for (Observateur v : this.listeObservateurs) {
             v.actualiser();
         }
+    }
+
+
+    /**
+     * Méthode qui permet de récupérer une classe du diagramme par son nom
+     *
+     * @param simpleName nom de la classe
+     * @return classe correspondante
+     */
+    public Classe getClasse(String simpleName) {
+        for (Classe c : this.listeClasses) {
+            if (c.getNom().equals(simpleName)) {
+                return c;
+            }
+        }
+        return null;
     }
 }
