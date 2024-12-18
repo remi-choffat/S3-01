@@ -161,8 +161,21 @@ public class Main extends Application {
         });
 
         btnAffichage.setOnAction(e -> {
+            Classe classe, classe2;
+            try {
+                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
+                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            Diagramme.getInstance().ajouterClasse(classe);
+            Diagramme.getInstance().ajouterClasse(classe2);
             Diagramme diagramme = Diagramme.getInstance();
-            borderPane.getChildren().setAll()
+            //VBox ligneClasse =
+            for (Classe c : diagramme.getListeClasses()) {
+                VueClasse vueClasse = new VueClasse(c);
+                borderPane.setCenter(vueClasse);
+            }
         });
     }
 }
