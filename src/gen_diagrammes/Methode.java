@@ -11,12 +11,14 @@ public class Methode {
     private String acces;
     private String typeRetour;
     private ArrayList<String> parametres;
+    private boolean estVisible;
 
     public Methode(String nom, String acces, String typeRetour, ArrayList<String> parametres) {
         this.nom = nom;
         this.acces = acces;
         this.typeRetour = typeRetour;
         this.parametres = parametres;
+        this.estVisible = true;
     }
 
     public Methode() {
@@ -24,6 +26,7 @@ public class Methode {
         this.acces = "Inconnu";
         this.typeRetour = "Inconnu";
         this.parametres = new ArrayList<>();
+        this.estVisible = true;
     }
 
     public String getNom() {
@@ -56,6 +59,14 @@ public class Methode {
 
     public void setParametres(ArrayList<String> parametres) {
         this.parametres = parametres;
+    }
+
+    public boolean estVisible() {
+        return estVisible;
+    }
+
+    public void setEstVisible(boolean estVisible) {
+        this.estVisible = estVisible;
     }
 
 

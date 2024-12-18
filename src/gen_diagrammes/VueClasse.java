@@ -1,5 +1,6 @@
 package gen_diagrammes;
 
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
 public class VueClasse extends VBox implements Vue {
@@ -14,13 +15,24 @@ public class VueClasse extends VBox implements Vue {
     }
 
     @Override
-    public void update(Modele m) {
-        //à chaque update, on efface tout et on re-remplit ?
-        //à voir si on peut pas faire autrement histoire de pas faire péter la machine
+    public void actualiser(Modele m) {
         this.getChildren().clear();
         Classe c = (Classe) (m);
-        //mettre un premier label avec le nom, le type et l'accès de la classe
-        //mettre une vbox avec toutes les VueAttribut
-        //mettre une vbox avec toutes les VueMethode
+        if (m.estVisible()) {
+            String texteEnTete = "(C)" + c.getType() + " " + c.getNom();
+            String texteAttributs = "";
+            String texteMethodes = "";
+            for (Attribut attribut : c.getAttributs()) {
+                if (attribut.estVisible()) {
+                    texteAttributs = texteAttributs + attribut.toString() + "\n";
+                }
+            }
+            for (Methode methode : c.getMethodes()) {
+                if (methode.estVisible()) {
+                    texteMethodes = texteMethodes + methode.toString() + "\n";
+                }
+            }
+            this.getChildren().addAll(new Label(texteEnTete), new Label(texteAttributs), new Label(texteMethodes));
+        }
     }
 }

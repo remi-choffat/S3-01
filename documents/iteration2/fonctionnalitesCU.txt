@@ -1,4 +1,4 @@
-Itération 1 : Fonctionnalités et cas d’utilisation développés
+Itération 2 : Fonctionnalités et cas d’utilisation développés
 
 Fonctionnalités : 
 

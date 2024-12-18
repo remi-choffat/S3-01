@@ -296,6 +296,8 @@ public class Classe {
     }
 
 
+
+
     /**
      * Affichage (PlantUML) de la classe
      *
@@ -342,4 +344,6 @@ public class Classe {
         }
         this.attributs = res;
     }
+
+
 }
