@@ -62,7 +62,6 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Plante UML");
-
         // création des boutons
         Button btnAjouter = new Button("Ajouter");
         Button btnSupprimer = new Button("Supprimer");
@@ -78,7 +77,7 @@ public class Main extends Application {
         VBox vbox = new VBox(10);
         vbox.setVisible(false);  // Initialement caché
 
-        // création de la mise en page principale
+        // Créer la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(hbox);
         borderPane.setCenter(vbox);
@@ -99,7 +98,7 @@ public class Main extends Application {
                 // Gestionnaire d'événements pour le bouton "Ajouter une classe"
                 btnClasse.setOnAction(event -> {
                     Button btnCenter = new Button("Sélectionner un fichier");
-                    ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
+                    ImageView imageView = new ImageView(new Image("https://images.daznservices.com/di/library/DAZN_News/30/21/francis-ngannoumarch2021_al6jp8bmie1m1hcbv34mo6qz8.jpg?t=1692569707"));
                     imageView.setFitWidth(150);
                     imageView.setFitHeight(150);
                     VBox content = new VBox(10, imageView, btnCenter);
@@ -110,6 +109,7 @@ public class Main extends Application {
                     rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
                     rectangle.setPrefSize(300, 200);  // Taille fixe pour le rectangle
                     rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);  // Limite la taille maximale à la taille préférée
+
                     // Ajouter le gestionnaire d'événements de glisser-déposer
                     rectangle.setOnDragOver(eventDragOver -> {
                         if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
@@ -125,6 +125,7 @@ public class Main extends Application {
                             success = true;
                             String filePath = db.getFiles().get(0).getAbsolutePath();
                             System.out.println("Fichier glissé-déposé: " + filePath);
+                            borderPane.setCenter(null);  // Déafficher le rectangle
                         }
                         eventDrop.setDropCompleted(success);
                         eventDrop.consume();
@@ -142,6 +143,7 @@ public class Main extends Application {
                         java.io.File file = fileChooser.showOpenDialog(fileStage);
                         if (file != null) {
                             System.out.println("Fichier sélectionné: " + file.getAbsolutePath());
+                            borderPane.setCenter(null);  // Déafficher le rectangle
                         }
                     });
                 });
@@ -152,3 +154,4 @@ public class Main extends Application {
         });
     }
 }
+
