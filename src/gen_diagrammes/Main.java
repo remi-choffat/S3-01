@@ -55,8 +55,8 @@ public class Main extends Application {
                     System.err.println(e.getMessage());
                 }
             } else {
-                Exporter exp = new Exporter(d);
-                exp.exportUML();
+//                Exporter exp = new Exporter(d);
+//                exp.exportUML();
             }
             System.out.println("Entrez un chemin de classe, ou tapez *export pour exporter le diagramme : ");
             res = sc.nextLine();
@@ -71,6 +71,7 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
         primaryStage.setTitle("Plante UML");
 
         // création des boutons
@@ -84,12 +85,19 @@ public class Main extends Application {
         HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
         hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
 
+        // création des boutons d'exportation
+        Button btnExporterImage = new Button("Exporter une image");
+        Button btnExporterUML = new Button("Exporter en PlantUML");
+        VBox vboxExport = new VBox(10, btnExporterImage, btnExporterUML);
+        vboxExport.setVisible(false);  // Initialement caché
+
         StackPane stackPane = new StackPane();
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(hbox);
         borderPane.setCenter(stackPane);
+        borderPane.setBottom(vboxExport);
 
         // création de la scène et l'ajouter à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);
@@ -243,18 +251,29 @@ public class Main extends Application {
                 }
             }
         });
+
+        // gestionnaire d'événements pour le bouton "Exporter"
+        btnExporter.setOnAction(e -> vboxExport.setVisible(!vboxExport.isVisible()));
+
+        // gestionnaire d'événements pour le bouton "Exporter une image"
+        btnExporterImage.setOnAction(e -> {
+            Exporter exp = new Exporter(Diagramme.getInstance());
+            exp.exportImage(primaryStage, stackPane);
+        });
+
+        // gestionnaire d'événements pour le bouton "Exporter en PlantUML"
+        btnExporterUML.setOnAction(e -> {
+            Exporter exp = new Exporter(Diagramme.getInstance());
+            exp.exportUML(primaryStage);
+        });
     }
 
     private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
-        switch (relation.getType()) {
-            case "heritage":
-                return VueRelation.TypeRelation.HERITAGE;
-            case "implementation":
-                return VueRelation.TypeRelation.IMPLEMENTATION;
-            case "association":
-            default:
-                return VueRelation.TypeRelation.ASSOCIATION;
-        }
+        return switch (relation.getType()) {
+            case "heritage" -> VueRelation.TypeRelation.HERITAGE;
+            case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
+            default -> VueRelation.TypeRelation.ASSOCIATION;
+        };
     }
 
     /**

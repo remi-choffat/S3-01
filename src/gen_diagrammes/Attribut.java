@@ -63,7 +63,7 @@ public class Attribut {
                 res += "~";
                 break;
         }
-        res += nom + " : " + type;
+        res += " " + nom + " : " + type;
         return res;
     }
 
