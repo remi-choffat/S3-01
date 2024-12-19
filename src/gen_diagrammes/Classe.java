@@ -67,11 +67,13 @@ public class Classe {
     /**
      * Axe des abscisses
      */
+    @Setter
     private double longueur;
 
     /**
      * Axe des ordonnées
      */
+    @Setter
     private double largeur;
 
 
