@@ -1,15 +1,37 @@
 Compte rendu itération 1 :
 Répartition :
-    Rémi : crétation classe Classe + gestion relations entre les classes + chargement fichiers .class + génération diagrammes UML
+    Rémi : création classe Classe + gestion relations entre les classes + chargement fichiers .class + génération diagrammes UML
     Tuline : création classes Methode + Attribut + Diagramme + diagrammes de séquence de l'application + génération digrammes UML
     Gabin : modification classe Classe + chargement des fichiers .class
     Noah : test de chaque classe de l'application + correction des classes
 
 Bilan : Notre application peut récupérer une classe et l'exporter au format UML. Il ne nous reste plus que l'interface graphique.
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Compte rendu itération 2 :
+Répartition :
+    Rémi : gestion des relations entre les classes + réglage de bugs itération 1 + aide interface graphique + diagramme classe
+    Tuline : création vue d'une classe + modification interface graphique + mise en place d'une position pour les classes + diagrammes de séquence
+    Gabin : création en partie de l'interface graphique + squelette MVC
+    Noah : interface graphique + fonctionnalité sélection fichier (recherche manuelle ou glissement) + début VueRelation + possibilité de sélectionner et changer la place d'une classe
+
+Bilan : L'utilisateur peut cliquer sur différents boutons :
+    - ajouter une classe, qui lui permet d'ajputer une classe au diagramme de l'application
+    - afficher, qui permet d'afficher le diagramme en fonction des classes ajoutées
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Compte rendu itération 3 :
+Répartition :
+    Rémi : exporter le diagramme sous forme d’image + afficher/masquer une classe
+    Tuline : afficher/masquer une classe
+    Gabin : ? malade ?
+    Noah : afficher/masquer les relations d’une classe
+
+Bilan :
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Compte rendu itération 4 :
 

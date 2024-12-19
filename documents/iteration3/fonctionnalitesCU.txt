@@ -1,0 +1,10 @@
+Itération 3 : Fonctionnalités et cas d’utilisation développés
+
+Fonctionnalités :
+    - afficher/masquer une classe
+        - créer un controleur qui change l'attribut "visible" d'une classe
+        - création d'un menu déroulant qui affiche la liste des classes
+        - création de boutons dans le menu déroulant qui affichent ou masquent les classes choisies (utilisation du controleur qui sera créé)
+    - afficher/masquer les relations d’une classe
+        - création d'un controleur qui change l'attribut "visible" d'une VueRelation
+    - exporter le diagramme sous forme d’image

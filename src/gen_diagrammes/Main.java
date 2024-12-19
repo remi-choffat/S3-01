@@ -5,20 +5,71 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Scanner;
+
+/**
+ * Classe principale de l'application
+ */
 public class Main extends Application {
 
-    private List<VueRelation> relations = new ArrayList<>();
+    private List<VueRelation> relations;
+    /**
+     * Méthode principale
+     * Démarre l'interface graphique et demande les chemins des fichiers .class en console
+     *
+     * @param args Arguments
+     */
+    public static void main(String[] args) {
 
+        System.setProperty("jps.track.ap.dependencies", "true");
+
+        // Lance l'interface graphique dans un thread séparé
+        new Thread(() -> Application.launch(Main.class, args)).start();
+
+        // Demande les chemins des fichiers .class en console
+        Diagramme d = Diagramme.getInstance();
+        if (args.length == 1) {
+            Diagramme.initialize(args[0], null);
+        }
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Entrez un chemin de classe (chemin absolu) : ");
+        String res = sc.nextLine();
+        while (!res.equals("q")) {
+            if (!res.equals("*export")) {
+                try {
+                    d.ajouterClasse(new Classe(res));
+                    System.out.println(d);
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            } else {
+                Exporter exp = new Exporter(d);
+                exp.exportUML();
+            }
+            System.out.println("Entrez un chemin de classe, ou tapez *export pour exporter le diagramme : ");
+            res = sc.nextLine();
+        }
+    }
+
+
+    /**
+     * Affiche l'interface graphique
+     *
+     * @param primaryStage Stage
+     */
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Plante UML");
@@ -34,6 +85,10 @@ public class Main extends Application {
         HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
         hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
 
+//        // création d'une VBox pour les nouveaux boutons
+//        VBox vbox = new VBox(10);
+//        vbox.setVisible(false);  // Initialement caché
+
         StackPane stackPane = new StackPane();
 
         // création de la mise en page principale
@@ -46,9 +101,12 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        final int[] etat = {0};
+
         // gestionnaire d'événements pour le bouton "Ajouter"
         btnAjouter.setOnAction(e -> {
-            Button btnPackage = new Button("Ajouter un package");
+            if (etat[0] == 0) {
+                etat[0] = 1;Button btnPackage = new Button("Ajouter un package");
             Button btnClasse = new Button("Ajouter une classe");
             VBox vbox = new VBox(10);
             vbox.getChildren().setAll(btnPackage, btnClasse);
@@ -57,7 +115,7 @@ public class Main extends Application {
             // Gestionnaire d'événements pour le bouton "Ajouter une classe"
             btnClasse.setOnAction(event -> {
                 stackPane.getChildren().clear();
-                Button btnCenter = new Button("Sélectionner un fichier");
+                etat[0] = 0;Button btnCenter = new Button("Sélectionner un fichier");
                 ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
                 imageView.setFitWidth(150);
                 imageView.setFitHeight(150);
@@ -87,10 +145,13 @@ public class Main extends Application {
                         Classe classe;
                         try {
                             classe = new Classe(filePath);
-                        } catch (Exception ex) {
+                        classe.setLongueur(Math.random() * 600);
+                                classe.setLargeur(Math.random() * 300);} catch (Exception ex) {
                             throw new RuntimeException(ex);
                         }
-                        Diagramme.getInstance().ajouterClasse(classe);
+                        Diagramme.getInstance().ajouterClasse(classe);stackPane.getChildren().clear();
+                            etat[0] = 0;
+                            btnAffichage.fire();
                     }
                     eventDrop.setDropCompleted(success);
                     eventDrop.consume();
@@ -121,10 +182,24 @@ public class Main extends Application {
                         btnAffichage.fire();
                     }
                 });
-            });
+            });} else {
+                etat[0] = 0;
+                stackPane.getChildren().clear();
+                btnAffichage.fire();
+            }
         });
 
         btnAffichage.setOnAction(e -> {
+//            Classe classe, classe2;
+//            try {
+//                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
+//                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
+//            } catch (Exception ex) {
+//                throw new RuntimeException(ex);
+//            }
+//            Diagramme.getInstance().ajouterClasse(classe);
+//            Diagramme.getInstance().ajouterClasse(classe2);
+            stackPane.getChildren().clear();
             Diagramme diagramme = Diagramme.getInstance();
             Pane ligneClasse = new Pane();
             Pane relationPane = new Pane();
@@ -211,7 +286,5 @@ public class Main extends Application {
         }
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+
 }
