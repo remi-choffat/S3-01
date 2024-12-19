@@ -30,17 +30,32 @@ public class VueRelation extends Pane {
     public void actualiser() {
         this.getChildren().clear();
 
-        double startX = source.getBoundsInParent().getMinX();
+        double startX = source.getBoundsInParent().getMaxX();
         double startY = source.getBoundsInParent().getMinY() + source.getHeight() / 2;
         double endX = destination.getBoundsInParent().getMinX();
         double endY = destination.getBoundsInParent().getMinY() + destination.getHeight() / 2;
 
-        // Ajuster les coordonnées si la flèche va de droite à gauche
-        if (startX > endX) {
-            startX = source.getBoundsInParent().getMaxX();
-            endX = destination.getBoundsInParent().getMaxX();
+        if (Math.abs(startX - endX) > Math.abs(startY - endY)) {
+            // Relation horizontale
+            if (startX > endX) {
+                startX = source.getBoundsInParent().getMinX();
+                endX = destination.getBoundsInParent().getMaxX();
+            } else {
+                startX = source.getBoundsInParent().getMaxX();
+                endX = destination.getBoundsInParent().getMinX();
+            }
+        } else {
+            // Relation verticale
+            if (startY > endY) {
+                startY = source.getBoundsInParent().getMinY();
+                endY = destination.getBoundsInParent().getMaxY();
+            } else {
+                startY = source.getBoundsInParent().getMaxY();
+                endY = destination.getBoundsInParent().getMinY();
+            }
         }
 
+        // Ajuster les points de départ et d'arrivée pour être le long des bords des classes
         Line line = new Line(startX, startY, endX, endY);
         this.getChildren().add(line);
 
@@ -75,7 +90,6 @@ public class VueRelation extends Pane {
                 arrowHead.setFill(Color.BLACK);
                 break;
         }
-
         this.getChildren().add(arrowHead);
     }
 }

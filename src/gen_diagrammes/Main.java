@@ -98,7 +98,7 @@ public class Main extends Application {
 
         final int[] etat = {0};
 
-        // Ajout du gestionnaire d'événements de la molette pour zoomer
+        // Ajout du gestionnaire d'événements de la molette pour zoomer/dezoomer
         stackPane.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.getDeltaY() > 0) {
                 scaleFactor *= 1.1;
@@ -200,7 +200,6 @@ public class Main extends Application {
                 btnAffichage.fire();
             }
         });
-        
 
                 btnAffichage.setOnAction(e -> {
 //            Classe classe, classe2;
@@ -225,7 +224,7 @@ public class Main extends Application {
                 ligneClasse.getChildren().add(vueClasse);
             }
 
-            // Ajouter des relations (exemple simplifié)
+            // Ajouter des relations
             for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
                 VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
                 VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
@@ -244,7 +243,6 @@ public class Main extends Application {
                 }
             }
         });
-
     }
 
     private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
@@ -298,6 +296,4 @@ public class Main extends Application {
             vueRelation.actualiser();
         }
     }
-
-
 }
