@@ -2,18 +2,10 @@ package gen_diagrammes;
 
 /**
  * Gère l'exportation du diagramme
+ *
+ * @param diagramme Diagramme à exporter
  */
-public class Exporter {
-
-    private final Diagramme diagramme;
-
-    public Exporter(Diagramme diagramme) {
-        this.diagramme = diagramme;
-    }
-
-    public Diagramme getDiagramme() {
-        return diagramme;
-    }
+public record Exporter(Diagramme diagramme) {
 
     /**
      * Exporte le diagramme dans un fichier au format UML
@@ -34,7 +26,8 @@ public class Exporter {
             fw.close();
             System.out.println("Diagramme exporté avec succès dans le fichier diagramme.puml");
         } catch (java.io.IOException e) {
-            System.err.println("Error while exporting diagram");
+            System.err.println("Erreur lors de l'export du diagramme");
         }
     }
+
 }

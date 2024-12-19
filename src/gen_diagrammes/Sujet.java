@@ -1,9 +1,14 @@
 package gen_diagrammes;
 
+/**
+ * Interface pour les sujets observables
+ */
 public interface Sujet {
-    public void ajouterObservateur(Observateur v);
 
-    public void supprimerObservateur(Observateur v);
+    void ajouterObservateur(Observateur v);
 
-    public void notifierObservateurs();
+    void supprimerObservateur(Observateur v);
+
+    void notifierObservateurs();
+
 }

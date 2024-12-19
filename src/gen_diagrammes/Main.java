@@ -31,6 +31,8 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
+        System.setProperty("jps.track.ap.dependencies", "true");
+
         // Lance l'interface graphique dans un thread séparé
         new Thread(() -> Application.launch(Main.class, args)).start();
 

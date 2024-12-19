@@ -1,61 +1,52 @@
 package gen_diagrammes;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Représente un attribut d'une classe du diagramme
  */
+@Setter
+@Getter
 public class Attribut {
 
     private String nom;
     private String typeAcces;
     private String type;
-    private boolean estVisible;
+    private boolean visible;
 
+
+    /**
+     * Constructeur
+     *
+     * @param nom       Nom de l'attribut
+     * @param typeAcces Type d'accès (public, private, protected, package)
+     * @param type      Type de l'attribut
+     */
     public Attribut(String nom, String typeAcces, String type) {
         this.nom = nom;
         this.typeAcces = typeAcces;
         this.type = type;
-        this.estVisible = true;
+        this.visible = true;
     }
 
+
+    /**
+     * Constructeur par défaut
+     */
     public Attribut() {
         this.nom = "Inconnu";
         this.typeAcces = "Inconnu";
         this.type = "Inconnu";
-        this.estVisible = true;
+        this.visible = true;
     }
 
-    public String getNom() {
-        return nom;
-    }
 
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
-
-    public String getTypeAcces() {
-        return typeAcces;
-    }
-
-    public void setTypeAcces(String typeAcces) {
-        this.typeAcces = typeAcces;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public boolean estVisible() {
-        return estVisible;
-    }
-
-    public void setEstVisible(boolean estVisible) {
-        this.estVisible = estVisible;
-    }
-
+    /**
+     * Retourne une chaîne de caractères représentant l'attribut
+     *
+     * @return String
+     */
     public String toString() {
         String res = "";
         switch (typeAcces) {
@@ -75,4 +66,5 @@ public class Attribut {
         res += nom + " : " + type;
         return res;
     }
+
 }

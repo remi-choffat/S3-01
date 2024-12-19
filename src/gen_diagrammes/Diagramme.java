@@ -1,5 +1,8 @@
 package gen_diagrammes;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 
 /**
@@ -7,11 +10,18 @@ import java.util.ArrayList;
  */
 public class Diagramme implements Sujet {
 
+    /**
+     * Nom du package
+     */
+    @Setter
+    @Getter
     private String nomPackage;
 
     /**
      * Liste des classes du diagramme
      */
+    @Setter
+    @Getter
     private ArrayList<Classe> listeClasses;
 
     /**
@@ -24,13 +34,15 @@ public class Diagramme implements Sujet {
      */
     private ArrayList<Observateur> listeObservateurs;
 
+
     /**
      * Constructeur privé pour empêcher l'instanciation directe
      */
     private Diagramme() {
-        this.nomPackage = "Inconnu";
+        this.nomPackage = null;
         this.listeClasses = new ArrayList<>();
     }
+
 
     /**
      * Méthode pour obtenir l'instance unique de Diagramme
@@ -44,6 +56,7 @@ public class Diagramme implements Sujet {
         return instance;
     }
 
+
     /**
      * Méthode pour initialiser l'instance unique de Diagramme avec des paramètres
      *
@@ -56,22 +69,6 @@ public class Diagramme implements Sujet {
             instance.nomPackage = nomPackage;
             instance.listeClasses = listeClasses;
         }
-    }
-
-    public String getNomPackage() {
-        return nomPackage;
-    }
-
-    public void setNomPackage(String nomPackage) {
-        this.nomPackage = nomPackage;
-    }
-
-    public ArrayList<Classe> getListeClasses() {
-        return listeClasses;
-    }
-
-    public void setListeClasses(ArrayList<Classe> listeClasses) {
-        this.listeClasses = listeClasses;
     }
 
 
@@ -102,7 +99,10 @@ public class Diagramme implements Sujet {
      * @return texte du diagramme
      */
     public String toString() {
-        StringBuilder texte = new StringBuilder("Nom du package : " + nomPackage + "\n\n");
+        StringBuilder texte = new StringBuilder();
+        if (this.nomPackage != null) {
+            texte.append("Package : ").append(this.nomPackage).append("\n\n");
+        }
         for (Classe c : this.listeClasses) {
             texte.append(c.toString()).append("\n");
         }
@@ -120,20 +120,36 @@ public class Diagramme implements Sujet {
         }
     }
 
+
+    /**
+     * Ajoute un observateur
+     *
+     * @param o observateur à ajouter
+     */
     @Override
-    public void ajouterObservateur(Observateur v) {
-        this.listeObservateurs.add(v);
+    public void ajouterObservateur(Observateur o) {
+        this.listeObservateurs.add(o);
     }
 
+
+    /**
+     * Supprime un observateur
+     *
+     * @param o observateur à supprimer
+     */
     @Override
-    public void supprimerObservateur(Observateur v) {
-        this.listeObservateurs.remove(v);
+    public void supprimerObservateur(Observateur o) {
+        this.listeObservateurs.remove(o);
     }
 
+
+    /**
+     * Notifie les observateurs
+     */
     @Override
     public void notifierObservateurs() {
-        for (Observateur v : this.listeObservateurs) {
-            v.actualiser();
+        for (Observateur o : this.listeObservateurs) {
+            o.actualiser();
         }
     }
 
@@ -152,4 +168,5 @@ public class Diagramme implements Sujet {
         }
         return null;
     }
+    
 }
