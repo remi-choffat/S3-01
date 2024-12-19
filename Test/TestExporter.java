@@ -1,4 +1,3 @@
-import gen_diagrammes.Attribut;
 import gen_diagrammes.Diagramme;
 import gen_diagrammes.Exporter;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +28,6 @@ public class TestExporter {
     @Test
     public void testConstructeur() {
         Exporter exporter = new Exporter(Diagramme.getInstance());
-        assertEquals(Diagramme.getInstance(), exporter.getDiagramme());
+        assertEquals(Diagramme.getInstance(), exporter.diagramme());
     }
 }

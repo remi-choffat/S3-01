@@ -2,39 +2,48 @@ package gen_diagrammes;
 
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.scene.text.Text;
 
+/**
+ * Affichage d'une classe
+ */
 public class VueClasse extends VBox implements Observateur {
 
-    private Classe classe;
-    //mettre un attribut boolean visible dans les classes Classe, Methode et Attribut
-    //Vue Classe ne gère pas les attributs et les méthodes, ce sera à faire dans VueAttribut et VueMethode
-    //j'imagine ?
+    /**
+     * Classe à afficher
+     */
+    private final Classe classe;
 
-    //on gère pas encore la position, ca sera dans le contrôleur
 
+    /**
+     * Constructeur
+     *
+     * @param c Classe à afficher
+     */
     public VueClasse(Classe c) {
         this.classe = c;
         this.actualiser();
     }
 
+
+    /**
+     * Actualise la vue de la classe
+     */
     @Override
     public void actualiser() {
         this.getChildren().clear();
-        if (this.classe.estVisible()) {
-            String texteEnTete = "(C)" + this.classe.getType() + " " + this.classe.getNom();
-            String texteAttributs = "";
-            String texteMethodes = "";
+        if (this.classe.isVisible()) {
+            String texteEnTete = "(" + this.classe.getType().substring(0, 1).toUpperCase() + ") " + this.classe.getNom();
+            StringBuilder texteAttributs = new StringBuilder();
+            StringBuilder texteMethodes = new StringBuilder();
             for (Attribut attribut : this.classe.getAttributs()) {
-                if (attribut.estVisible()) {
-                    texteAttributs = texteAttributs + attribut.toString() + "\n";
+                if (attribut.isVisible()) {
+                    texteAttributs.append(attribut.toString()).append("\n");
                 }
             }
             for (Methode methode : this.classe.getMethodes()) {
-                if (methode.estVisible()) {
-                    texteMethodes = texteMethodes + methode.toString() + "\n";
+                if (methode.isVisible()) {
+                    texteMethodes.append(methode.toString()).append("\n");
                 }
             }
             HBox h1 = new HBox();
@@ -43,9 +52,9 @@ public class VueClasse extends VBox implements Observateur {
 
             Text l1 = new Text(texteEnTete);
             h1.getChildren().add(l1);
-            Text l2 = new Text(texteAttributs);
+            Text l2 = new Text(texteAttributs.toString());
             h2.getChildren().add(l2);
-            Text l3 = new Text(texteMethodes);
+            Text l3 = new Text(texteMethodes.toString());
             h3.getChildren().add(l3);
 
             h1.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
@@ -55,4 +64,5 @@ public class VueClasse extends VBox implements Observateur {
             this.getChildren().addAll(h1, h2, h3);
         }
     }
+
 }

@@ -1,5 +1,8 @@
 package gen_diagrammes;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 /**
  * Représente une classe du diagramme
  */
+@Getter
 public class Classe {
 
     public static final String PUBLIC = "public";
@@ -57,7 +61,8 @@ public class Classe {
     /**
      * Si la classe est visible ou non
      */
-    private boolean estVisible;
+    @Setter
+    private boolean visible;
 
     /**
      * Axe des abscisses
@@ -80,7 +85,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
-        this.estVisible = true;
+        this.visible = true;
     }
 
 
@@ -99,7 +104,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
-        this.estVisible = true;
+        this.visible = true;
         this.longueur = 0.0;
         this.largeur = 0.0;
     }
@@ -116,7 +121,7 @@ public class Classe {
         this.parents = new ArrayList<Classe>();
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
-        this.estVisible = true;
+        this.visible = true;
         this.longueur = 0.0;
         this.largeur = 0.0;
 
@@ -146,7 +151,8 @@ public class Classe {
                 String className = file.getName().replace(".class", "");
                 classe = classLoader.loadClass(className);
                 isValid = true;
-            } catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError e) {
+            } catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError |
+                     ArrayIndexOutOfBoundsException e) {
                 state++;
                 if (state > 10) {
                     throw new ClassNotFoundException("Erreur lors du chargement de la classe " + nomClasse);
@@ -291,69 +297,24 @@ public class Classe {
 
 
     /**
-     * getter de l'attribut nom
+     * Ajoute une méthode à la classe
+     *
+     * @param m Méthode à ajouter
      */
-    public String getNom() {
-        return nom;
-    }
-
-    /**
-     * getter de l'attribut acces
-     */
-    public String getAcces() {
-        return acces;
-    }
-
-    /**
-     * getter de l'attribut type
-     */
-    public String getType() {
-        return type;
-    }
-
-    public ArrayList<Classe> getParents() {
-        return parents;
-    }
-
-    public ArrayList<Attribut> getAttributs() {
-        return attributs;
-    }
-
-    public ArrayList<Methode> getMethodes() {
-        return methodes;
-    }
-
-    public double getLongueur() {
-        return this.longueur;
-    }
-
-    public double getLargeur() {
-        return this.largeur;
-    }
-
-    public void setLongueur(double longueur) {
-        this.longueur = longueur;
-    }
-
-    public void setLargeur(double largeur) {
-        this.largeur = largeur;
-    }
-
-    public boolean estVisible() {
-        return estVisible;
-    }
-
-    public void setEstVisible(boolean estVisible) {
-        this.estVisible = estVisible;
-    }
-
     public void addMethode(Methode m) {
         methodes.add(m);
     }
 
+
+    /**
+     * Ajoute un attribut à la classe
+     *
+     * @param a Attribut à ajouter
+     */
     public void addAttribut(Attribut a) {
         attributs.add(a);
     }
+
 
     /**
      * Ajoute un parent à la classe
@@ -379,18 +340,47 @@ public class Classe {
      * @param state état de l'ajustement
      * @return String
      */
-    private static String adjustPath(String path, int state) {
+    private static String adjustPath(String path, int state) throws ArrayIndexOutOfBoundsException {
         String[] folds = path.split("[/\\\\]");
         if (state >= folds.length) {
             throw new ArrayIndexOutOfBoundsException("état dépassé");
         } else {
-            String res = "";
+            StringBuilder res = new StringBuilder();
             for (int i = 0; i < folds.length - 1; i++) {
-                res += folds[i] + "\\\\";
+                res.append(folds[i]).append("\\\\");
             }
-            res += folds[folds.length - state - 2] + "." + folds[folds.length - 1];
-            return res;
+            res.append(folds[folds.length - state - 2]).append(".").append(folds[folds.length - 1]);
+            return res.toString();
         }
+    }
+
+
+    /**
+     * Met à jour les attributs de la classe
+     */
+    public void updateAttributs() {
+        ArrayList<Attribut> res = new ArrayList<>();
+        for (Attribut a : this.attributs) {
+
+            String type = a.getType();
+            String accesAttribut = a.getTypeAcces();
+
+            boolean isClassPresent = false;
+            for (Classe c : Diagramme.getInstance().getListeClasses()) {
+                // Vérifie si le type de l'attribut est une classe du diagramme
+                // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
+                if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
+                    res.add(new AttributClasse(a.getNom(), accesAttribut, type, "", "", c));
+                    isClassPresent = true;
+                    break;
+                }
+            }
+
+            if (!isClassPresent) {
+                res.add(new Attribut(a.getNom(), accesAttribut, type));
+            }
+        }
+        this.attributs = res;
     }
 
 
@@ -436,34 +426,4 @@ public class Classe {
         uml.append(relations);
         return uml.toString();
     }
-
-
-    /**
-     * Met à jour les attributs de la classe
-     */
-    public void updateAttributs() {
-        ArrayList<Attribut> res = new ArrayList<>();
-        for (Attribut a : this.attributs) {
-
-            String type = a.getType();
-            String accesAttribut = a.getTypeAcces();
-
-            boolean isClassPresent = false;
-            for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                // Vérifie si le type de l'attribut est une classe du diagramme
-                // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
-                if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
-                    res.add(new AttributClasse(a.getNom(), accesAttribut, type, "", "", c));
-                    isClassPresent = true;
-                    break;
-                }
-            }
-
-            if (!isClassPresent) {
-                res.add(new Attribut(a.getNom(), accesAttribut, type));
-            }
-        }
-        this.attributs = res;
-    }
-
 }
