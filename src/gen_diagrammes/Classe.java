@@ -391,7 +391,7 @@ public class Classe {
      *
      * @return String
      */
-    public String toString() {
+    public String toPlantUML() {
 
         StringBuilder uml = new StringBuilder();
         StringBuilder relations = new StringBuilder();
@@ -428,4 +428,15 @@ public class Classe {
         uml.append(relations);
         return uml.toString();
     }
+
+
+    /**
+     * Affichage de la classe
+     *
+     * @return String
+     */
+    public String toString() {
+        return this.type + " " + this.nom;
+    }
+
 }

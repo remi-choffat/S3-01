@@ -3,19 +3,15 @@ package gen_diagrammes;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.*;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.net.MalformedURLException;
-import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -42,7 +38,7 @@ public class Main extends Application {
             Diagramme.initialize(args[0], null);
         }
         Scanner sc = new Scanner(System.in);
-        System.out.println("Entrez un chemin de classe (chemin absolu si aucun package sélectionné) : ");
+        System.out.println("Entrez un chemin de classe (chemin absolu) : ");
         String res = sc.nextLine();
         while (!res.equals("q")) {
             if (!res.equals("*export")) {
@@ -61,6 +57,7 @@ public class Main extends Application {
         }
     }
 
+
     /**
      * Affiche l'interface graphique
      *
@@ -68,6 +65,7 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
         primaryStage.setTitle("Plante UML");
 
         // création des boutons

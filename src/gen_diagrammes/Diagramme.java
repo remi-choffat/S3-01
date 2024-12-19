@@ -104,7 +104,7 @@ public class Diagramme implements Sujet {
             texte.append("Package : ").append(this.nomPackage).append("\n\n");
         }
         for (Classe c : this.listeClasses) {
-            texte.append(c.toString()).append("\n");
+            texte.append(c).append("\n");
         }
         return texte.toString();
     }
