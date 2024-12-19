@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Représente une classe du diagramme
@@ -75,6 +76,10 @@ public class Classe {
      */
     @Setter
     private double largeur;
+
+
+    @Getter
+    private final List<Relation> relations = new ArrayList<>();
 
 
     /**
@@ -427,5 +432,10 @@ public class Classe {
         uml.append("}\n");
         uml.append(relations);
         return uml.toString();
+    }
+
+    public void ajouterRelation(Relation relation) {
+        relations.add(relation);
+        Diagramme.getInstance().notifierObservateurs();
     }
 }
