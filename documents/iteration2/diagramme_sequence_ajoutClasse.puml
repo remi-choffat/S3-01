@@ -1,0 +1,32 @@
+@startuml
+title Ajout d'une classe
+
+actor "Vincent" as Utilisateur
+participant "main : Main" as Main
+participant "classe : Classe" as Classe
+participant "diagramme : Diagramme" as Diagramme
+
+activate Main
+Utilisateur -> Main : clique sur le bouton "ajouter une classe"
+Utilisateur -> Main : donne le chemin d'accès au fichier .class
+create Classe
+Main -> Classe : new Classe(chemin)
+Main -> Classe : setLongueur(Math.random())
+activate Classe
+Classe --> Main :
+deactivate Classe
+Main -> Classe : setLargeur(Math.random())
+activate Classe
+Classe --> Main :
+deactivate Classe
+Main -> Diagramme : getInstance()
+activate Diagramme
+Diagramme --> Main : Diagramme
+deactivate Diagramme
+Main -> Diagramme : ajouterClasse(classe)
+activate Diagramme
+Diagramme --> Main :
+deactivate Diagramme
+Main --> Utilisateur : affichage
+
+@enduml
