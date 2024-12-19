@@ -15,7 +15,7 @@ public record Exporter(Diagramme diagramme) {
         StringBuilder uml = new StringBuilder();
         uml.append("@startuml\n");
         for (Classe c : diagramme.getListeClasses()) {
-            uml.append(c.toPlantUML());
+            uml.append(c.toPlantUML()).append("\n");
         }
         uml.append("@enduml\n");
 
