@@ -59,6 +59,16 @@ public class Classe {
      */
     private boolean estVisible;
 
+    /**
+     * Axe des abscisses
+     */
+    private double longueur;
+
+    /**
+     * Axe des ordonnées
+     */
+    private double largeur;
+
 
     /**
      * Constructeur par défaut
@@ -90,6 +100,8 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
         this.estVisible = true;
+        this.longueur = 0.0;
+        this.largeur = 0.0;
     }
 
 
@@ -105,6 +117,8 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
         this.estVisible = true;
+        this.longueur = 0.0;
+        this.largeur = 0.0;
 
         String nomClasse = cheminFichier.substring(cheminFichier.lastIndexOf("\\") + 1, cheminFichier.length() - 6);
 
@@ -307,6 +321,22 @@ public class Classe {
 
     public ArrayList<Methode> getMethodes() {
         return methodes;
+    }
+
+    public double getLongueur() {
+        return this.longueur;
+    }
+
+    public double getLargeur() {
+        return this.largeur;
+    }
+
+    public void setLongueur(double longueur) {
+        this.longueur = longueur;
+    }
+
+    public void setLargeur(double largeur) {
+        this.largeur = largeur;
     }
 
     public boolean estVisible() {

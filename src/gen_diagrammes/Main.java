@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -78,14 +79,16 @@ public class Main extends Application {
         HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
         hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
 
-        // création d'une VBox pour les nouveaux boutons
-        VBox vbox = new VBox(10);
-        vbox.setVisible(false);  // Initialement caché
+//        // création d'une VBox pour les nouveaux boutons
+//        VBox vbox = new VBox(10);
+//        vbox.setVisible(false);  // Initialement caché
+
+        StackPane stackPane = new StackPane();
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(hbox);
-        borderPane.setCenter(vbox);
+        borderPane.setCenter(stackPane);
 
         // création de la scène et l'ajouter à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);
@@ -94,14 +97,15 @@ public class Main extends Application {
 
         // gestionnaire d'événements pour le bouton "Ajouter"
         btnAjouter.setOnAction(e -> {
-            if (!vbox.isVisible()) {
                 Button btnPackage = new Button("Ajouter un package");
                 Button btnClasse = new Button("Ajouter une classe");
+                VBox vbox = new VBox(10);
                 vbox.getChildren().setAll(btnPackage, btnClasse);
-                vbox.setVisible(true);
+                stackPane.getChildren().add(vbox);
 
                 // Gestionnaire d'événements pour le bouton "Ajouter une classe"
                 btnClasse.setOnAction(event -> {
+                    stackPane.getChildren().clear();
                     Button btnCenter = new Button("Sélectionner un fichier");
                     ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
                     imageView.setFitWidth(150);
@@ -144,7 +148,7 @@ public class Main extends Application {
                     wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
                     StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
 
-                    borderPane.setCenter(wrapper);
+                    stackPane.getChildren().add(wrapper);
                     // Gestionnaire d'événements pour le bouton central
                     btnCenter.setOnAction(fileEvent -> {
                         FileChooser fileChooser = new FileChooser();
@@ -156,17 +160,17 @@ public class Main extends Application {
                             Classe classe;
                             try {
                                 classe = new Classe(file.getAbsolutePath());
+                                classe.setLongueur(Math.random() * 600);
+                                classe.setLargeur(Math.random() * 300);
                             } catch (Exception ex) {
                                 throw new RuntimeException(ex);
                             }
                             Diagramme.getInstance().ajouterClasse(classe);
+                            stackPane.getChildren().clear();
+                            btnAffichage.fire();
                         }
                     });
                 });
-            } else {
-                vbox.setVisible(false);
-                vbox.getChildren().clear();  // Effacer les nouveaux boutons lorsqu'on cache la VBox
-            }
         });
 
         btnAffichage.setOnAction(e -> {
@@ -183,10 +187,10 @@ public class Main extends Application {
             Pane ligneClasse = new Pane();
             for (Classe c : diagramme.getListeClasses()) {
                 VueClasse vueClasse = new VueClasse(c);
-                vueClasse.relocate((int) (Math.random() * 600), (int) (Math.random() * 300));
+                vueClasse.relocate(c.getLongueur(), c.getLargeur());
                 ligneClasse.getChildren().add(vueClasse);
             }
-            borderPane.setCenter(ligneClasse);
+            stackPane.getChildren().add(ligneClasse);
         });
     }
 }
