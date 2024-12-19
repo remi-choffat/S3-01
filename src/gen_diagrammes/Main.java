@@ -6,6 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
@@ -13,9 +16,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Classe principale de l'application
@@ -25,42 +28,26 @@ public class Main extends Application {
     private List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
 
+
     /**
      * Méthode principale
-     * Démarre l'interface graphique et demande les chemins des fichiers .class en console
+     * Démarre l'interface graphique
      *
      * @param args Arguments
      */
     public static void main(String[] args) {
 
+        String ANSI_RESET = "\u001B[0m";
+        String ANSI_GREEN = "\u001B[32m";
+        String ANSI_BLUE = "\u001B[34m";
+
+        System.out.println(ANSI_GREEN + "╔══════════════════╗" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "║ " + ANSI_BLUE + "   Plante UML   " + ANSI_GREEN + " ║" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "╚══════════════════╝" + ANSI_RESET);
+
         System.setProperty("jps.track.ap.dependencies", "true");
+        Application.launch(Main.class, args);
 
-        // Lance l'interface graphique dans un thread séparé
-        new Thread(() -> Application.launch(Main.class, args)).start();
-
-        // Demande les chemins des fichiers .class en console
-        Diagramme d = Diagramme.getInstance();
-        if (args.length == 1) {
-            Diagramme.initialize(args[0], null);
-        }
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Entrez un chemin de classe (chemin absolu) : ");
-        String res = sc.nextLine();
-        while (!res.equals("q")) {
-            if (!res.equals("*export")) {
-                try {
-                    d.ajouterClasse(new Classe(res));
-                    System.out.println(d);
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
-            } else {
-//                Exporter exp = new Exporter(d);
-//                exp.exportUML();
-            }
-            System.out.println("Entrez un chemin de classe, ou tapez *export pour exporter le diagramme : ");
-            res = sc.nextLine();
-        }
     }
 
 
@@ -73,6 +60,22 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         primaryStage.setTitle("Plante UML");
+
+        // Création de la barre de menu
+        MenuBar menuBar = new MenuBar();
+        Menu menuAjouter = new Menu("Ajouter");
+        MenuItem menuAjouterPackage = new MenuItem("Package");
+        MenuItem menuAjouterClasse = new MenuItem("Classe");
+        Menu menuSupprimer = new Menu("Supprimer");
+        Menu menuExporter = new Menu("Exporter");
+        MenuItem menuExporterImage = new MenuItem("Exporter une image");
+        MenuItem menuExporterUML = new MenuItem("Exporter en PlantUML");
+        Menu menuGenerer = new Menu("Générer");
+        Menu menuAffichage = new Menu("Affichage");
+        menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
+        menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
+        menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
+        // TODO - Utiliser setOnAction pour définir les gestionnaires d'événements pour les éléments de menu
 
         // création des boutons
         Button btnAjouter = new Button("Ajouter");
@@ -95,7 +98,7 @@ public class Main extends Application {
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(hbox);
+        borderPane.setTop(hbox); // TODO - Remplacer hbox par menuBar
         borderPane.setCenter(stackPane);
         borderPane.setBottom(vboxExport);
 
@@ -159,13 +162,13 @@ public class Main extends Application {
                             success = true;
                             String filePath = db.getFiles().get(0).getAbsolutePath();
                             System.out.println("Fichier déposé : " + filePath);
-                            Classe classe;
+                            Classe classe = null;
                             try {
                                 classe = new Classe(filePath);
                                 classe.setLongueur(Math.random() * 600);
                                 classe.setLargeur(Math.random() * 300);
                             } catch (Exception ex) {
-                                throw new RuntimeException(ex);
+                                System.err.println(ex.getMessage());
                             }
                             Diagramme.getInstance().ajouterClasse(classe);
                             stackPane.getChildren().clear();
@@ -188,13 +191,13 @@ public class Main extends Application {
                         java.io.File file = fileChooser.showOpenDialog(fileStage);
                         if (file != null) {
                             System.out.println("Fichier sélectionné : " + file.getAbsolutePath());
-                            Classe classe;
+                            Classe classe = null;
                             try {
                                 classe = new Classe(file.getAbsolutePath());
                                 classe.setLongueur(Math.random() * 600);
                                 classe.setLargeur(Math.random() * 300);
                             } catch (Exception ex) {
-                                throw new RuntimeException(ex);
+                                System.err.println(ex.getMessage());
                             }
                             Diagramme.getInstance().ajouterClasse(classe);
                             stackPane.getChildren().clear();
@@ -209,7 +212,7 @@ public class Main extends Application {
             }
         });
 
-                btnAffichage.setOnAction(e -> {
+        btnAffichage.setOnAction(e -> {
 //            Classe classe, classe2;
 //            try {
 //                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
@@ -244,8 +247,7 @@ public class Main extends Application {
 
             // Mettre à jour les relations à chaque déplacement de classe
             for (Node node : ligneClasse.getChildren()) {
-                if (node instanceof VueClasse) {
-                    VueClasse vueClasse = (VueClasse) node;
+                if (node instanceof VueClasse vueClasse) {
                     vueClasse.layoutXProperty().addListener((observable, oldValue, newValue) -> updateRelations());
                     vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
                 }
@@ -268,6 +270,7 @@ public class Main extends Application {
         });
     }
 
+
     private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
         return switch (relation.getType()) {
             case "heritage" -> VueRelation.TypeRelation.HERITAGE;
@@ -275,6 +278,7 @@ public class Main extends Application {
             default -> VueRelation.TypeRelation.ASSOCIATION;
         };
     }
+
 
     /**
      * Ajoute la possibilité de déplacer un nœud par glisser-déposer
@@ -315,4 +319,5 @@ public class Main extends Application {
             vueRelation.actualiser();
         }
     }
+
 }
