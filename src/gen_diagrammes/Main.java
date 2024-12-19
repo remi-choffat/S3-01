@@ -95,8 +95,12 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        final int[] etat = {0};
+
         // gestionnaire d'événements pour le bouton "Ajouter"
         btnAjouter.setOnAction(e -> {
+            if (etat[0] == 0) {
+                etat[0] = 1;
                 Button btnPackage = new Button("Ajouter un package");
                 Button btnClasse = new Button("Ajouter une classe");
                 VBox vbox = new VBox(10);
@@ -106,6 +110,7 @@ public class Main extends Application {
                 // Gestionnaire d'événements pour le bouton "Ajouter une classe"
                 btnClasse.setOnAction(event -> {
                     stackPane.getChildren().clear();
+                    etat[0] = 0;
                     Button btnCenter = new Button("Sélectionner un fichier");
                     ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
                     imageView.setFitWidth(150);
@@ -136,10 +141,15 @@ public class Main extends Application {
                             Classe classe;
                             try {
                                 classe = new Classe(filePath);
+                                classe.setLongueur(Math.random() * 600);
+                                classe.setLargeur(Math.random() * 300);
                             } catch (Exception ex) {
                                 throw new RuntimeException(ex);
                             }
                             Diagramme.getInstance().ajouterClasse(classe);
+                            stackPane.getChildren().clear();
+                            etat[0] = 0;
+                            btnAffichage.fire();
                         }
                         eventDrop.setDropCompleted(success);
                         eventDrop.consume();
@@ -147,8 +157,8 @@ public class Main extends Application {
                     StackPane wrapper = new StackPane(rectangle);
                     wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
                     StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
-
                     stackPane.getChildren().add(wrapper);
+
                     // Gestionnaire d'événements pour le bouton central
                     btnCenter.setOnAction(fileEvent -> {
                         FileChooser fileChooser = new FileChooser();
@@ -171,6 +181,11 @@ public class Main extends Application {
                         }
                     });
                 });
+            } else {
+                etat[0] = 0;
+                stackPane.getChildren().clear();
+                btnAffichage.fire();
+            }
         });
 
         btnAffichage.setOnAction(e -> {
@@ -183,6 +198,7 @@ public class Main extends Application {
 //            }
 //            Diagramme.getInstance().ajouterClasse(classe);
 //            Diagramme.getInstance().ajouterClasse(classe2);
+            stackPane.getChildren().clear();
             Diagramme diagramme = Diagramme.getInstance();
             Pane ligneClasse = new Pane();
             for (Classe c : diagramme.getListeClasses()) {
