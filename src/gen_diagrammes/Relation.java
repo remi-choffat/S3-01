@@ -1,6 +1,13 @@
 package gen_diagrammes;
 
+import lombok.Getter;
+
+/**
+ * Représente une relation entre deux classes
+ */
+@Getter
 public class Relation {
+
     private final Classe source;
     private final Classe destination;
     private final String type;
@@ -10,18 +17,5 @@ public class Relation {
         this.destination = destination;
         this.type = type;
     }
-
-    public Classe getSource() {
-        return source;
-    }
-
-    public Classe getDestination() {
-        return destination;
-    }
-
-    public String getType() {
-        return type;
-    }
-
 
 }

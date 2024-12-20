@@ -1,6 +1,7 @@
 package gen_diagrammes;
 
-import javafx.scene.layout.HBox;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -14,7 +15,6 @@ public class VueClasse extends VBox implements Observateur {
      */
     private final Classe classe;
 
-
     /**
      * Constructeur
      *
@@ -24,7 +24,6 @@ public class VueClasse extends VBox implements Observateur {
         this.classe = c;
         this.actualiser();
     }
-
 
     /**
      * Actualise la vue de la classe
@@ -36,32 +35,49 @@ public class VueClasse extends VBox implements Observateur {
             String texteEnTete = "(" + this.classe.getType().substring(0, 1).toUpperCase() + ") " + this.classe.getNom();
             StringBuilder texteAttributs = new StringBuilder();
             StringBuilder texteMethodes = new StringBuilder();
-            for (Attribut attribut : this.classe.getAttributs()) {
+
+            for (int i = 0; i < this.classe.getAttributs().size(); i++) {
+                Attribut attribut = this.classe.getAttributs().get(i);
                 if (attribut.isVisible()) {
-                    texteAttributs.append(attribut.toString()).append("\n");
+                    texteAttributs.append(attribut);
+                    if (i < this.classe.getAttributs().size() - 1) {
+                        texteAttributs.append("\n");
+                    }
                 }
             }
-            for (Methode methode : this.classe.getMethodes()) {
+
+            for (int i = 0; i < this.classe.getMethodes().size(); i++) {
+                Methode methode = this.classe.getMethodes().get(i);
                 if (methode.isVisible()) {
-                    texteMethodes.append(methode.toString()).append("\n");
+                    texteMethodes.append(methode);
+                    if (i < this.classe.getMethodes().size() - 1) {
+                        texteMethodes.append("\n");
+                    }
                 }
             }
-            HBox h1 = new HBox();
-            HBox h2 = new HBox();
-            HBox h3 = new HBox();
 
             Text l1 = new Text(texteEnTete);
-            h1.getChildren().add(l1);
             Text l2 = new Text(texteAttributs.toString());
-            h2.getChildren().add(l2);
             Text l3 = new Text(texteMethodes.toString());
-            h3.getChildren().add(l3);
 
-            h1.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-            h2.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-            h3.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+            VBox vbox1 = new VBox(l1);
+            vbox1.setPadding(new Insets(5));
+            VBox vbox2 = new VBox(l2);
+            vbox2.setPadding(new Insets(5));
+            VBox vbox3 = new VBox(l3);
+            vbox3.setPadding(new Insets(5));
 
-            this.getChildren().addAll(h1, h2, h3);
+            this.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+            this.setSpacing(5);
+
+            Region separator1 = new Region();
+            separator1.setStyle("-fx-background-color: black;");
+            separator1.setPrefHeight(2);
+            Region separator2 = new Region();
+            separator2.setStyle("-fx-background-color: black;");
+            separator2.setPrefHeight(2);
+
+            this.getChildren().addAll(vbox1, separator1, vbox2, separator2, vbox3);
         }
     }
 }

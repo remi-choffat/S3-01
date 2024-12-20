@@ -27,10 +27,10 @@ Répartition :
     Rémi : exporter le diagramme sous forme d’image + afficher/masquer une classe
     Tuline : afficher/masquer une classe
     Gabin : ? malade ?
-    Noah : afficher/masquer les relations d’une classe
+    Noah : afficher des flèches entre les classe + déplacer les classes
 
 Bilan : L'utilisateur peut voir dans une barre à gauche la liste des classes ajoutées. Il peut, en cliquant dessus, les afficher ou les cacher.
-Les flèches sont également visibles et changent de direction en fonction du placament des classes. Néanmoins elles ne sont pas justes car
+Les flèches sont également visibles et changent de direction en fonction du placement des classes. Néanmoins, elles ne sont pas justes car
 elles ne correspondent pas aux vraies liaisons.
 Nous pouvons aussi exporter le diagramme sous forme d'image.
 Les classes sont déplaçables.

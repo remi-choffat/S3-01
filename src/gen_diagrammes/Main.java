@@ -92,7 +92,7 @@ public class Main extends Application {
         //creation du menu affichant les classes ajoutees
         VBox menu = new VBox(21);
         menu.setPadding(new Insets(10));
-        Text texteMenu = new Text("    Liste des classes ajoutées au diagramme :    ");
+        Text texteMenu = new Text("    Liste des classes du diagramme :    ");
         texteMenu.setStyle("-fx-text-fill: #ffffff;");
         menu.setStyle("-fx-border-color: #919090; -fx-border-width: 1; -fx-background-color: #c6c4c4;");
         menu.getChildren().add(texteMenu);
@@ -132,7 +132,7 @@ public class Main extends Application {
         menuAjouterClasse.setOnAction(event -> {
             stackPane.getChildren().clear();
             Button btnCenter = new Button("Sélectionner un fichier");
-            ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
+            ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
             imageView.setFitWidth(150);
             imageView.setFitHeight(150);
             VBox content = new VBox(10, imageView, btnCenter);
@@ -173,6 +173,8 @@ public class Main extends Application {
                 }
             });
 
+            StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
+            StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
             stackPane.getChildren().add(rectangle);
         });
 
@@ -181,7 +183,7 @@ public class Main extends Application {
         menuAjouterPackage.setOnAction(e -> {
             stackPane.getChildren().clear();
             Button btnOpenFolder = new Button("Sélectionner un dossier");
-            ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
+            ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
             imageView.setFitWidth(150);
             imageView.setFitHeight(150);
             VBox content = new VBox(10, imageView, btnOpenFolder);
@@ -238,6 +240,8 @@ public class Main extends Application {
                 }
             });
 
+            StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
+            StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
             stackPane.getChildren().add(rectangle);
         });
 
