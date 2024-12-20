@@ -1,7 +1,6 @@
 package gen_diagrammes;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,19 +8,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +101,7 @@ public class Main extends Application {
             Label l = new Label("");
             l.setVisible(false);
             l.setStyle("-fx-text-fill: #3434ba;");
-            l.setPadding(new Insets(20,0,0,0));
+            l.setPadding(new Insets(20, 0, 0, 0));
             menu.getChildren().add(l);
         }
 
@@ -142,13 +137,13 @@ public class Main extends Application {
             imageView.setFitHeight(150);
             VBox content = new VBox(10, imageView, btnCenter);
             content.setPadding(new Insets(20));
-            content.setAlignment(Pos.CENTER); // Centrer le contenu
+            content.setAlignment(Pos.CENTER);
 
             StackPane rectangle = new StackPane(content);
             rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-            rectangle.setPrefSize(300, 200);  // Taille fixe pour le rectangle
-            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);  // Limite la taille maximale à la taille préférée
-            // Ajouter le gestionnaire d'événements de glisser-déposer
+            rectangle.setPrefSize(300, 200);
+            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
             rectangle.setOnDragOver(eventDragOver -> {
                 if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
                     eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -161,120 +156,28 @@ public class Main extends Application {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    String filePath = db.getFiles().get(0).getAbsolutePath();
-                    Classe classe = null;
-                    try {
-                        classe = new Classe(filePath);
-                        classe.setLongueur(Math.random() * 600);
-                        classe.setLargeur(Math.random() * 300);
-                        System.out.println("Classe " + classe.getNom() + " ajoutée");
-                    } catch (Exception ex) {
-                        System.err.println(ex.getMessage());
-                    }
-                    Diagramme.getInstance().ajouterClasse(classe);
-                    stackPane.getChildren().clear();
-                    menuAfficherDiagramme.fire();
+                    ajouterClasseDepuisFichier(db.getFiles().get(0), menu, stackPane);
                 }
                 eventDrop.setDropCompleted(success);
                 eventDrop.consume();
             });
-            StackPane wrapper = new StackPane(rectangle);
-            wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
-            StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
 
-            // TODO - Supprimer la répétition de code
-            stackPane.getChildren().add(wrapper);
-            // Gestionnaire d'événements pour le bouton central
             btnCenter.setOnAction(fileEvent -> {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Sélectionner un fichier");
-                // Ajouter un filtre pour les fichiers de classe Java compilés (.class)
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Classes Java compilées", "*.class"));
                 Stage fileStage = (Stage) btnCenter.getScene().getWindow();
-                java.io.File file = fileChooser.showOpenDialog(fileStage);
+                File file = fileChooser.showOpenDialog(fileStage);
                 if (file != null) {
-                    Classe classe = null;
-                    try {
-                        classe = new Classe(file.getAbsolutePath());
-                        classe.setLongueur(Math.random() * 600);
-                        classe.setLargeur(Math.random() * 300);
-                        System.out.println("Classe " + classe.getNom() + " ajoutée");
-                    } catch (Exception ex) {
-                        System.err.println(ex.getMessage());
-                    }
-                    Diagramme.getInstance().ajouterClasse(classe);
-
-                    int i = 1;
-                    boolean estNote = false;
-                    ControleurVisibilite controleur = new ControleurVisibilite(classe);
-                    while ((i < menu.getChildren().size()) && (!estNote)) {
-                        if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
-                            ((Label) menu.getChildren().get(i)).setText(classe.getNom());
-                            menu.getChildren().get(i).setVisible(true);
-                            menu.getChildren().get(i).setOnMouseClicked(controleur);
-                            estNote = true;
-                        }
-                        i++;
-                    }
-
-                    stackPane.getChildren().clear();
-                    menuAfficherDiagramme.fire();
+                    ajouterClasseDepuisFichier(file, menu, stackPane);
                 }
             });
+
+            stackPane.getChildren().add(rectangle);
         });
 
 
-        // AFFICHER LE DIAGRAMME
-        menuAfficherDiagramme.setOnAction(e -> {
-            stackPane.getChildren().clear();
-            Diagramme diagramme = Diagramme.getInstance();
-            Pane ligneClasse = new Pane();
-            Pane relationPane = new Pane();
-            stackPane.getChildren().addAll(relationPane, ligneClasse);
-
-            for (Classe c : diagramme.getListeClasses()) {
-                VueClasse vueClasse = new VueClasse(c);
-                makeDraggable(vueClasse);
-                vueClasse.relocate(c.getLongueur(), c.getLargeur());
-                Diagramme.getInstance().ajouterObservateur(vueClasse);
-                ligneClasse.getChildren().add(vueClasse);
-            }
-
-            // Ajouter des relations
-            for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
-                VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
-                VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
-                VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
-                VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
-                relations.add(vueRelation);
-                relationPane.getChildren().add(vueRelation);
-            }
-
-            // Mettre à jour les relations à chaque déplacement de classe
-            for (Node node : ligneClasse.getChildren()) {
-                if (node instanceof VueClasse vueClasse) {
-                    vueClasse.layoutXProperty().addListener((observable, oldValue, newValue) -> updateRelations());
-                    vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
-                }
-            }
-        });
-
-
-        // EXPORTER UNE IMAGE
-        menuExporterImage.setOnAction(e -> {
-            // Affiche le diagramme avant de faire la capture d'écran
-            menuAfficherDiagramme.fire();
-            Exporter exp = new Exporter(Diagramme.getInstance());
-            exp.exportImage(primaryStage, stackPane);
-        });
-
-        // EXPORTER UN PLANTUML
-        menuExporterUML.setOnAction(e -> {
-            Exporter exp = new Exporter(Diagramme.getInstance());
-            exp.exportUML(primaryStage);
-        });
-
-        // fonctionnalité pour ajouter un package
+        // AJOUTER UN PACKAGE
         menuAjouterPackage.setOnAction(e -> {
             stackPane.getChildren().clear();
             Button btnOpenFolder = new Button("Sélectionner un dossier");
@@ -302,37 +205,13 @@ public class Main extends Application {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    java.io.File selectedDirectory = db.getFiles().get(0);
+                    File selectedDirectory = db.getFiles().get(0);
                     if (selectedDirectory.isDirectory()) {
-                        java.io.File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-
+                        File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                         if (files != null) {
-                            for (java.io.File file : files) {
-                                System.out.println("Fichier trouvé : " + file.getAbsolutePath());
-
-                                try {
-                                    Classe classe = new Classe(file.getAbsolutePath());
-                                    classe.setLongueur(Math.random() * 600);
-                                    classe.setLargeur(Math.random() * 300);
-                                    Diagramme.getInstance().ajouterClasse(classe);
-
-                                    int i = 1;
-                                    boolean estNote = false;
-                                    ControleurVisibilite controleur = new ControleurVisibilite(classe);
-                                    while ((i < menu.getChildren().size()) && (!estNote)) {
-                                        if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
-                                            ((Label) menu.getChildren().get(i)).setText(classe.getNom());
-                                            menu.getChildren().get(i).setVisible(true);
-                                            menu.getChildren().get(i).setOnMouseClicked(controleur);
-                                            estNote = true;
-                                        }
-                                        i++;
-                                    }
-                                } catch (Exception ex) {
-                                    System.err.println(ex.getMessage());
-                                }
+                            for (File file : files) {
+                                ajouterClasseDepuisFichier(file, menu, stackPane);
                             }
-                            menuAfficherDiagramme.fire();
                         }
                     }
                 }
@@ -344,43 +223,18 @@ public class Main extends Application {
                 DirectoryChooser directoryChooser = new DirectoryChooser();
                 directoryChooser.setTitle("Sélectionner un dossier");
                 Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
-                java.io.File selectedDirectory = directoryChooser.showDialog(fileStage);
-
+                File selectedDirectory = directoryChooser.showDialog(fileStage);
                 if (selectedDirectory != null) {
-                    java.io.File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-
+                    File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                     if (files != null) {
-                        for (java.io.File file : files) {
-                            System.out.println("Fichier trouvé : " + file.getAbsolutePath());
-
-                            try {
-                                Classe classe = new Classe(file.getAbsolutePath());
-                                classe.setLongueur(Math.random() * 600);
-                                classe.setLargeur(Math.random() * 300);
-                                Diagramme.getInstance().ajouterClasse(classe);
-
-                                int i = 1;
-                                boolean estNote = false;
-                                ControleurVisibilite controleur = new ControleurVisibilite(classe);
-                                while ((i < menu.getChildren().size()) && (!estNote)) {
-                                    if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
-                                        ((Label) menu.getChildren().get(i)).setText(classe.getNom());
-                                        menu.getChildren().get(i).setVisible(true);
-                                        menu.getChildren().get(i).setOnMouseClicked(controleur);
-                                        estNote = true;
-                                    }
-                                    i++;
-                                }
-                            } catch (Exception ex) {
-                                System.err.println(ex.getMessage());
-                            }
+                        for (File file : files) {
+                            ajouterClasseDepuisFichier(file, menu, stackPane);
                         }
-                        menuAfficherDiagramme.fire();
                     } else {
-                        System.out.println("Aucun fichier .class trouvé dans le dossier.");
+                        System.err.println("Aucun fichier .class trouvé dans le dossier");
                     }
                 } else {
-                    System.out.println("Aucun dossier sélectionné.");
+                    System.err.println("Aucun dossier sélectionné");
                 }
             });
 
@@ -388,9 +242,36 @@ public class Main extends Application {
         });
 
 
+        // AFFICHER LE DIAGRAMME
+        menuAfficherDiagramme.setOnAction(e -> {
+            afficherDiagramme(stackPane);
+        });
+
+
+        // EXPORTER UNE IMAGE
+        menuExporterImage.setOnAction(e -> {
+            // Affiche le diagramme avant de faire la capture d'écran
+            afficherDiagramme(stackPane);
+            ;
+            Exporter exp = new Exporter(Diagramme.getInstance());
+            exp.exportImage(primaryStage, stackPane);
+        });
+
+        // EXPORTER UN PLANTUML
+        menuExporterUML.setOnAction(e -> {
+            Exporter exp = new Exporter(Diagramme.getInstance());
+            exp.exportUML(primaryStage);
+        });
+
     }
 
 
+    /**
+     * Détermine le type de relation à partir de la relation
+     *
+     * @param relation Relation
+     * @return Type de relation
+     */
     private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
         return switch (relation.getType()) {
             case "heritage" -> VueRelation.TypeRelation.HERITAGE;
@@ -420,8 +301,6 @@ public class Main extends Application {
             node.setLayoutX(e.getSceneX() + dragDelta[0]);
             node.setLayoutY(e.getSceneY() + dragDelta[1]);
         });
-        //------------------------------------------------FIN BOUTON POUR AFFICHER LE DIAGRAMME------------------------------------------------
-
 
         node.setOnMouseEntered(e -> {
             if (!e.isPrimaryButtonDown()) {
@@ -436,9 +315,90 @@ public class Main extends Application {
         });
     }
 
+
+    /**
+     * Met à jour les relations entre les classes
+     */
     private void updateRelations() {
         for (VueRelation vueRelation : relations) {
             vueRelation.actualiser();
+        }
+    }
+
+
+    /**
+     * Ajoute une classe à partir d'un fichier
+     *
+     * @param file      Fichier
+     * @param menu      Menu : Liste des classes du diagramme
+     * @param stackPane StackPane : Conteneur du diagramme
+     */
+    private void ajouterClasseDepuisFichier(File file, VBox menu, StackPane stackPane) {
+        try {
+            Classe classe = new Classe(file.getAbsolutePath());
+            classe.setLongueur(Math.random() * 600);
+            classe.setLargeur(Math.random() * 300);
+            Diagramme.getInstance().ajouterClasse(classe);
+            System.out.println("Classe " + classe.getNom() + " ajoutée");
+
+            int i = 1;
+            boolean estNote = false;
+            ControleurVisibilite controleur = new ControleurVisibilite(classe);
+            while ((i < menu.getChildren().size()) && (!estNote)) {
+                if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
+                    ((Label) menu.getChildren().get(i)).setText(classe.getNom());
+                    menu.getChildren().get(i).setVisible(true);
+                    menu.getChildren().get(i).setOnMouseClicked(controleur);
+                    estNote = true;
+                }
+                i++;
+            }
+
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        stackPane.getChildren().clear();
+        afficherDiagramme(stackPane);
+    }
+
+
+    /**
+     * Affiche le diagramme
+     *
+     * @param stackPane StackPane
+     */
+    private void afficherDiagramme(StackPane stackPane) {
+
+        stackPane.getChildren().clear();
+        Diagramme diagramme = Diagramme.getInstance();
+        Pane ligneClasse = new Pane();
+        Pane relationPane = new Pane();
+        stackPane.getChildren().addAll(relationPane, ligneClasse);
+
+        for (Classe c : diagramme.getListeClasses()) {
+            VueClasse vueClasse = new VueClasse(c);
+            makeDraggable(vueClasse);
+            vueClasse.relocate(c.getLongueur(), c.getLargeur());
+            Diagramme.getInstance().ajouterObservateur(vueClasse);
+            ligneClasse.getChildren().add(vueClasse);
+        }
+
+        // Ajoute les relations
+        for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
+            VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
+            VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
+            VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
+            VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+            relations.add(vueRelation);
+            relationPane.getChildren().add(vueRelation);
+        }
+
+        // Met à jour les relations à chaque déplacement de classe
+        for (Node node : ligneClasse.getChildren()) {
+            if (node instanceof VueClasse vueClasse) {
+                vueClasse.layoutXProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+                vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+            }
         }
     }
 
