@@ -1,6 +1,7 @@
 package gen_diagrammes;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -8,12 +9,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,18 +95,28 @@ public class Main extends Application {
 
         //creation du menu affichant les classes ajoutees
         VBox menu = new VBox(21);
-        Text texteMenu = new Text("----- Liste des classes ajoutées : -----");
-        menu.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: grey;");
+        menu.setPadding(new Insets(10));
+        Text texteMenu = new Text("    Liste des classes ajoutées au diagramme :    ");
+        texteMenu.setStyle("-fx-text-fill: #ffffff;");
+        menu.setStyle("-fx-border-color: #919090; -fx-border-width: 1; -fx-background-color: #c6c4c4;");
         menu.getChildren().add(texteMenu);
 
         for (int i = 0; i < 20; i++) {
             Label l = new Label("");
             l.setVisible(false);
-            l.setStyle("-fx-text-fill: blue;");
+            l.setStyle("-fx-text-fill: #3434ba;");
+            l.setPadding(new Insets(20,0,0,0));
             menu.getChildren().add(l);
         }
 
+
+        Rectangle rect = new Rectangle(200, 200, Color.RED);
+        ScrollPane s1 = new ScrollPane();
+        s1.setPrefSize(120, 120);
+        s1.setContent(rect);
+
         borderPane.setLeft(menu);
+
 
         // création de la scène et l'ajouter à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);

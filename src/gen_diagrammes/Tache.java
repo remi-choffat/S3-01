@@ -1,6 +1,9 @@
 package gen_diagrammes;
 
+import lombok.Setter;
+
 public class Tache {
+    @Setter
     private String nom;
 
     public Tache(String nom) {

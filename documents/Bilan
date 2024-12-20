@@ -29,7 +29,11 @@ Répartition :
     Gabin : ? malade ?
     Noah : afficher/masquer les relations d’une classe
 
-Bilan :
+Bilan : L'utilisateur peut voir dans une barre à gauche la liste des classes ajoutées. Il peut, en cliquant dessus, les afficher ou les cacher.
+Les flèches sont également visibles et changent de direction en fonction du placament des classes. Néanmoins elles ne sont pas justes car
+elles ne correspondent pas aux vraies liaisons.
+Nous pouvons aussi exporter le diagramme sous forme d'image.
+Les classes sont déplaçables.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
