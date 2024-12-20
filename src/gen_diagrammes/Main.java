@@ -16,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -109,14 +110,7 @@ public class Main extends Application {
             menu.getChildren().add(l);
         }
 
-
-        Rectangle rect = new Rectangle(200, 200, Color.RED);
-        ScrollPane s1 = new ScrollPane();
-        s1.setPrefSize(120, 120);
-        s1.setContent(rect);
-
         borderPane.setLeft(menu);
-
 
         // création de la scène et l'ajouter à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);
@@ -279,6 +273,121 @@ public class Main extends Application {
             Exporter exp = new Exporter(Diagramme.getInstance());
             exp.exportUML(primaryStage);
         });
+
+        // fonctionnalité pour ajouter un package
+        menuAjouterPackage.setOnAction(e -> {
+            stackPane.getChildren().clear();
+            Button btnOpenFolder = new Button("Sélectionner un dossier");
+            ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
+            imageView.setFitWidth(150);
+            imageView.setFitHeight(150);
+            VBox content = new VBox(10, imageView, btnOpenFolder);
+            content.setPadding(new Insets(20));
+            content.setAlignment(Pos.CENTER);
+
+            StackPane rectangle = new StackPane(content);
+            rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+            rectangle.setPrefSize(300, 200);
+            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+            rectangle.setOnDragOver(eventDragOver -> {
+                if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
+                    eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+                eventDragOver.consume();
+            });
+
+            rectangle.setOnDragDropped(eventDrop -> {
+                var db = eventDrop.getDragboard();
+                boolean success = false;
+                if (db.hasFiles()) {
+                    success = true;
+                    java.io.File selectedDirectory = db.getFiles().get(0);
+                    if (selectedDirectory.isDirectory()) {
+                        java.io.File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
+
+                        if (files != null) {
+                            for (java.io.File file : files) {
+                                System.out.println("Fichier trouvé : " + file.getAbsolutePath());
+
+                                try {
+                                    Classe classe = new Classe(file.getAbsolutePath());
+                                    classe.setLongueur(Math.random() * 600);
+                                    classe.setLargeur(Math.random() * 300);
+                                    Diagramme.getInstance().ajouterClasse(classe);
+
+                                    int i = 1;
+                                    boolean estNote = false;
+                                    ControleurVisibilite controleur = new ControleurVisibilite(classe);
+                                    while ((i < menu.getChildren().size()) && (!estNote)) {
+                                        if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
+                                            ((Label) menu.getChildren().get(i)).setText(classe.getNom());
+                                            menu.getChildren().get(i).setVisible(true);
+                                            menu.getChildren().get(i).setOnMouseClicked(controleur);
+                                            estNote = true;
+                                        }
+                                        i++;
+                                    }
+                                } catch (Exception ex) {
+                                    System.err.println(ex.getMessage());
+                                }
+                            }
+                            menuAfficherDiagramme.fire();
+                        }
+                    }
+                }
+                eventDrop.setDropCompleted(success);
+                eventDrop.consume();
+            });
+
+            btnOpenFolder.setOnAction(fileEvent -> {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("Sélectionner un dossier");
+                Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
+                java.io.File selectedDirectory = directoryChooser.showDialog(fileStage);
+
+                if (selectedDirectory != null) {
+                    java.io.File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
+
+                    if (files != null) {
+                        for (java.io.File file : files) {
+                            System.out.println("Fichier trouvé : " + file.getAbsolutePath());
+
+                            try {
+                                Classe classe = new Classe(file.getAbsolutePath());
+                                classe.setLongueur(Math.random() * 600);
+                                classe.setLargeur(Math.random() * 300);
+                                Diagramme.getInstance().ajouterClasse(classe);
+
+                                int i = 1;
+                                boolean estNote = false;
+                                ControleurVisibilite controleur = new ControleurVisibilite(classe);
+                                while ((i < menu.getChildren().size()) && (!estNote)) {
+                                    if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
+                                        ((Label) menu.getChildren().get(i)).setText(classe.getNom());
+                                        menu.getChildren().get(i).setVisible(true);
+                                        menu.getChildren().get(i).setOnMouseClicked(controleur);
+                                        estNote = true;
+                                    }
+                                    i++;
+                                }
+                            } catch (Exception ex) {
+                                System.err.println(ex.getMessage());
+                            }
+                        }
+                        menuAfficherDiagramme.fire();
+                    } else {
+                        System.out.println("Aucun fichier .class trouvé dans le dossier.");
+                    }
+                } else {
+                    System.out.println("Aucun dossier sélectionné.");
+                }
+            });
+
+            stackPane.getChildren().add(rectangle);
+        });
+
+
     }
 
 
