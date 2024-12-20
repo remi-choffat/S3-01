@@ -30,36 +30,30 @@ public class VueRelation extends Pane {
     public void actualiser() {
         this.getChildren().clear();
 
-        double startX = source.getBoundsInParent().getMaxX();
+        double startX = source.getBoundsInParent().getMinX() + source.getWidth() / 2;
         double startY = source.getBoundsInParent().getMinY() + source.getHeight() / 2;
-        double endX = destination.getBoundsInParent().getMinX();
+        double endX = destination.getBoundsInParent().getMinX() + destination.getWidth() / 2;
         double endY = destination.getBoundsInParent().getMinY() + destination.getHeight() / 2;
 
-        if (Math.abs(startX - endX) > Math.abs(startY - endY)) {
-            // Relation horizontale
-            if (startX > endX) {
-                startX = source.getBoundsInParent().getMinX();
-                endX = destination.getBoundsInParent().getMaxX();
-            } else {
-                startX = source.getBoundsInParent().getMaxX();
-                endX = destination.getBoundsInParent().getMinX();
-            }
-        } else {
-            // Relation verticale
-            if (startY > endY) {
-                startY = source.getBoundsInParent().getMinY();
-                endY = destination.getBoundsInParent().getMaxY();
-            } else {
-                startY = source.getBoundsInParent().getMaxY();
-                endY = destination.getBoundsInParent().getMinY();
-            }
-        }
+        // Calculer l'angle de la ligne
+        double angle = Math.atan2(endY - startY, endX - startX);
 
-        // Ajuster les points de départ et d'arrivée pour être le long des bords des classes
+        // Déterminer les bordures de la classe de destination
+        double deltaX = (destination.getWidth() / 2) / Math.abs(Math.cos(angle));
+        double deltaY = (destination.getHeight() / 2) / Math.abs(Math.sin(angle));
+
+        // Choisir le plus petit delta pour s'assurer que la ligne touche le bord de la classe
+        double offsetX = Math.min(deltaX, deltaY) * Math.cos(angle);
+        double offsetY = Math.min(deltaX, deltaY) * Math.sin(angle);
+
+        endX -= offsetX;
+        endY -= offsetY;
+
+        // Créer et ajouter la ligne
         Line line = new Line(startX, startY, endX, endY);
         this.getChildren().add(line);
 
-        double angle = Math.atan2(endY - startY, endX - startX);
+        // Créer et ajouter la tête de flèche
         double arrowLength = 15;
         double arrowWidth = 7;
 
