@@ -265,6 +265,7 @@ public class Main extends Application {
             exp.exportUML(primaryStage);
         });
 
+        // fonctionnalité pour ajouter un package
         menuAjouterPackage.setOnAction(e -> {
             stackPane.getChildren().clear();
             Button btnOpenFolder = new Button("Sélectionner un dossier");

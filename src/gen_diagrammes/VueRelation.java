@@ -8,7 +8,7 @@ import javafx.scene.shape.Polygon;
 /**
  * Affichage d'une relation entre deux classes
  */
-public class VueRelation extends Pane {
+public class VueRelation extends Pane implements Observateur{
 
     public enum TypeRelation {
         HERITAGE,
