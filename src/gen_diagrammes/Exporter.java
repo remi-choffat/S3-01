@@ -39,7 +39,7 @@ public record Exporter(Diagramme diagramme) {
             java.io.FileWriter fw = new java.io.FileWriter(file.getAbsolutePath());
             fw.write(uml.toString());
             fw.close();
-            System.out.println("Diagramme exporté avec succès dans le fichier : " + file.getAbsolutePath());
+            System.out.println("Fichier PlantUML enregistré : " + file.getAbsolutePath());
         } catch (java.io.IOException e) {
             System.err.println("Erreur lors de l'export du diagramme" + e.getMessage());
         }

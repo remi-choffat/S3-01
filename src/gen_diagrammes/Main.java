@@ -1,7 +1,6 @@
 package gen_diagrammes;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,14 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +59,7 @@ public class Main extends Application {
 
         //------------------------------------------------INTERFACE GRAPHIQUE------------------------------------------------
         primaryStage.setTitle("Plante UML");
+        primaryStage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
 
         // Création de la barre de menu
         MenuBar menuBar = new MenuBar();
@@ -74,35 +72,19 @@ public class Main extends Application {
         MenuItem menuExporterUML = new MenuItem("Exporter en PlantUML");
         Menu menuGenerer = new Menu("Générer");
         Menu menuAffichage = new Menu("Affichage");
+        MenuItem menuAfficherDiagramme = new MenuItem("Afficher le diagramme");
         menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
+        menuAffichage.getItems().addAll(menuAfficherDiagramme);
         menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
-        // TODO - Utiliser setOnAction pour définir les gestionnaires d'événements pour les éléments de menu
 
-        // création des boutons
-        Button btnAjouter = new Button("Ajouter");
-        Button btnSupprimer = new Button("Supprimer");
-        Button btnExporter = new Button("Exporter");
-        Button btnGenerer = new Button("Générer");
-        Button btnAffichage = new Button("Affichage");
-
-        // création d'une HBox pour les boutons de base
-        HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
-        hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
-
-        // création des boutons d'exportation
-        Button btnExporterImage = new Button("Exporter une image");
-        Button btnExporterUML = new Button("Exporter en PlantUML");
-        VBox vboxExport = new VBox(10, btnExporterImage, btnExporterUML);
-        vboxExport.setVisible(false);  // Initialement caché
 
         StackPane stackPane = new StackPane();
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(hbox); // TODO - Remplacer hbox par menuBar
+        borderPane.setTop(menuBar);
         borderPane.setCenter(stackPane);
-        borderPane.setBottom(vboxExport);
 
 
         //creation du menu affichant les classes ajoutees
@@ -111,7 +93,7 @@ public class Main extends Application {
         menu.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: grey;");
         menu.getChildren().add(texteMenu);
 
-        for (int i=0; i<20; i++) {
+        for (int i = 0; i < 20; i++) {
             Label l = new Label("");
             l.setVisible(false);
             l.setStyle("-fx-text-fill: blue;");
@@ -124,12 +106,9 @@ public class Main extends Application {
         Scene scene = new Scene(borderPane, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+
         //------------------------------------------------FIN INTERFACE GRAPHIQUE------------------------------------------------
 
-
-
-
-        final int[] etat = {0};
 
         // Ajout du gestionnaire d'événements de la molette pour zoomer/dezoomer
         stackPane.addEventFilter(ScrollEvent.SCROLL, event -> {
@@ -143,136 +122,100 @@ public class Main extends Application {
             event.consume();
         });
 
-        // gestionnaire d'événements pour le bouton "Ajouter"
-        btnAjouter.setOnAction(e -> {
-            if (etat[0] == 0) {
-                etat[0] = 1;
-                Button btnPackage = new Button("Ajouter un package");
-                Button btnClasse = new Button("Ajouter une classe");
-                VBox vbox = new VBox(10);
-                vbox.getChildren().setAll(btnPackage, btnClasse);
-                stackPane.getChildren().add(vbox);
 
+        // AJOUTER UNE CLASSE
+        menuAjouterClasse.setOnAction(event -> {
+            stackPane.getChildren().clear();
+            Button btnCenter = new Button("Sélectionner un fichier");
+            ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
+            imageView.setFitWidth(150);
+            imageView.setFitHeight(150);
+            VBox content = new VBox(10, imageView, btnCenter);
+            content.setPadding(new Insets(20));
+            content.setAlignment(Pos.CENTER); // Centrer le contenu
 
-                //------------------------------------------------BOUTON AJOUTER UNE CLASSE------------------------------------------------
-                btnClasse.setOnAction(event -> {
+            StackPane rectangle = new StackPane(content);
+            rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+            rectangle.setPrefSize(300, 200);  // Taille fixe pour le rectangle
+            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);  // Limite la taille maximale à la taille préférée
+            // Ajouter le gestionnaire d'événements de glisser-déposer
+            rectangle.setOnDragOver(eventDragOver -> {
+                if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
+                    eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+                eventDragOver.consume();
+            });
+
+            rectangle.setOnDragDropped(eventDrop -> {
+                var db = eventDrop.getDragboard();
+                boolean success = false;
+                if (db.hasFiles()) {
+                    success = true;
+                    String filePath = db.getFiles().get(0).getAbsolutePath();
+                    Classe classe = null;
+                    try {
+                        classe = new Classe(filePath);
+                        classe.setLongueur(Math.random() * 600);
+                        classe.setLargeur(Math.random() * 300);
+                        System.out.println("Classe " + classe.getNom() + " ajoutée");
+                    } catch (Exception ex) {
+                        System.err.println(ex.getMessage());
+                    }
+                    Diagramme.getInstance().ajouterClasse(classe);
                     stackPane.getChildren().clear();
-                    etat[0] = 0;
-                    Button btnCenter = new Button("Sélectionner un fichier");
-                    ImageView imageView = new ImageView(new Image("https://static.vecteezy.com/system/resources/previews/023/454/938/non_2x/important-document-upload-logo-design-vector.jpg"));
-                    imageView.setFitWidth(150);
-                    imageView.setFitHeight(150);
-                    VBox content = new VBox(10, imageView, btnCenter);
-                    content.setPadding(new Insets(20));
-                    content.setAlignment(Pos.CENTER); // Centrer le contenu
+                    menuAfficherDiagramme.fire();
+                }
+                eventDrop.setDropCompleted(success);
+                eventDrop.consume();
+            });
+            StackPane wrapper = new StackPane(rectangle);
+            wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
+            StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
 
-                    StackPane rectangle = new StackPane(content);
-                    rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-                    rectangle.setPrefSize(300, 200);  // Taille fixe pour le rectangle
-                    rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);  // Limite la taille maximale à la taille préférée
-                    // Ajouter le gestionnaire d'événements de glisser-déposer
-                    rectangle.setOnDragOver(eventDragOver -> {
-                        if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
-                            eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            // TODO - Supprimer la répétition de code
+            stackPane.getChildren().add(wrapper);
+            // Gestionnaire d'événements pour le bouton central
+            btnCenter.setOnAction(fileEvent -> {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Sélectionner un fichier");
+                // Ajouter un filtre pour les fichiers de classe Java compilés (.class)
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Classes Java compilées", "*.class"));
+                Stage fileStage = (Stage) btnCenter.getScene().getWindow();
+                java.io.File file = fileChooser.showOpenDialog(fileStage);
+                if (file != null) {
+                    Classe classe = null;
+                    try {
+                        classe = new Classe(file.getAbsolutePath());
+                        classe.setLongueur(Math.random() * 600);
+                        classe.setLargeur(Math.random() * 300);
+                        System.out.println("Classe " + classe.getNom() + " ajoutée");
+                    } catch (Exception ex) {
+                        System.err.println(ex.getMessage());
+                    }
+                    Diagramme.getInstance().ajouterClasse(classe);
+
+                    int i = 1;
+                    boolean estNote = false;
+                    ControleurVisibilite controleur = new ControleurVisibilite(classe);
+                    while ((i < menu.getChildren().size()) && (!estNote)) {
+                        if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
+                            ((Label) menu.getChildren().get(i)).setText(classe.getNom());
+                            menu.getChildren().get(i).setVisible(true);
+                            menu.getChildren().get(i).setOnMouseClicked(controleur);
+                            estNote = true;
                         }
-                        eventDragOver.consume();
-                    });
-                    //------------------------------------------------FIN BOUTTON AJOUTER UNE CLASSE------------------------------------------------
+                        i++;
+                    }
 
-
-
-                    //------------------------------------------------FICHIER GLISSE------------------------------------------------
-                    rectangle.setOnDragDropped(eventDrop -> {
-                        var db = eventDrop.getDragboard();
-                        boolean success = false;
-                        if (db.hasFiles()) {
-                            success = true;
-                            String filePath = db.getFiles().get(0).getAbsolutePath();
-                            System.out.println("Fichier déposé : " + filePath);
-                            Classe classe = null;
-                            try {
-                                classe = new Classe(filePath);
-                                classe.setLongueur(Math.random() * 600);
-                                classe.setLargeur(Math.random() * 300);
-                            } catch (Exception ex) {
-                                System.err.println(ex.getMessage());
-                            }
-                            Diagramme.getInstance().ajouterClasse(classe);
-                            stackPane.getChildren().clear();
-                            etat[0] = 0;
-                            btnAffichage.fire();
-                        }
-                        eventDrop.setDropCompleted(success);
-                        eventDrop.consume();
-                    });
-                    //------------------------------------------------FIN FICHIER GLISSE------------------------------------------------
-
-
-
-                    StackPane wrapper = new StackPane(rectangle);
-                    wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
-                    StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
-
-                    stackPane.getChildren().add(wrapper);
-
-                    //------------------------------------------------BOUTON POUR AJOUTER FICHIER------------------------------------------------
-                    btnCenter.setOnAction(fileEvent -> {
-                        FileChooser fileChooser = new FileChooser();
-                        fileChooser.setTitle("Sélectionner un fichier");
-                        Stage fileStage = (Stage) btnCenter.getScene().getWindow();
-                        java.io.File file = fileChooser.showOpenDialog(fileStage);
-                        if (file != null) {
-                            System.out.println("Fichier sélectionné : " + file.getAbsolutePath());
-                            Classe classe = null;
-                            try {
-                                classe = new Classe(file.getAbsolutePath());
-                                classe.setLongueur(Math.random() * 600);
-                                classe.setLargeur(Math.random() * 300);
-                            } catch (Exception ex) {
-                                System.err.println(ex.getMessage());
-                            }
-
-                            Diagramme.getInstance().ajouterClasse(classe);
-
-                            int i=1;
-                            boolean estNote = false;
-                            ControleurVisibilite controleur = new ControleurVisibilite(classe);
-                            while ((i<menu.getChildren().size())&&(!estNote)) {
-                                if (((Label)menu.getChildren().get(i)).getText().isEmpty()) {
-                                    ((Label)menu.getChildren().get(i)).setText(classe.getNom());
-                                    menu.getChildren().get(i).setVisible(true);
-                                    menu.getChildren().get(i).setOnMouseClicked(controleur);
-                                    estNote = true;
-                                }
-                                i++;
-                            }
-                            stackPane.getChildren().clear();
-                            etat[0] = 0;
-                            btnAffichage.fire();
-                        }
-                    });
-                    //------------------------------------------------FIN BOUTON POUR AJOUTER FICHIER------------------------------------------------
-                });
-            } else {
-                etat[0] = 0;
-                stackPane.getChildren().clear();
-                btnAffichage.fire();
-            }
+                    stackPane.getChildren().clear();
+                    menuAfficherDiagramme.fire();
+                }
+            });
         });
 
 
-
-        //------------------------------------------------BOUTON POUR AFFICHER LE DIAGRAMME------------------------------------------------
-        btnAffichage.setOnAction(e -> {
-//            Classe classe, classe2;
-//            try {
-//                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
-//                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
-//            } catch (Exception ex) {
-//                throw new RuntimeException(ex);
-//            }
-//            Diagramme.getInstance().ajouterClasse(classe);
-//            Diagramme.getInstance().ajouterClasse(classe2);
+        // AFFICHER LE DIAGRAMME
+        menuAfficherDiagramme.setOnAction(e -> {
             stackPane.getChildren().clear();
             Diagramme diagramme = Diagramme.getInstance();
             Pane ligneClasse = new Pane();
@@ -306,17 +249,17 @@ public class Main extends Application {
             }
         });
 
-        // gestionnaire d'événements pour le bouton "Exporter"
-        btnExporter.setOnAction(e -> vboxExport.setVisible(!vboxExport.isVisible()));
 
-        // gestionnaire d'événements pour le bouton "Exporter une image"
-        btnExporterImage.setOnAction(e -> {
+        // EXPORTER UNE IMAGE
+        menuExporterImage.setOnAction(e -> {
+            // Affiche le diagramme avant de faire la capture d'écran
+            menuAfficherDiagramme.fire();
             Exporter exp = new Exporter(Diagramme.getInstance());
             exp.exportImage(primaryStage, stackPane);
         });
 
-        // gestionnaire d'événements pour le bouton "Exporter en PlantUML"
-        btnExporterUML.setOnAction(e -> {
+        // EXPORTER UN PLANTUML
+        menuExporterUML.setOnAction(e -> {
             Exporter exp = new Exporter(Diagramme.getInstance());
             exp.exportUML(primaryStage);
         });
