@@ -4,11 +4,13 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
@@ -16,12 +18,17 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe principale de l'application
  */
 public class Main extends Application {
+
+    private List<VueRelation> relations = new ArrayList<>();
+    private double scaleFactor = 1.0;
+
 
     /**
      * Méthode principale
@@ -31,34 +38,17 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
 
+        String ANSI_RESET = "\u001B[0m";
+        String ANSI_GREEN = "\u001B[32m";
+        String ANSI_BLUE = "\u001B[34m";
+
+        System.out.println(ANSI_GREEN + "╔══════════════════╗" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "║ " + ANSI_BLUE + "   Plante UML   " + ANSI_GREEN + " ║" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "╚══════════════════╝" + ANSI_RESET);
+
         System.setProperty("jps.track.ap.dependencies", "true");
+        Application.launch(Main.class, args);
 
-        // Lance l'interface graphique dans un thread séparé
-        new Thread(() -> Application.launch(Main.class, args)).start();
-
-        // Demande les chemins des fichiers .class en console
-        Diagramme d = Diagramme.getInstance();
-        if (args.length == 1) {
-            Diagramme.initialize(args[0], null);
-        }
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Entrez un chemin de classe (chemin absolu) : ");
-        String res = sc.nextLine();
-        while (!res.equals("q")) {
-            if (!res.equals("*export")) {
-                try {
-                    d.ajouterClasse(new Classe(res));
-                    System.out.println(d);
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
-            } else {
-                Exporter exp = new Exporter(d);
-                exp.exportUML();
-            }
-            System.out.println("Entrez un chemin de classe, ou tapez *export pour exporter le diagramme : ");
-            res = sc.nextLine();
-        }
     }
 
 
@@ -73,6 +63,22 @@ public class Main extends Application {
         //------------------------------------------------INTERFACE GRAPHIQUE------------------------------------------------
         primaryStage.setTitle("Plante UML");
 
+        // Création de la barre de menu
+        MenuBar menuBar = new MenuBar();
+        Menu menuAjouter = new Menu("Ajouter");
+        MenuItem menuAjouterPackage = new MenuItem("Package");
+        MenuItem menuAjouterClasse = new MenuItem("Classe");
+        Menu menuSupprimer = new Menu("Supprimer");
+        Menu menuExporter = new Menu("Exporter");
+        MenuItem menuExporterImage = new MenuItem("Exporter une image");
+        MenuItem menuExporterUML = new MenuItem("Exporter en PlantUML");
+        Menu menuGenerer = new Menu("Générer");
+        Menu menuAffichage = new Menu("Affichage");
+        menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
+        menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
+        menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
+        // TODO - Utiliser setOnAction pour définir les gestionnaires d'événements pour les éléments de menu
+
         // création des boutons
         Button btnAjouter = new Button("Ajouter");
         Button btnSupprimer = new Button("Supprimer");
@@ -84,16 +90,19 @@ public class Main extends Application {
         HBox hbox = new HBox(10);  // 10 est l'espacement entre les boutons
         hbox.getChildren().addAll(btnAjouter, btnSupprimer, btnExporter, btnGenerer, btnAffichage);
 
-//        // création d'une VBox pour les nouveaux boutons
-//        VBox vbox = new VBox(10);
-//        vbox.setVisible(false);  // Initialement caché
+        // création des boutons d'exportation
+        Button btnExporterImage = new Button("Exporter une image");
+        Button btnExporterUML = new Button("Exporter en PlantUML");
+        VBox vboxExport = new VBox(10, btnExporterImage, btnExporterUML);
+        vboxExport.setVisible(false);  // Initialement caché
 
         StackPane stackPane = new StackPane();
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(hbox);
+        borderPane.setTop(hbox); // TODO - Remplacer hbox par menuBar
         borderPane.setCenter(stackPane);
+        borderPane.setBottom(vboxExport);
 
 
         //creation du menu affichant les classes ajoutees
@@ -121,6 +130,18 @@ public class Main extends Application {
 
 
         final int[] etat = {0};
+
+        // Ajout du gestionnaire d'événements de la molette pour zoomer/dezoomer
+        stackPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaY() > 0) {
+                scaleFactor *= 1.1;
+            } else {
+                scaleFactor /= 1.1;
+            }
+            stackPane.setScaleX(scaleFactor);
+            stackPane.setScaleY(scaleFactor);
+            event.consume();
+        });
 
         // gestionnaire d'événements pour le bouton "Ajouter"
         btnAjouter.setOnAction(e -> {
@@ -166,15 +187,15 @@ public class Main extends Application {
                         boolean success = false;
                         if (db.hasFiles()) {
                             success = true;
-                            String filePath = db.getFiles().getFirst().getAbsolutePath();
+                            String filePath = db.getFiles().get(0).getAbsolutePath();
                             System.out.println("Fichier déposé : " + filePath);
-                            Classe classe;
+                            Classe classe = null;
                             try {
                                 classe = new Classe(filePath);
                                 classe.setLongueur(Math.random() * 600);
                                 classe.setLargeur(Math.random() * 300);
                             } catch (Exception ex) {
-                                throw new RuntimeException(ex);
+                                System.err.println(ex.getMessage());
                             }
                             Diagramme.getInstance().ajouterClasse(classe);
                             stackPane.getChildren().clear();
@@ -191,6 +212,7 @@ public class Main extends Application {
                     StackPane wrapper = new StackPane(rectangle);
                     wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
                     StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
+
                     stackPane.getChildren().add(wrapper);
 
                     //------------------------------------------------BOUTON POUR AJOUTER FICHIER------------------------------------------------
@@ -201,13 +223,13 @@ public class Main extends Application {
                         java.io.File file = fileChooser.showOpenDialog(fileStage);
                         if (file != null) {
                             System.out.println("Fichier sélectionné : " + file.getAbsolutePath());
-                            Classe classe;
+                            Classe classe = null;
                             try {
                                 classe = new Classe(file.getAbsolutePath());
                                 classe.setLongueur(Math.random() * 600);
                                 classe.setLargeur(Math.random() * 300);
                             } catch (Exception ex) {
-                                throw new RuntimeException(ex);
+                                System.err.println(ex.getMessage());
                             }
 
                             Diagramme.getInstance().ajouterClasse(classe);
@@ -242,21 +264,114 @@ public class Main extends Application {
 
         //------------------------------------------------BOUTON POUR AFFICHER LE DIAGRAMME------------------------------------------------
         btnAffichage.setOnAction(e -> {
+//            Classe classe, classe2;
+//            try {
+//                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
+//                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
+//            } catch (Exception ex) {
+//                throw new RuntimeException(ex);
+//            }
+//            Diagramme.getInstance().ajouterClasse(classe);
+//            Diagramme.getInstance().ajouterClasse(classe2);
             stackPane.getChildren().clear();
             Diagramme diagramme = Diagramme.getInstance();
             Pane ligneClasse = new Pane();
+            Pane relationPane = new Pane();
+            stackPane.getChildren().addAll(relationPane, ligneClasse);
+
             for (Classe c : diagramme.getListeClasses()) {
-                System.out.println(1);
                 VueClasse vueClasse = new VueClasse(c);
+                makeDraggable(vueClasse);
                 vueClasse.relocate(c.getLongueur(), c.getLargeur());
-                System.out.println(Diagramme.getInstance().getListeObservateurs().size());
                 Diagramme.getInstance().ajouterObservateur(vueClasse);
                 ligneClasse.getChildren().add(vueClasse);
             }
-            stackPane.getChildren().add(ligneClasse);
+
+            // Ajouter des relations
+            for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
+                VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
+                VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
+                VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
+                VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+                relations.add(vueRelation);
+                relationPane.getChildren().add(vueRelation);
+            }
+
+            // Mettre à jour les relations à chaque déplacement de classe
+            for (Node node : ligneClasse.getChildren()) {
+                if (node instanceof VueClasse vueClasse) {
+                    vueClasse.layoutXProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+                    vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+                }
+            }
+        });
+
+        // gestionnaire d'événements pour le bouton "Exporter"
+        btnExporter.setOnAction(e -> vboxExport.setVisible(!vboxExport.isVisible()));
+
+        // gestionnaire d'événements pour le bouton "Exporter une image"
+        btnExporterImage.setOnAction(e -> {
+            Exporter exp = new Exporter(Diagramme.getInstance());
+            exp.exportImage(primaryStage, stackPane);
+        });
+
+        // gestionnaire d'événements pour le bouton "Exporter en PlantUML"
+        btnExporterUML.setOnAction(e -> {
+            Exporter exp = new Exporter(Diagramme.getInstance());
+            exp.exportUML(primaryStage);
+        });
+    }
+
+
+    private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
+        return switch (relation.getType()) {
+            case "heritage" -> VueRelation.TypeRelation.HERITAGE;
+            case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
+            default -> VueRelation.TypeRelation.ASSOCIATION;
+        };
+    }
+
+
+    /**
+     * Ajoute la possibilité de déplacer un nœud par glisser-déposer
+     *
+     * @param node Noeud à rendre déplaçable
+     */
+    private void makeDraggable(Node node) {
+        final double[] dragDelta = new double[2];
+
+        node.setOnMousePressed(e -> {
+            dragDelta[0] = node.getLayoutX() - e.getSceneX();
+            dragDelta[1] = node.getLayoutY() - e.getSceneY();
+            node.setCursor(javafx.scene.Cursor.MOVE);
+        });
+
+        node.setOnMouseReleased(e -> node.setCursor(javafx.scene.Cursor.HAND));
+
+        node.setOnMouseDragged(e -> {
+            node.setLayoutX(e.getSceneX() + dragDelta[0]);
+            node.setLayoutY(e.getSceneY() + dragDelta[1]);
         });
         //------------------------------------------------FIN BOUTON POUR AFFICHER LE DIAGRAMME------------------------------------------------
 
 
+        node.setOnMouseEntered(e -> {
+            if (!e.isPrimaryButtonDown()) {
+                node.setCursor(javafx.scene.Cursor.HAND);
+            }
+        });
+
+        node.setOnMouseExited(e -> {
+            if (!e.isPrimaryButtonDown()) {
+                node.setCursor(javafx.scene.Cursor.DEFAULT);
+            }
+        });
     }
+
+    private void updateRelations() {
+        for (VueRelation vueRelation : relations) {
+            vueRelation.actualiser();
+        }
+    }
+
 }

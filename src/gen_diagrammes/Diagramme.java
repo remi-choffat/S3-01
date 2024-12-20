@@ -80,6 +80,9 @@ public class Diagramme implements Sujet {
      * @param c classe à ajouter au diagramme
      */
     public void ajouterClasse(Classe c) {
+        if (c == null) {
+            return;
+        }
         this.listeClasses.add(c);
         this.updateClasses();
     }
@@ -170,5 +173,5 @@ public class Diagramme implements Sujet {
         }
         return null;
     }
-    
+
 }

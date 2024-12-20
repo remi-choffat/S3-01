@@ -64,5 +64,4 @@ public class VueClasse extends VBox implements Observateur {
             this.getChildren().addAll(h1, h2, h3);
         }
     }
-
 }
