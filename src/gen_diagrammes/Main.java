@@ -1,16 +1,20 @@
 package gen_diagrammes;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.util.Scanner;
 
@@ -66,6 +70,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        //------------------------------------------------INTERFACE GRAPHIQUE------------------------------------------------
         primaryStage.setTitle("Plante UML");
 
         // création des boutons
@@ -90,10 +95,30 @@ public class Main extends Application {
         borderPane.setTop(hbox);
         borderPane.setCenter(stackPane);
 
+
+        //creation du menu affichant les classes ajoutees
+        VBox menu = new VBox(21);
+        Text texteMenu = new Text("----- Liste des classes ajoutées : -----");
+        menu.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: grey;");
+        menu.getChildren().add(texteMenu);
+
+        for (int i=0; i<20; i++) {
+            Label l = new Label("");
+            l.setVisible(false);
+            l.setStyle("-fx-text-fill: blue;");
+            menu.getChildren().add(l);
+        }
+
+        borderPane.setLeft(menu);
+
         // création de la scène et l'ajouter à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+        //------------------------------------------------FIN INTERFACE GRAPHIQUE------------------------------------------------
+
+
+
 
         final int[] etat = {0};
 
@@ -107,7 +132,8 @@ public class Main extends Application {
                 vbox.getChildren().setAll(btnPackage, btnClasse);
                 stackPane.getChildren().add(vbox);
 
-                // Gestionnaire d'événements pour le bouton "Ajouter une classe"
+
+                //------------------------------------------------BOUTON AJOUTER UNE CLASSE------------------------------------------------
                 btnClasse.setOnAction(event -> {
                     stackPane.getChildren().clear();
                     etat[0] = 0;
@@ -130,7 +156,11 @@ public class Main extends Application {
                         }
                         eventDragOver.consume();
                     });
+                    //------------------------------------------------FIN BOUTTON AJOUTER UNE CLASSE------------------------------------------------
 
+
+
+                    //------------------------------------------------FICHIER GLISSE------------------------------------------------
                     rectangle.setOnDragDropped(eventDrop -> {
                         var db = eventDrop.getDragboard();
                         boolean success = false;
@@ -154,12 +184,16 @@ public class Main extends Application {
                         eventDrop.setDropCompleted(success);
                         eventDrop.consume();
                     });
+                    //------------------------------------------------FIN FICHIER GLISSE------------------------------------------------
+
+
+
                     StackPane wrapper = new StackPane(rectangle);
                     wrapper.setPrefSize(800, 600);  // Taille fixe pour le conteneur
                     StackPane.setAlignment(rectangle, Pos.CENTER);  // Centrer le rectangle dans le conteneur
                     stackPane.getChildren().add(wrapper);
 
-                    // Gestionnaire d'événements pour le bouton central
+                    //------------------------------------------------BOUTON POUR AJOUTER FICHIER------------------------------------------------
                     btnCenter.setOnAction(fileEvent -> {
                         FileChooser fileChooser = new FileChooser();
                         fileChooser.setTitle("Sélectionner un fichier");
@@ -175,11 +209,27 @@ public class Main extends Application {
                             } catch (Exception ex) {
                                 throw new RuntimeException(ex);
                             }
+
                             Diagramme.getInstance().ajouterClasse(classe);
+
+                            int i=1;
+                            boolean estNote = false;
+                            ControleurVisibilite controleur = new ControleurVisibilite(classe);
+                            while ((i<menu.getChildren().size())&&(!estNote)) {
+                                if (((Label)menu.getChildren().get(i)).getText().isEmpty()) {
+                                    ((Label)menu.getChildren().get(i)).setText(classe.getNom());
+                                    menu.getChildren().get(i).setVisible(true);
+                                    menu.getChildren().get(i).setOnMouseClicked(controleur);
+                                    estNote = true;
+                                }
+                                i++;
+                            }
                             stackPane.getChildren().clear();
+                            etat[0] = 0;
                             btnAffichage.fire();
                         }
                     });
+                    //------------------------------------------------FIN BOUTON POUR AJOUTER FICHIER------------------------------------------------
                 });
             } else {
                 etat[0] = 0;
@@ -188,25 +238,25 @@ public class Main extends Application {
             }
         });
 
+
+
+        //------------------------------------------------BOUTON POUR AFFICHER LE DIAGRAMME------------------------------------------------
         btnAffichage.setOnAction(e -> {
-//            Classe classe, classe2;
-//            try {
-//                classe = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Attribut.class");
-//                classe2 = new Classe("C:\\Users\\tulin\\Documents\\git\\S3-01\\out\\production\\S3-01\\gen_diagrammes\\Exporter.class");
-//            } catch (Exception ex) {
-//                throw new RuntimeException(ex);
-//            }
-//            Diagramme.getInstance().ajouterClasse(classe);
-//            Diagramme.getInstance().ajouterClasse(classe2);
             stackPane.getChildren().clear();
             Diagramme diagramme = Diagramme.getInstance();
             Pane ligneClasse = new Pane();
             for (Classe c : diagramme.getListeClasses()) {
+                System.out.println(1);
                 VueClasse vueClasse = new VueClasse(c);
                 vueClasse.relocate(c.getLongueur(), c.getLargeur());
+                System.out.println(Diagramme.getInstance().getListeObservateurs().size());
+                Diagramme.getInstance().ajouterObservateur(vueClasse);
                 ligneClasse.getChildren().add(vueClasse);
             }
             stackPane.getChildren().add(ligneClasse);
         });
+        //------------------------------------------------FIN BOUTON POUR AFFICHER LE DIAGRAMME------------------------------------------------
+
+
     }
 }

@@ -32,6 +32,7 @@ public class Diagramme implements Sujet {
     /**
      * Liste des observateurs
      */
+    @Getter
     private ArrayList<Observateur> listeObservateurs;
 
 
@@ -41,6 +42,7 @@ public class Diagramme implements Sujet {
     private Diagramme() {
         this.nomPackage = null;
         this.listeClasses = new ArrayList<>();
+        this.listeObservateurs = new ArrayList<>();
     }
 
 

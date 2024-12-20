@@ -1,0 +1,112 @@
+```@startuml
+title Diagramme de classes de l'application - Itération 3
+
+class Diagramme <<Singleton>> {
+-nomPackage : String
++ {static} getInstance() : Diagramme
++ {static}initialize(String, ArrayList) : void
++ ajouterClasse(Classe) : void
++ getListeClasses() : ArrayList
++ getClasse(String) : Classe
++ supprimerClasse(Classe) : void
++ setNomPackage(String) : void
++ getNomPackage() : String
++ ajouterObservateur(Observateur) : void
++ notifierObservateurs() : void
++ supprimerObservateur(Observateur) : void
++ updateClasses() : void
++ toString() : String
+}
+Diagramme ..|> Sujet
+Diagramme --> Classe : listeClasses
+Diagramme --> Diagramme : instance
+Diagramme --> Observateur : listeObservateurs
+
+class Attribut {
+-nom : String
+-typeAcces : String
+-type : String
+-visible : boolean
++ toString() : String
++ setVisible(boolean) : void
++ isVisible() : boolean
+}
+
+class AttributClasse {
+-cardinalitePointeur : String
+-cardinalitePointee : String
++ toString() : String
++ setCardinalitePointee(String) : void
++ getCardinalitePointee() : String
++ getCardinalitePointeur() : String
++ setCardinalitePointeur(String) : void
++ getAttribut() : Classe
+}
+AttributClasse --|> Attribut
+AttributClasse --> Classe : attribut
+
+class Methode {
+-nom : String
+-acces : String
+-typeRetour : String
+-parametres : ArrayList<String>
+-visible : boolean
++ setVisible(boolean) : void
++ isVisible() : boolean
++ toString() : String
+}
+
+class Exporter <<Record>> {
++ diagramme() : Diagramme
++ exportUML() : void
+}
+Exporter --> Diagramme : diagramme
+
+class Classe {
+-nom : String
+-acces : String
+-type : String
+-visible : boolean
+-longueur : double
+-largeur : double
++ getLongueur() : double
++ setLongueur(double) : void
++ addParent(Classe) : void
+- adjustPath(String, int) : String
++ addMethode(Methode) : void
++ setVisible(boolean) : void
++ getLargeur() : double
++ setLargeur(double) : void
++ updateAttributs() : void
++ getMethodes() : ArrayList
++ getAttributs() : ArrayList
++ addAttribut(Attribut) : void
++ isVisible() : boolean
++ toPlantUML() : String
++ toString() : String
+}
+Classe --> Classe : parents
+Classe --> Attribut : attributs
+Classe --> Methode : methodes
+
+interface Sujet {
+ ajouterObservateur(Observateur) : void
+ notifierObservateurs() : void
+ supprimerObservateur(Observateur) : void
+}
+interface Observateur {
+ actualiser() : void
+}
+class VueClasse ##royalBlue {
++  actualiser() : void
+}
+VueClasse ..|> Observateur
+VueClasse --|> VBox
+VueClasse --> Classe : classe
+
+class ControleurVisibilite {
++ handle(ActionEvent) : void
+}
+ControleurVisibilite --> Classe : classe
+@enduml
+```

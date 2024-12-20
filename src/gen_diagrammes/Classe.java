@@ -61,7 +61,6 @@ public class Classe {
     /**
      * Si la classe est visible ou non
      */
-    @Setter
     private boolean visible;
 
     /**
@@ -295,6 +294,11 @@ public class Classe {
             }
         }
 
+    }
+
+    public void setVisibilite(boolean etat) {
+        this.visible = etat;
+        Diagramme.getInstance().notifierObservateurs();
     }
 
 
