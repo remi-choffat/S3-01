@@ -5,10 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
@@ -29,6 +26,7 @@ public class Main extends Application {
 
     private List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
+    private StackPane stackPane;
 
 
     /**
@@ -81,18 +79,23 @@ public class Main extends Application {
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
         menuAffichage.getItems().addAll(menuAfficherDiagramme);
         menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
+        menuBar.setViewOrder(-1);
 
-
-        StackPane stackPane = new StackPane();
+        this.stackPane = new StackPane();
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(menuBar);
         borderPane.setCenter(stackPane);
 
-        // création du menu affichant les classes ajoutées
+        // Création du menu affichant les classes ajoutées
         VueListeClasses vueListeClasses = new VueListeClasses();
-        borderPane.setLeft(vueListeClasses);
+        // ScrollPane pour afficher toute la liste
+        ScrollPane scrollPane = new ScrollPane(vueListeClasses);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFocusTraversable(false);
+        borderPane.setLeft(scrollPane);
         Diagramme.getInstance().ajouterObservateur(vueListeClasses);
 
         // création de la scène et l'ajouter à la fenêtre principale
@@ -236,14 +239,14 @@ public class Main extends Application {
 
         // AFFICHER LE DIAGRAMME
         menuAfficherDiagramme.setOnAction(e -> {
-            afficherDiagramme(stackPane);
+            afficherDiagramme();
         });
 
 
         // EXPORTER UNE IMAGE
         menuExporterImage.setOnAction(e -> {
             // Affiche le diagramme avant de faire la capture d'écran
-            afficherDiagramme(stackPane);
+            afficherDiagramme();
             ;
             Exporter exp = new Exporter(Diagramme.getInstance());
             exp.exportImage(primaryStage, stackPane);
@@ -290,8 +293,12 @@ public class Main extends Application {
         node.setOnMouseReleased(e -> node.setCursor(javafx.scene.Cursor.HAND));
 
         node.setOnMouseDragged(e -> {
-            node.setLayoutX(e.getSceneX() + dragDelta[0]);
-            node.setLayoutY(e.getSceneY() + dragDelta[1]);
+            double newX = e.getSceneX() + dragDelta[0];
+            double newY = e.getSceneY() + dragDelta[1];
+            if (newX > 0) {
+                node.setLayoutX(newX);
+                node.setLayoutY(newY);
+            }
         });
 
         node.setOnMouseEntered(e -> {
@@ -339,16 +346,14 @@ public class Main extends Application {
             System.err.println(ex.getMessage());
         }
         stackPane.getChildren().clear();
-        afficherDiagramme(stackPane);
+        afficherDiagramme();
     }
 
 
     /**
      * Affiche le diagramme
-     *
-     * @param stackPane StackPane
      */
-    private void afficherDiagramme(StackPane stackPane) {
+    private void afficherDiagramme() {
 
         stackPane.getChildren().clear();
         Diagramme diagramme = Diagramme.getInstance();
