@@ -104,6 +104,9 @@ public class Classe {
      * @param type  type de la classe
      */
     public Classe(String nom, String acces, String type) {
+        if (nom == null || nom.trim().isEmpty()) {
+            nom = null;
+        }
         this.nom = nom;
         this.acces = acces;
         this.type = type;
@@ -174,7 +177,11 @@ public class Classe {
         }
 
         // Récupère le nom de la classe
-        this.nom = classe.getSimpleName();
+        String nom = classe.getSimpleName();
+        if (nom.trim().isEmpty()) {
+            nom = null;
+        }
+        this.nom = nom;
 
         // Récupère le type d'accès de la classe (public, private, protected)
         switch (classe.getModifiers()) {

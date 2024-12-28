@@ -47,11 +47,15 @@ public class VueClasse extends VBox implements Observateur {
             }
 
             for (int i = 0; i < this.classe.getMethodes().size(); i++) {
-                Methode methode = this.classe.getMethodes().get(i);
-                if (methode.isVisible()) {
-                    texteMethodes.append(methode);
-                    if (i < this.classe.getMethodes().size() - 1) {
-                        texteMethodes.append("\n");
+                String nomMethode = this.classe.getMethodes().get(i).getNom();
+                // N'affiche pas les méthodes lambda (générées par Java)
+                if (!nomMethode.contains("lambda$")) {
+                    Methode methode = this.classe.getMethodes().get(i);
+                    if (methode.isVisible()) {
+                        texteMethodes.append(methode);
+                        if (i < this.classe.getMethodes().size() - 1) {
+                            texteMethodes.append("\n");
+                        }
                     }
                 }
             }

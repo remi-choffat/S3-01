@@ -100,8 +100,8 @@ public class Main extends Application {
         for (int i = 0; i < 20; i++) {
             Label l = new Label("");
             l.setVisible(false);
-            l.setStyle("-fx-text-fill: #3434ba;");
-            l.setPadding(new Insets(20, 0, 0, 0));
+            l.setStyle("-fx-text-fill: #1E6C93;");
+            l.setPadding(new Insets(5, 0, 0, 0));
             menu.getChildren().add(l);
         }
 
@@ -340,16 +340,19 @@ public class Main extends Application {
     private void ajouterClasseDepuisFichier(File file, VBox menu, StackPane stackPane) {
         try {
             Classe classe = new Classe(file.getAbsolutePath());
-            classe.setLongueur(Math.random() * 600);
-            classe.setLargeur(Math.random() * 300);
-            Diagramme.getInstance().ajouterClasse(classe);
-            System.out.println("Classe " + classe.getNom() + " ajoutée");
+            // N'affiche pas les classes anonymes (générées par Java)
+            if (classe.getNom() != null) {
+                classe.setLongueur(Math.random() * 600);
+                classe.setLargeur(Math.random() * 300);
+                Diagramme.getInstance().ajouterClasse(classe);
+                System.out.println("Classe " + classe.getNom() + " ajoutée");
+            }
 
             int i = 1;
             boolean estNote = false;
             ControleurVisibilite controleur = new ControleurVisibilite(classe);
             while ((i < menu.getChildren().size()) && (!estNote)) {
-                if (((Label) menu.getChildren().get(i)).getText().isEmpty()) {
+                if (((Label) menu.getChildren().get(i)).getText() == null || ((Label) menu.getChildren().get(i)).getText().isEmpty()) {
                     ((Label) menu.getChildren().get(i)).setText(classe.getNom());
                     menu.getChildren().get(i).setVisible(true);
                     menu.getChildren().get(i).setOnMouseClicked(controleur);
