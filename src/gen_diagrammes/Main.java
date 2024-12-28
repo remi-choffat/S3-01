@@ -5,13 +5,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -88,24 +90,10 @@ public class Main extends Application {
         borderPane.setTop(menuBar);
         borderPane.setCenter(stackPane);
 
-
-        //creation du menu affichant les classes ajoutees
-        VBox menu = new VBox(21);
-        menu.setPadding(new Insets(10));
-        Text texteMenu = new Text("    Liste des classes du diagramme :    ");
-        texteMenu.setStyle("-fx-text-fill: #ffffff;");
-        menu.setStyle("-fx-border-color: #919090; -fx-border-width: 1; -fx-background-color: #c6c4c4;");
-        menu.getChildren().add(texteMenu);
-
-        for (int i = 0; i < 20; i++) {
-            Label l = new Label("");
-            l.setVisible(false);
-            l.setStyle("-fx-text-fill: #1E6C93;");
-            l.setPadding(new Insets(5, 0, 0, 0));
-            menu.getChildren().add(l);
-        }
-
-        borderPane.setLeft(menu);
+        // création du menu affichant les classes ajoutées
+        VueListeClasses vueListeClasses = new VueListeClasses();
+        borderPane.setLeft(vueListeClasses);
+        Diagramme.getInstance().ajouterObservateur(vueListeClasses);
 
         // création de la scène et l'ajouter à la fenêtre principale
         Scene scene = new Scene(borderPane, 800, 600);
@@ -156,7 +144,7 @@ public class Main extends Application {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    ajouterClasseDepuisFichier(db.getFiles().get(0), menu, stackPane);
+                    ajouterClasseDepuisFichier(db.getFiles().get(0), vueListeClasses, stackPane);
                 }
                 eventDrop.setDropCompleted(success);
                 eventDrop.consume();
@@ -169,7 +157,7 @@ public class Main extends Application {
                 Stage fileStage = (Stage) btnCenter.getScene().getWindow();
                 File file = fileChooser.showOpenDialog(fileStage);
                 if (file != null) {
-                    ajouterClasseDepuisFichier(file, menu, stackPane);
+                    ajouterClasseDepuisFichier(file, vueListeClasses, stackPane);
                 }
             });
 
@@ -212,7 +200,7 @@ public class Main extends Application {
                         File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                         if (files != null) {
                             for (File file : files) {
-                                ajouterClasseDepuisFichier(file, menu, stackPane);
+                                ajouterClasseDepuisFichier(file, vueListeClasses, stackPane);
                             }
                         }
                     }
@@ -230,7 +218,7 @@ public class Main extends Application {
                     File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                     if (files != null) {
                         for (File file : files) {
-                            ajouterClasseDepuisFichier(file, menu, stackPane);
+                            ajouterClasseDepuisFichier(file, vueListeClasses, stackPane);
                         }
                     } else {
                         System.err.println("Aucun fichier .class trouvé dans le dossier");
@@ -337,7 +325,7 @@ public class Main extends Application {
      * @param menu      Menu : Liste des classes du diagramme
      * @param stackPane StackPane : Conteneur du diagramme
      */
-    private void ajouterClasseDepuisFichier(File file, VBox menu, StackPane stackPane) {
+    private void ajouterClasseDepuisFichier(File file, VueListeClasses menu, StackPane stackPane) {
         try {
             Classe classe = new Classe(file.getAbsolutePath());
             // N'affiche pas les classes anonymes (générées par Java)
@@ -347,20 +335,6 @@ public class Main extends Application {
                 Diagramme.getInstance().ajouterClasse(classe);
                 System.out.println("Classe " + classe.getNom() + " ajoutée");
             }
-
-            int i = 1;
-            boolean estNote = false;
-            ControleurVisibilite controleur = new ControleurVisibilite(classe);
-            while ((i < menu.getChildren().size()) && (!estNote)) {
-                if (((Label) menu.getChildren().get(i)).getText() == null || ((Label) menu.getChildren().get(i)).getText().isEmpty()) {
-                    ((Label) menu.getChildren().get(i)).setText(classe.getNom());
-                    menu.getChildren().get(i).setVisible(true);
-                    menu.getChildren().get(i).setOnMouseClicked(controleur);
-                    estNote = true;
-                }
-                i++;
-            }
-
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
         }

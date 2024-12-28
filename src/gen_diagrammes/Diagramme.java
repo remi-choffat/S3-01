@@ -95,6 +95,7 @@ public class Diagramme implements Sujet {
      */
     public void supprimerClasse(Classe c) {
         this.listeClasses.remove(c);
+        this.updateClasses();
     }
 
 
@@ -123,6 +124,7 @@ public class Diagramme implements Sujet {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();
         }
+        this.notifierObservateurs();
     }
 
 
