@@ -8,7 +8,7 @@ import javafx.scene.shape.Polygon;
 /**
  * Affichage d'une relation entre deux classes
  */
-public class VueRelation extends Pane implements Observateur{
+public class VueRelation extends Pane implements Observateur {
 
     public enum TypeRelation {
         HERITAGE,
@@ -27,63 +27,73 @@ public class VueRelation extends Pane implements Observateur{
         this.actualiser();
     }
 
+
+    /**
+     * Actualise la vue de la relation
+     */
     public void actualiser() {
         this.getChildren().clear();
 
-        double startX = source.getBoundsInParent().getMinX() + source.getWidth() / 2;
-        double startY = source.getBoundsInParent().getMinY() + source.getHeight() / 2;
-        double endX = destination.getBoundsInParent().getMinX() + destination.getWidth() / 2;
-        double endY = destination.getBoundsInParent().getMinY() + destination.getHeight() / 2;
+        // Affiche la flèche si les deux classes concernées sont affichées
+        if (this.source.estVisibleClasse() && this.destination.estVisibleClasse()) {
 
-        // Calculer l'angle de la ligne
-        double angle = Math.atan2(endY - startY, endX - startX);
+            double startX = source.getBoundsInParent().getMinX() + source.getWidth() / 2;
+            double startY = source.getBoundsInParent().getMinY() + source.getHeight() / 2;
+            double endX = destination.getBoundsInParent().getMinX() + destination.getWidth() / 2;
+            double endY = destination.getBoundsInParent().getMinY() + destination.getHeight() / 2;
 
-        // Déterminer les bordures de la classe de destination
-        double deltaX = (destination.getWidth() / 2) / Math.abs(Math.cos(angle));
-        double deltaY = (destination.getHeight() / 2) / Math.abs(Math.sin(angle));
+            // Calculer l'angle de la ligne
+            double angle = Math.atan2(endY - startY, endX - startX);
 
-        // Choisir le plus petit delta pour s'assurer que la ligne touche le bord de la classe
-        double offsetX = Math.min(deltaX, deltaY) * Math.cos(angle);
-        double offsetY = Math.min(deltaX, deltaY) * Math.sin(angle);
+            // Déterminer les bordures de la classe de destination
+            double deltaX = (destination.getWidth() / 2) / Math.abs(Math.cos(angle));
+            double deltaY = (destination.getHeight() / 2) / Math.abs(Math.sin(angle));
 
-        endX -= offsetX;
-        endY -= offsetY;
+            // Choisir le plus petit delta pour s'assurer que la ligne touche le bord de la classe
+            double offsetX = Math.min(deltaX, deltaY) * Math.cos(angle);
+            double offsetY = Math.min(deltaX, deltaY) * Math.sin(angle);
 
-        // Créer et ajouter la ligne
-        Line line = new Line(startX, startY, endX, endY);
-        this.getChildren().add(line);
+            endX -= offsetX;
+            endY -= offsetY;
 
-        // Créer et ajouter la tête de flèche
-        double arrowLength = 15;
-        double arrowWidth = 7;
+            // Créer et ajouter la ligne
+            Line line = new Line(startX, startY, endX, endY);
+            this.getChildren().add(line);
 
-        double x1 = endX - arrowLength * Math.cos(angle - Math.PI / 6);
-        double y1 = endY - arrowLength * Math.sin(angle - Math.PI / 6);
-        double x2 = endX - arrowLength * Math.cos(angle + Math.PI / 6);
-        double y2 = endY - arrowLength * Math.sin(angle + Math.PI / 6);
+            // Créer et ajouter la tête de flèche
+            double arrowLength = 15;
+            double arrowWidth = 7;
 
-        Polygon arrowHead = new Polygon(endX, endY, x1, y1, x2, y2);
+            double x1 = endX - arrowLength * Math.cos(angle - Math.PI / 6);
+            double y1 = endY - arrowLength * Math.sin(angle - Math.PI / 6);
+            double x2 = endX - arrowLength * Math.cos(angle + Math.PI / 6);
+            double y2 = endY - arrowLength * Math.sin(angle + Math.PI / 6);
 
-        switch (typeRelation) {
-            case HERITAGE:
-                line.setStroke(Color.BLACK);
-                line.setStrokeWidth(2);
-                arrowHead.setFill(Color.TRANSPARENT);
-                arrowHead.setStroke(Color.BLACK);
-                break;
-            case IMPLEMENTATION:
-                line.getStrokeDashArray().addAll(10.0, 10.0);
-                line.setStroke(Color.BLACK);
-                line.setStrokeWidth(2);
-                arrowHead.setFill(Color.TRANSPARENT);
-                arrowHead.setStroke(Color.BLACK);
-                break;
-            case ASSOCIATION:
-                line.setStroke(Color.BLACK);
-                line.setStrokeWidth(2);
-                arrowHead.setFill(Color.BLACK);
-                break;
+            Polygon arrowHead = new Polygon(endX, endY, x1, y1, x2, y2);
+
+            switch (typeRelation) {
+                case HERITAGE:
+                    line.setStroke(Color.BLACK);
+                    line.setStrokeWidth(2);
+                    arrowHead.setFill(Color.TRANSPARENT);
+                    arrowHead.setStroke(Color.BLACK);
+                    break;
+                case IMPLEMENTATION:
+                    line.getStrokeDashArray().addAll(10.0, 10.0);
+                    line.setStroke(Color.BLACK);
+                    line.setStrokeWidth(2);
+                    arrowHead.setFill(Color.TRANSPARENT);
+                    arrowHead.setStroke(Color.BLACK);
+                    break;
+                case ASSOCIATION:
+                    line.setStroke(Color.BLACK);
+                    line.setStrokeWidth(2);
+                    arrowHead.setFill(Color.BLACK);
+                    break;
+            }
+            this.getChildren().add(arrowHead);
         }
-        this.getChildren().add(arrowHead);
+
     }
+
 }

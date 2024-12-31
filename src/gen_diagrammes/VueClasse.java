@@ -25,6 +25,17 @@ public class VueClasse extends VBox implements Observateur {
         this.actualiser();
     }
 
+
+    /**
+     * Vérifie si la classe est visible sur le diagramme
+     *
+     * @return true si la classe est visible, false sinon
+     */
+    public boolean estVisibleClasse() {
+        return this.classe.isVisible();
+    }
+
+
     /**
      * Actualise la vue de la classe
      */
@@ -84,4 +95,5 @@ public class VueClasse extends VBox implements Observateur {
             this.getChildren().addAll(vbox1, separator1, vbox2, separator2, vbox3);
         }
     }
+
 }

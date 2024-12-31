@@ -66,8 +66,8 @@ public class Main extends Application {
         // Création de la barre de menu
         MenuBar menuBar = new MenuBar();
         Menu menuAjouter = new Menu("Ajouter");
-        MenuItem menuAjouterPackage = new MenuItem("Package");
-        MenuItem menuAjouterClasse = new MenuItem("Classe");
+        MenuItem menuAjouterPackage = new MenuItem("Ajouter un package");
+        MenuItem menuAjouterClasse = new MenuItem("Ajouter une classe");
         Menu menuSupprimer = new Menu("Supprimer");
         Menu menuExporter = new Menu("Exporter");
         MenuItem menuExporterImage = new MenuItem("Exporter une image");
@@ -75,9 +75,11 @@ public class Main extends Application {
         Menu menuGenerer = new Menu("Générer");
         Menu menuAffichage = new Menu("Affichage");
         MenuItem menuAfficherDiagramme = new MenuItem("Afficher le diagramme");
+        MenuItem menuAfficherToutesClasses = new MenuItem("Afficher toutes les classes");
+        MenuItem menuMasquerToutesClasses = new MenuItem("Masquer toutes les classes");
         menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
-        menuAffichage.getItems().addAll(menuAfficherDiagramme);
+        menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses);
         menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
         menuBar.setViewOrder(-1);
 
@@ -258,6 +260,17 @@ public class Main extends Application {
             exp.exportUML(primaryStage);
         });
 
+
+        // AFFICHER TOUTES LES CLASSES
+        menuAfficherToutesClasses.setOnAction(e -> {
+            Diagramme.getInstance().afficherToutesClasses();
+        });
+
+        // MASQUER TOUTES LES CLASSES
+        menuMasquerToutesClasses.setOnAction(e -> {
+            Diagramme.getInstance().masquerToutesClasses();
+        });
+
     }
 
 
@@ -376,6 +389,7 @@ public class Main extends Application {
             VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
             VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
             relations.add(vueRelation);
+            diagramme.ajouterObservateur(vueRelation);
             relationPane.getChildren().add(vueRelation);
         }
 

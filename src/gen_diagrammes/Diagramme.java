@@ -176,4 +176,26 @@ public class Diagramme implements Sujet {
         return null;
     }
 
+
+    /**
+     * Affiche toutes les classes du diagramme
+     */
+    public void afficherToutesClasses() {
+        for (Classe c : this.listeClasses) {
+            c.setVisibilite(true);
+        }
+        this.notifierObservateurs();
+    }
+
+
+    /**
+     * Masque toutes les classes du diagramme
+     */
+    public void masquerToutesClasses() {
+        for (Classe c : this.listeClasses) {
+            c.setVisibilite(false);
+        }
+        this.notifierObservateurs();
+    }
+
 }

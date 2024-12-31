@@ -308,6 +308,12 @@ public class Classe {
 
     }
 
+
+    /**
+     * Récupère le nom de la classe
+     *
+     * @param etat état de la visibilité
+     */
     public void setVisibilite(boolean etat) {
         this.visible = etat;
         Diagramme.getInstance().notifierObservateurs();
