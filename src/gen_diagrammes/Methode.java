@@ -54,7 +54,6 @@ public class Methode {
      * @return Représentation textuelle de la méthode
      */
     public String toString() {
-        StringBuilder resultat = new StringBuilder();
         String texteAcces = switch (this.acces) {
             case Classe.PRIVATE -> "-";
             case Classe.PUBLIC -> "+";
@@ -62,7 +61,7 @@ public class Methode {
             case Classe.PACKAGE_PRIVATE -> "~";
             default -> "";
         };
-        resultat = new StringBuilder(texteAcces + " " + nom + "(");
+        StringBuilder resultat = new StringBuilder(texteAcces + " " + nom + "(");
         boolean aParametres = false;
         for (String parametre : parametres) {
             resultat.append(parametre).append(", ");

@@ -28,6 +28,9 @@ public class Main extends Application {
     private double scaleFactor = 1.0;
     private StackPane stackPane;
 
+    private boolean afficherAttributs = true;
+    private boolean afficherMethodes = true;
+
 
     /**
      * Méthode principale
@@ -77,9 +80,11 @@ public class Main extends Application {
         MenuItem menuAfficherDiagramme = new MenuItem("Afficher le diagramme");
         MenuItem menuAfficherToutesClasses = new MenuItem("Afficher toutes les classes");
         MenuItem menuMasquerToutesClasses = new MenuItem("Masquer toutes les classes");
+        CheckMenuItem menuAfficherTousAttributs = new CheckMenuItem("Afficher tous les attributs");
+        CheckMenuItem menuAfficherToutesMethodes = new CheckMenuItem("Afficher toutes les méthodes");
         menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
-        menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses);
+        menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses, menuAfficherTousAttributs, menuAfficherToutesMethodes);
         menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
         menuBar.setViewOrder(-1);
 
@@ -149,7 +154,7 @@ public class Main extends Application {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    ajouterClasseDepuisFichier(db.getFiles().get(0), vueListeClasses, stackPane);
+                    ajouterClasseDepuisFichier(db.getFiles().get(0), stackPane);
                 }
                 eventDrop.setDropCompleted(success);
                 eventDrop.consume();
@@ -162,7 +167,7 @@ public class Main extends Application {
                 Stage fileStage = (Stage) btnCenter.getScene().getWindow();
                 File file = fileChooser.showOpenDialog(fileStage);
                 if (file != null) {
-                    ajouterClasseDepuisFichier(file, vueListeClasses, stackPane);
+                    ajouterClasseDepuisFichier(file, stackPane);
                 }
             });
 
@@ -205,7 +210,7 @@ public class Main extends Application {
                         File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                         if (files != null) {
                             for (File file : files) {
-                                ajouterClasseDepuisFichier(file, vueListeClasses, stackPane);
+                                ajouterClasseDepuisFichier(file, stackPane);
                             }
                         }
                     }
@@ -223,7 +228,7 @@ public class Main extends Application {
                     File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                     if (files != null) {
                         for (File file : files) {
-                            ajouterClasseDepuisFichier(file, vueListeClasses, stackPane);
+                            ajouterClasseDepuisFichier(file, stackPane);
                         }
                     } else {
                         System.err.println("Aucun fichier .class trouvé dans le dossier");
@@ -269,6 +274,30 @@ public class Main extends Application {
         // MASQUER TOUTES LES CLASSES
         menuMasquerToutesClasses.setOnAction(e -> {
             Diagramme.getInstance().masquerToutesClasses();
+        });
+
+        // AFFICHER/MASQUER TOUS LES ATTRIBUTS
+        menuAfficherTousAttributs.setSelected(true);
+        menuAfficherTousAttributs.setOnAction(e -> {
+            afficherAttributs = menuAfficherTousAttributs.isSelected();
+            if (afficherAttributs) {
+                Diagramme.getInstance().afficherTousAttributs();
+            } else {
+                Diagramme.getInstance().masquerTousAttributs();
+            }
+            afficherDiagramme();
+        });
+
+        // AFFICHER/MASQUER TOUTES LES METHODES
+        menuAfficherToutesMethodes.setSelected(true);
+        menuAfficherToutesMethodes.setOnAction(e -> {
+            afficherMethodes = menuAfficherToutesMethodes.isSelected();
+            if (afficherMethodes) {
+                Diagramme.getInstance().afficherToutesMethodes();
+            } else {
+                Diagramme.getInstance().masquerToutesMethodes();
+            }
+            afficherDiagramme();
         });
 
     }
@@ -342,10 +371,9 @@ public class Main extends Application {
      * Ajoute une classe à partir d'un fichier
      *
      * @param file      Fichier
-     * @param menu      Menu : Liste des classes du diagramme
      * @param stackPane StackPane : Conteneur du diagramme
      */
-    private void ajouterClasseDepuisFichier(File file, VueListeClasses menu, StackPane stackPane) {
+    private void ajouterClasseDepuisFichier(File file, StackPane stackPane) {
         try {
             Classe classe = new Classe(file.getAbsolutePath());
             // N'affiche pas les classes anonymes (générées par Java)
@@ -367,7 +395,6 @@ public class Main extends Application {
      * Affiche le diagramme
      */
     private void afficherDiagramme() {
-
         stackPane.getChildren().clear();
         Diagramme diagramme = Diagramme.getInstance();
         Pane ligneClasse = new Pane();
@@ -379,6 +406,21 @@ public class Main extends Application {
             makeDraggable(vueClasse);
             vueClasse.relocate(c.getLongueur(), c.getLargeur());
             Diagramme.getInstance().ajouterObservateur(vueClasse);
+
+            // Appliquer les paramètres d'affichage
+            if (afficherAttributs) {
+                c.afficherAttributs();
+            } else {
+                c.masquerAttributs();
+            }
+            if (afficherMethodes) {
+                c.afficherMethodes();
+            } else {
+                c.masquerMethodes();
+            }
+
+            vueClasse.actualiser();
+
             ligneClasse.getChildren().add(vueClasse);
         }
 

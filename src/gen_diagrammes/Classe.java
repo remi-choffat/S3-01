@@ -466,4 +466,44 @@ public class Classe {
         return this.type + " " + this.nom;
     }
 
+
+    /**
+     * Affiche les attributs de la classe
+     */
+    public void afficherAttributs() {
+        for (Attribut a : this.getAttributs()) {
+            a.setVisible(true);
+        }
+    }
+
+
+    /**
+     * Masque les attributs de la classe
+     */
+    public void masquerAttributs() {
+        for (Attribut a : this.getAttributs()) {
+            a.setVisible(false);
+        }
+    }
+
+
+    /**
+     * Affiche les méthodes de la classe
+     */
+    public void afficherMethodes() {
+        for (Methode m : this.getMethodes()) {
+            m.setVisible(true);
+        }
+    }
+
+
+    /**
+     * Masque les méthodes de la classe
+     */
+    public void masquerMethodes() {
+        for (Methode m : this.getMethodes()) {
+            m.setVisible(false);
+        }
+    }
+
 }

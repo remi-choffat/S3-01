@@ -198,4 +198,56 @@ public class Diagramme implements Sujet {
         this.notifierObservateurs();
     }
 
+
+    /**
+     * Affiche tous les attributs de toutes les classes du diagramme
+     */
+    public void afficherTousAttributs() {
+        for (Classe c : this.listeClasses) {
+            for (Attribut a : c.getAttributs()) {
+                a.setVisible(true);
+            }
+        }
+        this.notifierObservateurs();
+    }
+
+
+    /**
+     * Masque tous les attributs de toutes les classes du diagramme
+     */
+    public void masquerTousAttributs() {
+        for (Classe c : this.listeClasses) {
+            for (Attribut a : c.getAttributs()) {
+                a.setVisible(false);
+            }
+        }
+        this.notifierObservateurs();
+    }
+
+
+    /**
+     * Affiche toutes les méthodes de toutes les classes du diagramme
+     */
+    public void afficherToutesMethodes() {
+        for (Classe c : this.listeClasses) {
+            for (Methode m : c.getMethodes()) {
+                m.setVisible(true);
+            }
+        }
+        this.notifierObservateurs();
+    }
+
+
+    /**
+     * Masque toutes les méthodes de toutes les classes du diagramme
+     */
+    public void masquerToutesMethodes() {
+        for (Classe c : this.listeClasses) {
+            for (Methode m : c.getMethodes()) {
+                m.setVisible(false);
+            }
+        }
+        this.notifierObservateurs();
+    }
+
 }

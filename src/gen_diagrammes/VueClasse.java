@@ -49,6 +49,7 @@ public class VueClasse extends VBox implements Observateur {
 
             for (int i = 0; i < this.classe.getAttributs().size(); i++) {
                 Attribut attribut = this.classe.getAttributs().get(i);
+                // Affiche l'attribut s'il n'est pas masqué
                 if (attribut.isVisible()) {
                     texteAttributs.append(attribut);
                     if (i < this.classe.getAttributs().size() - 1) {
@@ -58,10 +59,10 @@ public class VueClasse extends VBox implements Observateur {
             }
 
             for (int i = 0; i < this.classe.getMethodes().size(); i++) {
-                String nomMethode = this.classe.getMethodes().get(i).getNom();
+                Methode methode = this.classe.getMethodes().get(i);
                 // N'affiche pas les méthodes lambda (générées par Java)
-                if (!nomMethode.contains("lambda$")) {
-                    Methode methode = this.classe.getMethodes().get(i);
+                if (!methode.getNom().contains("lambda$")) {
+                    // Affiche la méthode si elle n'est pas masquée
                     if (methode.isVisible()) {
                         texteMethodes.append(methode);
                         if (i < this.classe.getMethodes().size() - 1) {
