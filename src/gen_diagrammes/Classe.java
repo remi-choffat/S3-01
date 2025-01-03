@@ -511,4 +511,19 @@ public class Classe {
         }
     }
 
+
+    /**
+     * Récupère le type de la classe en String
+     *
+     * @return String
+     */
+    public String getTypeClasseString() {
+        return switch (type) {
+            case CLASS -> "Classe";
+            case INTERFACE -> "Interface";
+            case ABSTRACT_CLASS -> "Classe abstraite";
+            default -> "";
+        };
+    }
+
 }

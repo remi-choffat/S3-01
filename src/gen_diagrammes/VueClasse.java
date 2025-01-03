@@ -2,6 +2,10 @@ package gen_diagrammes;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -29,9 +33,62 @@ public class VueClasse extends VBox implements Observateur {
      */
     public VueClasse(Classe c) {
         this.classe = c;
+        this.initialiserComportement();
         this.actualiser();
+    }
+
+
+    /**
+     * Initialise le comportement de la vue
+     * (clic, menu contextuel)
+     */
+    private void initialiserComportement() {
+
         // Passe au premier plan lorsqu'on clique dessus
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> this.toFront());
+
+        // CRÉE UN MENU CONTEXTUEL
+        ContextMenu contextMenu = new ContextMenu();
+
+        // Crée un titre au menu
+        MenuItem title = new MenuItem(this.classe.getTypeClasseString() + " " + this.classe.getNom());
+        title.setStyle("-fx-font-weight: bold;");
+
+        MenuItem hideClass = new MenuItem("Masquer la classe");
+        CheckMenuItem showAttributes = new CheckMenuItem("Afficher les attributs");
+        showAttributes.setSelected(true);
+        CheckMenuItem showMethods = new CheckMenuItem("Afficher les méthodes");
+        showMethods.setSelected(true);
+        CheckMenuItem showParentClasses = new CheckMenuItem("Afficher les classes parent");
+        showParentClasses.setSelected(true);
+        // Si la classe n'a pas de parent, on désactive l'option
+        if (this.classe.getParents().isEmpty()) {
+            showParentClasses.setDisable(true);
+        }
+        MenuItem modify = new MenuItem("Modifier");
+        modify.setDisable(true); // TODO - Implémenter la modification ?
+
+        contextMenu.getItems().addAll(title, new SeparatorMenuItem(), hideClass, new SeparatorMenuItem(), showAttributes, showMethods, showParentClasses, new SeparatorMenuItem(), modify);
+
+        hideClass.setOnAction(event -> this.classe.setVisibilite(false));
+        showAttributes.setOnAction(event -> {
+            if (showAttributes.isSelected()) {
+                this.classe.afficherAttributs();
+            } else {
+                this.classe.masquerAttributs();
+            }
+            actualiser();
+        });
+        showMethods.setOnAction(event -> {
+            if (showMethods.isSelected()) {
+                this.classe.afficherMethodes();
+            } else {
+                this.classe.masquerMethodes();
+            }
+            actualiser();
+        });
+
+        this.setOnContextMenuRequested(e -> contextMenu.show(this, e.getScreenX(), e.getScreenY()));
     }
 
 

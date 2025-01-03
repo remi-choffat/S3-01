@@ -378,7 +378,7 @@ public class Main extends Application {
                 classe.setLongueur(Math.random() * 600);
                 classe.setLargeur(Math.random() * 300);
                 Diagramme.getInstance().ajouterClasse(classe);
-                System.out.println("Classe " + classe.getNom() + " ajoutée");
+                System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " ajoutée");
             }
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
@@ -439,6 +439,7 @@ public class Main extends Application {
                 vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
             }
         }
+        updateRelations();
     }
 
 }
