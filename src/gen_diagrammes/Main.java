@@ -34,7 +34,7 @@ public class Main extends Application {
 
     /**
      * Méthode principale
-     * Démarre l'interface graphique et demande les chemins des fichiers .class en console
+     * Démarre l'interface graphique
      *
      * @param args Arguments
      */
@@ -226,15 +226,13 @@ public class Main extends Application {
                 File selectedDirectory = directoryChooser.showDialog(fileStage);
                 if (selectedDirectory != null) {
                     File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-                    if (files != null) {
+                    if (files != null && files.length > 0) {
                         for (File file : files) {
                             ajouterClasseDepuisFichier(file, stackPane);
                         }
                     } else {
-                        System.err.println("Aucun fichier .class trouvé dans le dossier");
+                        System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
                     }
-                } else {
-                    System.err.println("Aucun dossier sélectionné");
                 }
             });
 
@@ -337,10 +335,9 @@ public class Main extends Application {
         node.setOnMouseDragged(e -> {
             double newX = e.getSceneX() + dragDelta[0];
             double newY = e.getSceneY() + dragDelta[1];
-            if (newX > 0) {
-                node.setLayoutX(newX);
-                node.setLayoutY(newY);
-            }
+
+            node.setLayoutX(newX);
+            node.setLayoutY(newY);
         });
 
         node.setOnMouseEntered(e -> {

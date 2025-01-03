@@ -43,11 +43,11 @@ public class Attribut {
 
 
     /**
-     * Retourne une chaîne de caractères représentant l'attribut
+     * Retourne l'affichage PlantUML de l'attribut
      *
      * @return String
      */
-    public String toString() {
+    public String toPlantUML() {
         String res = "";
         switch (typeAcces) {
             case Classe.PUBLIC:
@@ -63,8 +63,17 @@ public class Attribut {
                 res += "~";
                 break;
         }
-        res += " " + nom + " : " + type;
-        return res;
+        return nom + " : " + type;
+    }
+
+
+    /**
+     * Retourne une chaîne de caractères représentant l'attribut
+     *
+     * @return String
+     */
+    public String toString() {
+        return nom + " : " + type;
     }
 
 }

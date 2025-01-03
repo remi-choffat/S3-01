@@ -49,11 +49,11 @@ public class Methode {
 
 
     /**
-     * Retourne une représentation textuelle de la méthode
+     * Retourne l'affichage PlantUML de la méthode
      *
-     * @return Représentation textuelle de la méthode
+     * @return String
      */
-    public String toString() {
+    public String toPlantUML() {
         String texteAcces = switch (this.acces) {
             case Classe.PRIVATE -> "-";
             case Classe.PUBLIC -> "+";
@@ -62,6 +62,26 @@ public class Methode {
             default -> "";
         };
         StringBuilder resultat = new StringBuilder(texteAcces + " " + nom + "(");
+        boolean aParametres = false;
+        for (String parametre : parametres) {
+            resultat.append(parametre).append(", ");
+            aParametres = true;
+        }
+        if (aParametres) {
+            resultat = new StringBuilder(resultat.substring(0, resultat.length() - 2));
+        }
+        resultat.append(") : ").append(typeRetour);
+        return resultat.toString();
+    }
+
+
+    /**
+     * Retourne une représentation textuelle de la méthode
+     *
+     * @return Représentation textuelle de la méthode
+     */
+    public String toString() {
+        StringBuilder resultat = new StringBuilder(nom + "(");
         boolean aParametres = false;
         for (String parametre : parametres) {
             resultat.append(parametre).append(", ");

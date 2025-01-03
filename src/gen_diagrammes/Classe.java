@@ -239,6 +239,8 @@ public class Classe {
                 this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
             }
         }
+        // Trie les attributs par nom
+        this.attributs.sort((a1, a2) -> a1.getNom().compareTo(a2.getNom()));
 
         // Remplit la liste des méthodes
         for (Method m : classe.getDeclaredMethods()) {
@@ -266,6 +268,8 @@ public class Classe {
             }
             this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
         }
+        // Trie les méthodes par nom
+        this.methodes.sort((m1, m2) -> m1.getNom().compareTo(m2.getNom()));
 
         // Remplit la liste des classes parentes
 
@@ -437,19 +441,20 @@ public class Classe {
             if (a instanceof AttributClasse) {
                 relations.append(this.nom).append(" --> ").append(((AttributClasse) a).getAttribut().getNom()).append(" : ").append(a.getNom()).append("\n");
             } else {
-                uml.append(a).append("\n");
+                uml.append(a.toPlantUML()).append("\n");
             }
         }
 
         // Affiche les méthodes
         for (Methode m : this.methodes) {
-            uml.append(m).append("\n");
+            uml.append(m.toPlantUML()).append("\n");
         }
 
         uml.append("}\n");
         uml.append(relations);
         return uml.toString();
     }
+
 
     public void ajouterRelation(Relation relation) {
         relations.add(relation);
