@@ -14,6 +14,7 @@ public class Attribut {
     private String typeAcces;
     private String type;
     private boolean visible;
+    private boolean staticAttr;
 
 
     /**

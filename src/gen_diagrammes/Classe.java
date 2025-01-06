@@ -238,6 +238,11 @@ public class Classe {
             if (!isClassPresent) {
                 this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
             }
+
+            if (Modifier.isStatic(modAttribut)) {
+                this.attributs.getLast().setStaticAttr(true);
+            }
+
         }
         // Trie les attributs par nom
         this.attributs.sort((a1, a2) -> a1.getNom().compareTo(a2.getNom()));
@@ -267,6 +272,13 @@ public class Classe {
                 parametres.add(c.getSimpleName());
             }
             this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
+
+            if (Modifier.isStatic(mod)) {
+                this.methodes.getLast().setStaticMethode(true);
+            }
+            if (Modifier.isAbstract(mod)) {
+                this.methodes.getLast().setAbstractMethode(true);
+            }
         }
         // Trie les méthodes par nom
         this.methodes.sort((m1, m2) -> m1.getNom().compareTo(m2.getNom()));

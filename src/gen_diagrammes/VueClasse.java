@@ -112,7 +112,8 @@ public class VueClasse extends VBox implements Observateur {
             this.setVisible(true);
             StackPane typeIndicator = createTypeIndicator(this.classe.getType());
             Text classNameText = new Text(this.classe.getNom());
-            classNameText.setStyle("-fx-font-weight: bold;");
+            // Met le texte en gras, et aussi en italique si la classe est abstraite
+            classNameText.setStyle("-fx-font-weight: bold;" + (this.classe.getType().equals(Classe.ABSTRACT_CLASS) ? "-fx-font-style: italic;" : ""));
 
             HBox header = new HBox(typeIndicator, classNameText);
             header.setSpacing(5);
@@ -120,11 +121,14 @@ public class VueClasse extends VBox implements Observateur {
             header.setAlignment(Pos.CENTER);
 
             VBox vbox2 = new VBox();
-            for (int i = 0; i < this.classe.getAttributs().size(); i++) {
-                Attribut attribut = this.classe.getAttributs().get(i);
+            for (Attribut attribut : this.classe.getAttributs()) {
                 // Affiche l'attribut s'il n'est pas masqué
                 if (attribut.isVisible()) {
-                    HBox attributBox = new HBox(createAccessIndicator(attribut.getTypeAcces()), new Text(" " + attribut));
+                    Text texteAttribut = new Text(attribut.toString());
+                    if (attribut.isStaticAttr()) {
+                        texteAttribut.setStyle("-fx-underline: true;");
+                    }
+                    HBox attributBox = new HBox(createAccessIndicator(attribut.getTypeAcces()), texteAttribut);
                     attributBox.setSpacing(5);
                     vbox2.getChildren().add(attributBox);
                 }
@@ -135,12 +139,18 @@ public class VueClasse extends VBox implements Observateur {
             vbox2.setPadding(new Insets(5));
 
             VBox vbox3 = new VBox();
-            for (int i = 0; i < this.classe.getMethodes().size(); i++) {
-                Methode methode = this.classe.getMethodes().get(i);
+            for (Methode methode : this.classe.getMethodes()) {
                 // N'affiche pas les méthodes lambda (générées par Java)
                 // Affiche la méthode si elle n'est pas masquée
                 if (!methode.getNom().contains("lambda$") && methode.isVisible()) {
-                    HBox methodeBox = new HBox(createAccessIndicator(methode.getAcces()), new Text(" " + methode));
+                    Text texteMethode = new Text(methode.toString());
+                    if (methode.isStaticMethode()) {
+                        texteMethode.setStyle("-fx-underline: true;");
+                    }
+                    if (methode.isAbstractMethode()) {
+                        texteMethode.setStyle("-fx-font-style: italic;");
+                    }
+                    HBox methodeBox = new HBox(createAccessIndicator(methode.getAcces()), texteMethode);
                     methodeBox.setSpacing(5);
                     vbox3.getChildren().add(methodeBox);
                 }

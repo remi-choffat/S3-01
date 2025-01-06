@@ -381,7 +381,8 @@ public class Main extends Application {
                 System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " ajoutée");
             }
         } catch (Exception ex) {
-            System.err.println(ex.getMessage());
+//            System.err.println(ex.getMessage());
+            ex.printStackTrace();
         }
         stackPane.getChildren().clear();
         afficherDiagramme();

@@ -17,6 +17,8 @@ public class Methode {
     private String typeRetour;
     private ArrayList<String> parametres;
     private boolean visible;
+    private boolean staticMethode;
+    private boolean abstractMethode;
 
 
     /**
