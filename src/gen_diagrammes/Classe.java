@@ -377,22 +377,19 @@ public class Classe {
 
     /**
      * Ajuste le chemin du fichier pour trouver la classe
+     * Détermine le répertoire racine pour récupérer la classe dans le bon package
      *
      * @param path  chemin du fichier
-     * @param state état de l'ajustement
+     * @param state état de l'ajustement (nombre de fois où le fichier a été ajusté)
      * @return String
      */
     private static String adjustPath(String path, int state) throws ArrayIndexOutOfBoundsException {
         String[] folds = path.split("[/\\\\]");
         if (state >= folds.length) {
-            throw new ArrayIndexOutOfBoundsException("état dépassé");
+            throw new ArrayIndexOutOfBoundsException("État dépassé");
         } else {
-            StringBuilder res = new StringBuilder();
-            for (int i = 0; i < folds.length - 1; i++) {
-                res.append(folds[i]).append("\\\\");
-            }
-            res.append(folds[folds.length - state - 2]).append(".").append(folds[folds.length - 1]);
-            return res.toString();
+            // Remplace le dernier File.separator par un point
+            return path.substring(0, path.lastIndexOf(File.separator)) + "." + path.substring(path.lastIndexOf(File.separator) + 1);
         }
     }
 
