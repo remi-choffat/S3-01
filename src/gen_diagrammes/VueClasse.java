@@ -65,6 +65,15 @@ public class VueClasse extends VBox implements Observateur {
         if (this.classe.getParents().isEmpty()) {
             showParentClasses.setDisable(true);
         }
+        // Lorsque le bouton est cliqué, inverse l'affichage des classes parent
+        showParentClasses.setOnAction(event -> {
+            if (showParentClasses.isSelected()) {
+                this.classe.afficherParents();
+            } else {
+                this.classe.masquerParents();
+            }
+            actualiser();
+        });
         MenuItem modify = new MenuItem("Modifier");
         modify.setDisable(true); // TODO - Implémenter la modification ?
 

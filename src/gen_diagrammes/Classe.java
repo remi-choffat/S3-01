@@ -287,14 +287,15 @@ public class Classe {
 
         // Interfaces
         for (Class<?> c : classe.getInterfaces()) {
-            // Vérifie si l'interface est déjà présente
+            // Vérifie si l'interface est déjà présente dans le diagramme
             boolean isPresent = false;
-            for (Classe p : this.parents) {
+            for (Classe p : Diagramme.getInstance().getListeClasses()) {
                 if (p.getNom().equals(c.getSimpleName())) {
                     isPresent = true;
                     break;
                 }
             }
+
             if (!isPresent) {
                 this.parents.add(new Classe(c.getSimpleName(), c.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", INTERFACE));
             } else {
@@ -306,14 +307,15 @@ public class Classe {
         // Classe parente
         Class<?> superClass = classe.getSuperclass();
         if (superClass != null && !superClass.getSimpleName().equals("Object")) {
-            // Vérifie si la classe parente est déjà présente
+            // Vérifie si la classe parente est déjà présente dans le diagramme
             boolean isPresent = false;
-            for (Classe p : this.parents) {
+            for (Classe p : Diagramme.getInstance().getListeClasses()) {
                 if (p.getNom().equals(superClass.getSimpleName())) {
                     isPresent = true;
                     break;
                 }
             }
+
             if (!isPresent) {
                 this.parents.add(new Classe(superClass.getSimpleName(), superClass.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", CLASS));
             } else {
@@ -536,6 +538,26 @@ public class Classe {
             case ABSTRACT_CLASS -> "Classe abstraite";
             default -> "";
         };
+    }
+
+
+    /**
+     * Affiche les classes parentes de la classe
+     */
+    public void afficherParents() {
+        for (Classe c : this.getParents()) {
+            c.setVisibilite(true);
+        }
+    }
+
+
+    /**
+     * Masque les classes parentes de la classe
+     */
+    public void masquerParents() {
+        for (Classe c : this.getParents()) {
+            c.setVisibilite(false);
+        }
     }
 
 }
