@@ -78,6 +78,8 @@ public class Main extends Application {
         MenuItem menuExporterImage = new MenuItem("Exporter une image");
         MenuItem menuExporterUML = new MenuItem("Exporter en PlantUML");
         Menu menuGenerer = new Menu("Générer");
+        MenuItem menuCreer= new MenuItem("Classe");
+        menuGenerer.getItems().add(menuCreer);
         Menu menuAffichage = new Menu("Affichage");
         MenuItem menuAfficherDiagramme = new MenuItem("Afficher le diagramme");
         MenuItem menuAfficherToutesClasses = new MenuItem("Afficher toutes les classes");
@@ -329,6 +331,7 @@ public class Main extends Application {
                 Classe classe = Diagramme.getInstance().getClasse(result);
                 System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
                 Diagramme.getInstance().supprimerClasse(classe);
+                afficherDiagramme();
             });
         });
 
@@ -355,6 +358,90 @@ public class Main extends Application {
                     stackPane.getChildren().clear();
                 }
             });
+        });
+
+        //CREER UNE CLASSE
+        menuCreer.setOnAction(e -> {
+            VBox vb = new VBox();
+            Label lb = new Label("Créer une classe");
+            TextField tf = new TextField();
+            MenuBar mb = new MenuBar();
+            Menu menuVisibilite = new Menu("visibilité");
+            RadioMenuItem menuVPub = new RadioMenuItem("public");
+            RadioMenuItem menuVPri = new RadioMenuItem("private");
+            RadioMenuItem menuVPro = new RadioMenuItem("protected");
+            menuVisibilite.getItems().addAll(menuVPub, menuVPri, menuVPro);
+            menuVPub.setSelected(true);
+
+            ToggleGroup tg1 = new ToggleGroup();
+            menuVPub.setToggleGroup(tg1);
+            menuVPri.setToggleGroup(tg1);
+            menuVPro.setToggleGroup(tg1);
+
+            Menu menuType = new Menu("Type de classe");
+            RadioMenuItem menuCreerClasse = new RadioMenuItem("classe");
+            RadioMenuItem menuCreerClasseAbs = new RadioMenuItem("classe abstraite");
+            RadioMenuItem menuCreerInterface = new RadioMenuItem("interface");
+            menuType.getItems().addAll(menuCreerClasse, menuCreerClasseAbs, menuCreerInterface);
+            menuCreerClasse.setSelected(true);
+
+            ToggleGroup tg2 = new ToggleGroup();
+            menuCreerClasseAbs.setToggleGroup(tg2);
+            menuCreerInterface.setToggleGroup(tg2);
+            menuCreerClasse.setToggleGroup(tg2);
+
+            mb.getMenus().addAll(menuVisibilite, menuType);
+            mb.setViewOrder(-1);
+            HBox hb = new HBox();
+            Button bCancel = new Button("Annuler");
+            Button bOk = new Button("OK");
+            hb.getChildren().addAll(bCancel, bOk);
+            vb.getChildren().addAll(lb,mb,tf,hb);
+            stackPane.getChildren().add(vb);
+            vb.setLayoutX(stackPane.getScaleX()-0.5*vb.getScaleX());
+            vb.setLayoutY(stackPane.getScaleY()-0.5*vb.getScaleY());
+
+            bOk.setOnAction(f -> {
+                // on créée la classe
+
+                String vis = Classe.PUBLIC;
+                String type = Classe.CLASS;
+                RadioMenuItem rmi1 = (RadioMenuItem)(tg1.getSelectedToggle());
+                switch(rmi1.getText()){
+                    case "public":
+                        vis = Classe.PUBLIC;
+                        break;
+                    case "private":
+                        vis = Classe.PRIVATE;
+                        break;
+                    case "protected":
+                        vis = Classe.PROTECTED;
+                        break;
+                }
+
+                RadioMenuItem rmi2 = (RadioMenuItem)(tg2.getSelectedToggle());
+                switch(rmi2.getText()){
+                    case "classe":
+                        type = Classe.CLASS;
+                        break;
+                    case "classe abstraite":
+                        type = Classe.ABSTRACT_CLASS;
+                        break;
+                    case "interface":
+                        type = Classe.INTERFACE;
+                        break;
+                }
+
+                Classe c = new Classe(tf.getText(), vis, type);
+                Diagramme.getInstance().ajouterClasse(c);
+                stackPane.getChildren().remove(vb);
+                afficherDiagramme();
+            });
+
+            bCancel.setOnAction(f -> {
+                stackPane.getChildren().remove(vb);
+            });
+
         });
 
     }
