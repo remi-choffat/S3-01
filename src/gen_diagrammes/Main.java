@@ -78,7 +78,7 @@ public class Main extends Application {
         MenuItem menuExporterImage = new MenuItem("Exporter une image");
         MenuItem menuExporterUML = new MenuItem("Exporter en PlantUML");
         Menu menuGenerer = new Menu("Générer");
-        MenuItem menuCreer= new MenuItem("Classe");
+        MenuItem menuCreer = new MenuItem("Créer une nouvelle classe");
         menuGenerer.getItems().add(menuCreer);
         Menu menuAffichage = new Menu("Affichage");
         MenuItem menuAfficherDiagramme = new MenuItem("Afficher le diagramme");
@@ -360,86 +360,67 @@ public class Main extends Application {
             });
         });
 
-        //CREER UNE CLASSE
+        // CRÉER UNE CLASSE
         menuCreer.setOnAction(e -> {
+
+            // Masque le diagramme
+            stackPane.getChildren().clear();
+
             VBox vb = new VBox();
             Label lb = new Label("Créer une classe");
+            lb.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
+            lb.setPadding(new Insets(10));
             TextField tf = new TextField();
-            MenuBar mb = new MenuBar();
-            Menu menuVisibilite = new Menu("visibilité");
-            RadioMenuItem menuVPub = new RadioMenuItem("public");
-            RadioMenuItem menuVPri = new RadioMenuItem("private");
-            RadioMenuItem menuVPro = new RadioMenuItem("protected");
-            menuVisibilite.getItems().addAll(menuVPub, menuVPri, menuVPro);
-            menuVPub.setSelected(true);
+            tf.setPromptText("Nom de la classe");
 
-            ToggleGroup tg1 = new ToggleGroup();
-            menuVPub.setToggleGroup(tg1);
-            menuVPri.setToggleGroup(tg1);
-            menuVPro.setToggleGroup(tg1);
+            ComboBox<String> comboVisibilite = new ComboBox<>();
+            comboVisibilite.getItems().addAll(Classe.PUBLIC, Classe.PRIVATE, Classe.PROTECTED);
+            comboVisibilite.setValue(Classe.PUBLIC);
 
-            Menu menuType = new Menu("Type de classe");
-            RadioMenuItem menuCreerClasse = new RadioMenuItem("classe");
-            RadioMenuItem menuCreerClasseAbs = new RadioMenuItem("classe abstraite");
-            RadioMenuItem menuCreerInterface = new RadioMenuItem("interface");
-            menuType.getItems().addAll(menuCreerClasse, menuCreerClasseAbs, menuCreerInterface);
-            menuCreerClasse.setSelected(true);
+            ComboBox<String> comboType = new ComboBox<>();
+            comboType.getItems().addAll(Classe.CLASS, Classe.ABSTRACT_CLASS, Classe.INTERFACE);
+            comboType.setValue(Classe.CLASS);
 
-            ToggleGroup tg2 = new ToggleGroup();
-            menuCreerClasseAbs.setToggleGroup(tg2);
-            menuCreerInterface.setToggleGroup(tg2);
-            menuCreerClasse.setToggleGroup(tg2);
+            HBox ligne = new HBox(10, comboVisibilite, comboType, tf);
+            ligne.setAlignment(Pos.CENTER);
 
-            mb.getMenus().addAll(menuVisibilite, menuType);
-            mb.setViewOrder(-1);
-            HBox hb = new HBox();
+            HBox boutons = new HBox(10);
             Button bCancel = new Button("Annuler");
-            Button bOk = new Button("OK");
-            hb.getChildren().addAll(bCancel, bOk);
-            vb.getChildren().addAll(lb,mb,tf,hb);
+            Button bOk = new Button("Ajouter");
+            bOk.setDefaultButton(true);
+            bOk.setDisable(true);
+            bCancel.setCancelButton(true);
+            boutons.getChildren().addAll(bOk, bCancel);
+            boutons.setAlignment(Pos.CENTER);
+
+            vb.getChildren().addAll(lb, ligne, boutons);
+            vb.setSpacing(20);
+            vb.setPadding(new Insets(20));
+            vb.setAlignment(Pos.CENTER);
+
             stackPane.getChildren().add(vb);
-            vb.setLayoutX(stackPane.getScaleX()-0.5*vb.getScaleX());
-            vb.setLayoutY(stackPane.getScaleY()-0.5*vb.getScaleY());
+            vb.setLayoutX(stackPane.getScaleX() - 0.5 * vb.getScaleX());
+            vb.setLayoutY(stackPane.getScaleY() - 0.5 * vb.getScaleY());
 
             bOk.setOnAction(f -> {
-                // on créée la classe
-
-                String vis = Classe.PUBLIC;
-                String type = Classe.CLASS;
-                RadioMenuItem rmi1 = (RadioMenuItem)(tg1.getSelectedToggle());
-                switch(rmi1.getText()){
-                    case "public":
-                        vis = Classe.PUBLIC;
-                        break;
-                    case "private":
-                        vis = Classe.PRIVATE;
-                        break;
-                    case "protected":
-                        vis = Classe.PROTECTED;
-                        break;
-                }
-
-                RadioMenuItem rmi2 = (RadioMenuItem)(tg2.getSelectedToggle());
-                switch(rmi2.getText()){
-                    case "classe":
-                        type = Classe.CLASS;
-                        break;
-                    case "classe abstraite":
-                        type = Classe.ABSTRACT_CLASS;
-                        break;
-                    case "interface":
-                        type = Classe.INTERFACE;
-                        break;
-                }
-
-                Classe c = new Classe(tf.getText(), vis, type);
+                Classe c = new Classe(tf.getText(), comboVisibilite.getValue(), comboType.getValue());
                 Diagramme.getInstance().ajouterClasse(c);
-                stackPane.getChildren().remove(vb);
-                afficherDiagramme();
+                bCancel.fire();
             });
 
             bCancel.setOnAction(f -> {
                 stackPane.getChildren().remove(vb);
+                afficherDiagramme();
+            });
+
+            tf.setOnKeyTyped(f -> {
+                // Désactive le bouton OK si le champ est vide
+                bOk.setDisable(tf.getText().length() <= 0);
+                // Met la première lettre de la classe en majuscule
+                if (tf.getText().length() == 1) {
+                    tf.setText(tf.getText().toUpperCase());
+                    tf.positionCaret(tf.getText().length());
+                }
             });
 
         });
