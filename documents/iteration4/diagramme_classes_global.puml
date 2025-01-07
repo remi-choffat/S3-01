@@ -9,6 +9,7 @@ class Diagramme <<Singleton>> {
 + getListeClasses() : ArrayList
 + getClasse(String) : Classe
 + supprimerClasse(Classe) : void
++<color:royalBlue>supprimerToutesClasses() : void
 + setNomPackage(String) : void
 + getNomPackage() : String
 + ajouterObservateur(Observateur) : void

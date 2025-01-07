@@ -72,6 +72,8 @@ public class Main extends Application {
         MenuItem menuAjouterPackage = new MenuItem("Ajouter un package");
         MenuItem menuAjouterClasse = new MenuItem("Ajouter une classe");
         Menu menuSupprimer = new Menu("Supprimer");
+        MenuItem menuSupprimerClasses = new MenuItem("Supprimer une classe");
+        MenuItem menuSupprimerToutesClasses = new MenuItem("Supprimer toutes les classes");
         Menu menuExporter = new Menu("Exporter");
         MenuItem menuExporterImage = new MenuItem("Exporter une image");
         MenuItem menuExporterUML = new MenuItem("Exporter en PlantUML");
@@ -83,6 +85,7 @@ public class Main extends Application {
         CheckMenuItem menuAfficherTousAttributs = new CheckMenuItem("Afficher tous les attributs");
         CheckMenuItem menuAfficherToutesMethodes = new CheckMenuItem("Afficher toutes les méthodes");
         menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
+        menuSupprimer.getItems().addAll(menuSupprimerClasses, menuSupprimerToutesClasses);
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
         menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses, menuAfficherTousAttributs, menuAfficherToutesMethodes);
         menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
@@ -296,6 +299,62 @@ public class Main extends Application {
                 Diagramme.getInstance().masquerToutesMethodes();
             }
             afficherDiagramme();
+        });
+
+        // SUPPRIMER UNE CLASSE
+        menuSupprimerClasses.setOnAction(e -> {
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("Supprimer une classe");
+            dialog.setHeaderText("Sélectionnez une classe à supprimer");
+
+            ButtonType buttonTypeOk = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
+
+            ListView<String> listView = new ListView<>();
+            ArrayList<String> nomsClasses = new ArrayList<>();
+            for (Classe c : Diagramme.getInstance().getListeClasses()) {
+                nomsClasses.add(c.getNom());
+            }
+            listView.getItems().addAll(nomsClasses);
+            dialog.getDialogPane().setContent(listView);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == buttonTypeOk) {
+                    return listView.getSelectionModel().getSelectedItem();
+                }
+                return null;
+            });
+
+            dialog.showAndWait().ifPresent(result -> {
+                Classe classe = Diagramme.getInstance().getClasse(result);
+                System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
+                Diagramme.getInstance().supprimerClasse(classe);
+            });
+        });
+
+        // SUPPRIMER TOUTES LES CLASSES
+        menuSupprimerToutesClasses.setOnAction(e -> {
+
+            Dialog<String> dialog = new Dialog<>();
+            dialog.setTitle("Supprimer toutes les classes");
+            dialog.setHeaderText("Voulez-vous vraiment supprimer toutes les classes du diagramme actuel ?");
+            ButtonType buttonTypeOk = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == buttonTypeOk) {
+                    return "ok";
+                }
+                return null;
+            });
+
+            dialog.showAndWait().ifPresent(result -> {
+                if (result.equals("ok")) {
+                    Diagramme.getInstance().supprimerToutesClasses();
+                    System.out.println("Toutes les classes ont été supprimées");
+                    stackPane.getChildren().clear();
+                }
+            });
         });
 
     }

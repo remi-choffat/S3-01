@@ -100,6 +100,15 @@ public class Diagramme implements Sujet {
 
 
     /**
+     * Supprime toutes les classes du diagramme
+     */
+    public void supprimerToutesClasses() {
+        this.listeClasses.clear();
+        this.updateClasses();
+    }
+
+
+    /**
      * Affiche le diagramme de classes
      *
      * @return texte du diagramme
