@@ -331,6 +331,7 @@ public class Main extends Application {
                 Classe classe = Diagramme.getInstance().getClasse(result);
                 System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
                 Diagramme.getInstance().supprimerClasse(classe);
+                afficherDiagramme();
             });
         });
 
