@@ -8,4 +8,3 @@ Fonctionnalités :
     - afficher/masquer les relations d’une classe
         - création d'un controleur qui change l'attribut "visible" d'une VueRelation
     - exporter le diagramme sous forme d’image
-

@@ -1,0 +1,10 @@
+Itération 4 : Fonctionnalités et cas d’utilisation développés
+
+Fonctionnalités :
+    - afficher le package dans le menu (se baser sur l'exemple donné sur arche)
+    - afficher les flèches en fonction de la relation :
+        - mettre les flèches entre les bonnes classes
+        - changer l'apparence de la flèche en fonction de la relation
+    - afficher/masquer toutes les relations du diagramme
+    - afficher/masquer les classes parent
+    - créer une classe
