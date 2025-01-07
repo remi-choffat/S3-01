@@ -15,6 +15,10 @@ class Diagramme <<Singleton>> {
 + notifierObservateurs() : void
 + supprimerObservateur(Observateur) : void
 + updateClasses() : void
++<color:royalBlue>afficherTousAttributs() : void
++<color:royalBlue>masquerTousAttributs() : void
++<color:royalBlue>afficherToutesMethodes() : void
++<color:royalBlue>masquerToutesMethodes() : void
 + toString() : String
 }
 Diagramme ..|> Sujet
@@ -27,9 +31,10 @@ class Attribut {
 -typeAcces : String
 -type : String
 -visible : boolean
-+ toString() : String
 + setVisible(boolean) : void
 + isVisible() : boolean
++<color:royalBlue>toPlantUML() : String
++ toString() : String
 }
 
 class AttributClasse {
@@ -53,6 +58,7 @@ class Methode {
 -visible : boolean
 + setVisible(boolean) : void
 + isVisible() : boolean
++<color:royalBlue>toPlantUML() : String
 + toString() : String
 }
 
@@ -82,6 +88,13 @@ class Classe {
 + getAttributs() : ArrayList
 + addAttribut(Attribut) : void
 + isVisible() : boolean
++<color:royalBlue>getTypeClasseString() : String
++<color:royalBlue>afficherAttributs() : void
++<color:royalBlue>afficherMethodes() : void
++<color:royalBlue>afficherParents() : void
++<color:royalBlue>masquerAttributs() : void
++<color:royalBlue>masquerMethodes() : void
++<color:royalBlue>masquerParents() : void
 + toPlantUML() : String
 + toString() : String
 }
@@ -97,8 +110,12 @@ interface Sujet {
 interface Observateur {
  actualiser() : void
 }
-class VueClasse ##royalBlue {
+class VueClasse {
 +  actualiser() : void
+-<color:royalBlue>initialiserComportement() : void
++<color:royalBlue>estVisibleClasse() : boolean
+-<color:royalBlue>createTypeIndicator() : StackPane
+-<color:royalBlue>createAccessIndicator() : StackPane
 }
 VueClasse ..|> Observateur
 VueClasse --|> VBox
@@ -111,8 +128,8 @@ ControleurVisibilite --> Classe : classe
 
 
 class VueListeClasses ##royalBlue {
-+ actualiser() : void
-+ updateListe() : void
++<color:royalBlue>actualiser() : void
++<color:royalBlue>updateListe() : void
 }
 VueListeClasses .[#royalBlue].|> Observateur
 VueListeClasses -[#royalBlue]-|> VBox
