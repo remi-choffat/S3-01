@@ -80,6 +80,11 @@ public class Classe {
     @Getter
     private final List<Relation> relations = new ArrayList<>();
 
+    /**
+     * Nom du package dans lequel est la classe
+     */
+    private String nomPackage;
+
 
     /**
      * Constructeur par défaut
@@ -92,6 +97,7 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
         this.visible = true;
+        this.nomPackage = null;
     }
 
 
@@ -116,6 +122,7 @@ public class Classe {
         this.visible = true;
         this.longueur = 0.0;
         this.largeur = 0.0;
+        this.nomPackage = null;
     }
 
 
@@ -159,6 +166,17 @@ public class Classe {
                 // Charge la classe
                 String className = file.getName().replace(".class", "");
                 classe = classLoader.loadClass(className);
+
+                // Récupère le nom du package de la classe
+                String nomPack = cheminFichier.substring(cheminFichier.lastIndexOf(File.separator), cheminFichier.length() - 6);
+                if (nomPack.contains(".")) {
+                    nomPack = nomPack.substring(1, nomPack.lastIndexOf("."));
+                    this.nomPackage = nomPack;
+                } else {
+                    // Si la classe n'est pas dans un package, on met nomPackage à null
+                    this.nomPackage = null;
+                }
+
                 isValid = true;
             } catch (ClassNotFoundException | MalformedURLException | NoClassDefFoundError |
                      ArrayIndexOutOfBoundsException e) {
