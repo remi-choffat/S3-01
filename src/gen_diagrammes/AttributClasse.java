@@ -24,6 +24,7 @@ public class AttributClasse extends Attribut {
     /**
      * Classe de l'attribut
      */
+    @Getter
     private final Classe attribut;
 
 
@@ -63,6 +64,31 @@ public class AttributClasse extends Attribut {
      */
     public String toString() {
         return super.toString() + " " + this.cardinalitePointeur + " --> " + this.cardinalitePointee;
+    }
+
+    public boolean isHeritage() {
+        // Logique pour déterminer si l'attribut est une relation d'héritage
+        return attribut.getType().equals(Classe.CLASS) && attribut.getNom().equals(this.getNom());
+    }
+
+    public boolean isImplementation() {
+        // Logique pour déterminer si l'attribut est une relation d'implémentation
+        return attribut.getType().equals(Classe.INTERFACE) && attribut.getNom().equals(this.getNom());
+    }
+
+    public boolean isAssociation() {
+        // Logique pour déterminer si l'attribut est une relation d'association
+        return true; // Par défaut, c'est une association
+    }
+
+    public boolean isAggregation() {
+        // Logique pour déterminer si l'attribut est une agrégation
+        return false; // Remplacez par la logique appropriée
+    }
+
+    public boolean isComposition() {
+        // Logique pour déterminer si l'attribut est une composition
+        return false; // Remplacez par la logique appropriée
     }
 
 }

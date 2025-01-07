@@ -3,6 +3,7 @@ package gen_diagrammes;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,6 +24,10 @@ import java.util.List;
  * Classe principale de l'application
  */
 public class Main extends Application {
+    private double dragStartX;
+    private double dragStartY;
+    private double offsetX;
+    private double offsetY;
 
     private List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
@@ -61,8 +66,6 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-
-        //------------------------------------------------INTERFACE GRAPHIQUE------------------------------------------------
         primaryStage.setTitle("Plante UML");
         primaryStage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
 
@@ -89,6 +92,7 @@ public class Main extends Application {
         menuBar.setViewOrder(-1);
 
         this.stackPane = new StackPane();
+        Pane classContainer = new Pane(); // Conteneur pour les classes
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
@@ -109,6 +113,47 @@ public class Main extends Application {
         Scene scene = new Scene(borderPane, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Ajout des styles pour le curseur
+        stackPane.setOnMouseEntered(event -> {
+            stackPane.setCursor(Cursor.MOVE);
+        });
+
+        stackPane.setOnMouseExited(event -> {
+            stackPane.setCursor(Cursor.DEFAULT);
+        });
+
+        // Ajout des gestionnaires d'événements pour le déplacement du fond
+        stackPane.setOnMousePressed(event -> {
+            if (event.getTarget() == stackPane) {
+                dragStartX = event.getSceneX();
+                dragStartY = event.getSceneY();
+                offsetX = stackPane.getTranslateX();
+                offsetY = stackPane.getTranslateY();
+            }
+        });
+
+        stackPane.setOnMouseDragged(event -> {
+            if (event.getTarget() == stackPane) {
+                double deltaX = event.getSceneX() - dragStartX;
+                double deltaY = event.getSceneY() - dragStartY;
+                stackPane.setTranslateX(offsetX + deltaX);
+                stackPane.setTranslateY(offsetY + deltaY);
+            }
+        });
+
+        // Ajout des classes au conteneur
+        stackPane.getChildren().add(classContainer);
+
+        // Ajout des gestionnaires d'événements pour les classes
+        for (Node node : classContainer.getChildren()) {
+            if (node instanceof VueClasse) {
+                node.setOnMousePressed(event -> {
+                    event.consume(); // Empêche la propagation de l'événement
+                });
+            }
+        }
+
 
         //------------------------------------------------FIN INTERFACE GRAPHIQUE------------------------------------------------
 
@@ -154,7 +199,9 @@ public class Main extends Application {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    ajouterClasseDepuisFichier(db.getFiles().get(0), stackPane);
+                    File file = db.getFiles().get(0);
+                    Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                    ajouterRelationsPourClasse(nouvelleClasse);
                 }
                 eventDrop.setDropCompleted(success);
                 eventDrop.consume();
@@ -167,7 +214,8 @@ public class Main extends Application {
                 Stage fileStage = (Stage) btnCenter.getScene().getWindow();
                 File file = fileChooser.showOpenDialog(fileStage);
                 if (file != null) {
-                    ajouterClasseDepuisFichier(file, stackPane);
+                    Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                    ajouterRelationsPourClasse(nouvelleClasse);
                 }
             });
 
@@ -210,7 +258,8 @@ public class Main extends Application {
                         File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                         if (files != null) {
                             for (File file : files) {
-                                ajouterClasseDepuisFichier(file, stackPane);
+                                Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                                ajouterRelationsPourClasse(nouvelleClasse);
                             }
                         }
                     }
@@ -228,7 +277,8 @@ public class Main extends Application {
                     File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
                     if (files != null && files.length > 0) {
                         for (File file : files) {
-                            ajouterClasseDepuisFichier(file, stackPane);
+                            Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                            ajouterRelationsPourClasse(nouvelleClasse);
                         }
                     } else {
                         System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
@@ -311,6 +361,8 @@ public class Main extends Application {
         return switch (relation.getType()) {
             case "heritage" -> VueRelation.TypeRelation.HERITAGE;
             case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
+            case "aggregation" -> VueRelation.TypeRelation.AGGREGATION;
+            case "composition" -> VueRelation.TypeRelation.COMPOSITION;
             default -> VueRelation.TypeRelation.ASSOCIATION;
         };
     }
@@ -370,22 +422,23 @@ public class Main extends Application {
      * @param file      Fichier
      * @param stackPane StackPane : Conteneur du diagramme
      */
-    private void ajouterClasseDepuisFichier(File file, StackPane stackPane) {
+    private Classe ajouterClasseDepuisFichier(File file, StackPane stackPane) {
+        Classe nouvelleClasse = null;
         try {
-            Classe classe = new Classe(file.getAbsolutePath());
+            nouvelleClasse = new Classe(file.getAbsolutePath());
             // N'affiche pas les classes anonymes (générées par Java)
-            if (classe.getNom() != null) {
-                classe.setLongueur(Math.random() * 600);
-                classe.setLargeur(Math.random() * 300);
-                Diagramme.getInstance().ajouterClasse(classe);
-                System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " ajoutée");
+            if (nouvelleClasse.getNom() != null) {
+                nouvelleClasse.setLongueur(Math.random() * 600);
+                nouvelleClasse.setLargeur(Math.random() * 300);
+                Diagramme.getInstance().ajouterClasse(nouvelleClasse);
+                System.out.println(nouvelleClasse.getTypeClasseString() + " " + nouvelleClasse.getNom() + " ajoutée");
             }
         } catch (Exception ex) {
-//            System.err.println(ex.getMessage());
             ex.printStackTrace();
         }
         stackPane.getChildren().clear();
         afficherDiagramme();
+        return nouvelleClasse;
     }
 
 
@@ -423,14 +476,21 @@ public class Main extends Application {
         }
 
         // Ajoute les relations
-        for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
-            VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
-            VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
-            VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
-            VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
-            relations.add(vueRelation);
-            diagramme.ajouterObservateur(vueRelation);
-            relationPane.getChildren().add(vueRelation);
+        for (Relation relation : diagramme.getRelations()) {
+            VueClasse source = (VueClasse) ligneClasse.getChildren().stream()
+                    .filter(node -> ((VueClasse) node).getClasse().equals(relation.getSource()))
+                    .findFirst().orElse(null);
+            VueClasse destination = (VueClasse) ligneClasse.getChildren().stream()
+                    .filter(node -> ((VueClasse) node).getClasse().equals(relation.getDestination()))
+                    .findFirst().orElse(null);
+
+            if (source != null && destination != null) {
+                VueRelation.TypeRelation typeRelation = determineTypeRelation(relation);
+                VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+                relations.add(vueRelation);
+                diagramme.ajouterObservateur(vueRelation);
+                relationPane.getChildren().add(vueRelation);
+            }
         }
 
         // Met à jour les relations à chaque déplacement de classe
@@ -442,5 +502,36 @@ public class Main extends Application {
         }
         updateRelations();
     }
+
+    private void ajouterRelationsPourClasse(Classe nouvelleClasse) {
+        Diagramme diagramme = Diagramme.getInstance();
+
+        // Ajout des relations de parenté (héritage et implémentation)
+        for (Classe parent : nouvelleClasse.getParents()) {
+            String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
+            Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
+            diagramme.ajouterRelation(relation);
+        }
+
+        // Ajout des relations d'association, d'agrégation et de composition (attributs de type classe)
+        for (Attribut attribut : nouvelleClasse.getAttributs()) {
+            if (attribut instanceof AttributClasse) {
+                Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
+                String typeRelation = "association"; // Par défaut, association
+                if (((AttributClasse) attribut).isHeritage()) {
+                    typeRelation = "heritage";
+                } else if (((AttributClasse) attribut).isImplementation()) {
+                    typeRelation = "implementation";
+                } else if (((AttributClasse) attribut).isAggregation()) {
+                    typeRelation = "aggregation";
+                } else if (((AttributClasse) attribut).isComposition()) {
+                    typeRelation = "composition";
+                }
+                Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
+                diagramme.ajouterRelation(relation);
+            }
+        }
+    }
+
 
 }

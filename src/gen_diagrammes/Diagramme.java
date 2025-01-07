@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Représente un diagramme de classes
@@ -16,6 +17,7 @@ public class Diagramme implements Sujet {
     @Setter
     @Getter
     private String nomPackage;
+    private List<Relation> relations = new ArrayList<>();
 
     /**
      * Liste des classes du diagramme
@@ -248,6 +250,15 @@ public class Diagramme implements Sujet {
             }
         }
         this.notifierObservateurs();
+    }
+
+    public List<Relation> getRelations() {
+        return relations;
+    }
+
+    public void ajouterRelation(Relation relation) {
+        relations.add(relation);
+        notifierObservateurs();
     }
 
 }

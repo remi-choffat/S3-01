@@ -13,7 +13,9 @@ public class VueRelation extends Pane implements Observateur {
     public enum TypeRelation {
         HERITAGE,
         IMPLEMENTATION,
-        ASSOCIATION
+        ASSOCIATION,
+        AGGREGATION,
+        COMPOSITION
     }
 
     private final VueClasse source;
@@ -42,25 +44,25 @@ public class VueRelation extends Pane implements Observateur {
             double endX = destination.getBoundsInParent().getMinX() + destination.getWidth() / 2;
             double endY = destination.getBoundsInParent().getMinY() + destination.getHeight() / 2;
 
-            // Calculer l'angle de la ligne
+            // Calcul de l'angle de la ligne
             double angle = Math.atan2(endY - startY, endX - startX);
 
-            // Déterminer les bordures de la classe de destination
+            // Détermination des bordures de la classe de destination
             double deltaX = (destination.getWidth() / 2) / Math.abs(Math.cos(angle));
             double deltaY = (destination.getHeight() / 2) / Math.abs(Math.sin(angle));
 
-            // Choisir le plus petit delta pour s'assurer que la ligne touche le bord de la classe
+            // Choix du plus petit delta pour s'assurer que la ligne touche le bord de la classe
             double offsetX = Math.min(deltaX, deltaY) * Math.cos(angle);
             double offsetY = Math.min(deltaX, deltaY) * Math.sin(angle);
 
             endX -= offsetX;
             endY -= offsetY;
 
-            // Créer et ajouter la ligne
+            // Création et ajout de la ligne
             Line line = new Line(startX, startY, endX, endY);
             this.getChildren().add(line);
 
-            // Créer et ajouter la tête de flèche
+            // Création et ajout de la tête de flèche
             double arrowLength = 15;
             double arrowWidth = 7;
 
@@ -71,6 +73,7 @@ public class VueRelation extends Pane implements Observateur {
 
             Polygon arrowHead = new Polygon(endX, endY, x1, y1, x2, y2);
 
+            // Définir le style de la flèche en fonction du type de relation
             switch (typeRelation) {
                 case HERITAGE:
                     line.setStroke(Color.BLACK);
@@ -90,10 +93,24 @@ public class VueRelation extends Pane implements Observateur {
                     line.setStrokeWidth(2);
                     arrowHead.setFill(Color.BLACK);
                     break;
+                case AGGREGATION:
+                    line.setStroke(Color.BLACK);
+                    line.setStrokeWidth(2);
+                    arrowHead = new Polygon(endX, endY, x1, y1, x2, y2);
+                    arrowHead.setFill(Color.TRANSPARENT);
+                    arrowHead.setStroke(Color.BLACK);
+                    break;
+                case COMPOSITION:
+                    line.setStroke(Color.BLACK);
+                    line.setStrokeWidth(2);
+                    arrowHead = new Polygon(endX, endY, x1, y1, x2, y2);
+                    arrowHead.setFill(Color.BLACK);
+                    break;
             }
             this.getChildren().add(arrowHead);
         }
-
     }
+
+
 
 }
