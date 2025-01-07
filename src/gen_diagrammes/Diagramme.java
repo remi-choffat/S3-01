@@ -261,4 +261,16 @@ public class Diagramme implements Sujet {
         notifierObservateurs();
     }
 
+
+    public boolean contientRelation(Classe source, Classe destination) {
+        for (Relation relation : relations) {
+            // Vérifier si la relation est entre ces deux classes, dans un ordre quelconque
+            if ((relation.getSource().equals(source) && relation.getDestination().equals(destination)) ||
+                    (relation.getSource().equals(destination) && relation.getDestination().equals(source))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

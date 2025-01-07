@@ -27,6 +27,15 @@ public class AttributClasse extends Attribut {
     @Getter
     private final Classe attribut;
 
+    /**
+     * Indique si l'attribut est une agrégation
+     */
+    private final boolean aggregation;
+
+    /**
+     * Indique si l'attribut est une composition
+     */
+    private final boolean composition;
 
     /**
      * Constructeur
@@ -37,14 +46,17 @@ public class AttributClasse extends Attribut {
      * @param cardPointeur Cardinalité côté classe à laquelle appartient l'attribut
      * @param cardPointee  Cardinalité côté classe du type de l'attribut
      * @param classe       Classe de l'attribut
+     * @param aggregation  Indique si l'attribut est une agrégation
+     * @param composition  Indique si l'attribut est une composition
      */
-    public AttributClasse(String nom, String typeAcces, String type, String cardPointeur, String cardPointee, Classe classe) {
+    public AttributClasse(String nom, String typeAcces, String type, String cardPointeur, String cardPointee, Classe classe, boolean aggregation, boolean composition) {
         super(nom, typeAcces, type);
         this.cardinalitePointeur = cardPointeur;
         this.cardinalitePointee = cardPointee;
         this.attribut = classe;
+        this.aggregation = aggregation;
+        this.composition = composition;
     }
-
 
     /**
      * Constructeur par défaut
@@ -54,8 +66,9 @@ public class AttributClasse extends Attribut {
         this.cardinalitePointeur = "Inconnu";
         this.cardinalitePointee = "Inconnu";
         this.attribut = null;
+        this.aggregation = false;
+        this.composition = false;
     }
-
 
     /**
      * Retourne une chaîne de caractères représentant l'attribut
@@ -76,19 +89,13 @@ public class AttributClasse extends Attribut {
         return attribut.getType().equals(Classe.INTERFACE) && attribut.getNom().equals(this.getNom());
     }
 
-    public boolean isAssociation() {
-        // Logique pour déterminer si l'attribut est une relation d'association
-        return true; // Par défaut, c'est une association
-    }
-
     public boolean isAggregation() {
         // Logique pour déterminer si l'attribut est une agrégation
-        return false; // Remplacez par la logique appropriée
+        return this.aggregation;
     }
 
     public boolean isComposition() {
         // Logique pour déterminer si l'attribut est une composition
-        return false; // Remplacez par la logique appropriée
+        return this.composition;
     }
-
 }

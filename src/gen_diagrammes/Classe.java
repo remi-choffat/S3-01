@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -92,6 +93,8 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
         this.visible = true;
+        this.longueur = Math.random() * 600;
+        this.largeur = Math.random() * 300;
     }
 
 
@@ -114,8 +117,8 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
         this.visible = true;
-        this.longueur = 0.0;
-        this.largeur = 0.0;
+        this.longueur = Math.random() * 600;
+        this.largeur = Math.random() * 300;
     }
 
 
@@ -131,8 +134,8 @@ public class Classe {
         this.methodes = new ArrayList<Methode>();
         this.attributs = new ArrayList<Attribut>();
         this.visible = true;
-        this.longueur = 0.0;
-        this.largeur = 0.0;
+        this.longueur = Math.random() * 600; // Valeurs par défaut pour éviter des dimensions nulles
+        this.largeur = Math.random() * 300;
 
         String nomClasse = cheminFichier.substring(cheminFichier.lastIndexOf("\\") + 1, cheminFichier.length() - 6);
 
@@ -229,7 +232,7 @@ public class Classe {
                 // Vérifie si le type de l'attribut est une classe du diagramme
                 // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
                 if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
-                    this.attributs.add(new AttributClasse(a.getName(), accesAttribut, type, "", "", c));
+                    this.attributs.add(new AttributClasse(a.getName(), accesAttribut, type, "", "", c, false, false));
                     isClassPresent = true;
                     break;
                 }
@@ -400,29 +403,28 @@ public class Classe {
      */
     public void updateAttributs() {
         ArrayList<Attribut> res = new ArrayList<>();
-        for (Attribut a : this.attributs) {
-
+        Iterator<Attribut> iterator = this.attributs.iterator();
+        while (iterator.hasNext()) {
+            Attribut a = iterator.next();
             String type = a.getType();
             String accesAttribut = a.getTypeAcces();
+            String nomAttribut = a.getNom();
 
             boolean isClassPresent = false;
             for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                // Vérifie si le type de l'attribut est une classe du diagramme
-                // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
                 if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
-                    res.add(new AttributClasse(a.getNom(), accesAttribut, type, "", "", c));
+                    res.add(new AttributClasse(nomAttribut, accesAttribut, type, "", "", c, false, false));
                     isClassPresent = true;
                     break;
                 }
             }
 
             if (!isClassPresent) {
-                res.add(new Attribut(a.getNom(), accesAttribut, type));
+                res.add(new Attribut(nomAttribut, accesAttribut, type));
             }
         }
         this.attributs = res;
     }
-
 
     /**
      * Affichage (PlantUML) de la classe

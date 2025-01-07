@@ -358,14 +358,21 @@ public class Main extends Application {
      * @return Type de relation
      */
     private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
-        return switch (relation.getType()) {
-            case "heritage" -> VueRelation.TypeRelation.HERITAGE;
-            case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
-            case "aggregation" -> VueRelation.TypeRelation.AGGREGATION;
-            case "composition" -> VueRelation.TypeRelation.COMPOSITION;
-            default -> VueRelation.TypeRelation.ASSOCIATION;
-        };
+        switch (relation.getType()) {
+            case "heritage":
+                return VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
+            case "implementation":
+                return VueRelation.TypeRelation.IMPLEMENTATION;
+            case "aggregation":
+                return VueRelation.TypeRelation.AGGREGATION;
+            case "composition":
+                return VueRelation.TypeRelation.COMPOSITION;
+            default:
+                return VueRelation.TypeRelation.ASSOCIATION;
+        }
     }
+
+
 
 
     /**
@@ -410,10 +417,12 @@ public class Main extends Application {
      * Met à jour les relations entre les classes
      */
     private void updateRelations() {
+        System.out.println("Mise à jour des relations");
         for (VueRelation vueRelation : relations) {
             vueRelation.actualiser();
         }
     }
+
 
 
     /**
@@ -426,12 +435,11 @@ public class Main extends Application {
         Classe nouvelleClasse = null;
         try {
             nouvelleClasse = new Classe(file.getAbsolutePath());
-            // N'affiche pas les classes anonymes (générées par Java)
             if (nouvelleClasse.getNom() != null) {
                 nouvelleClasse.setLongueur(Math.random() * 600);
                 nouvelleClasse.setLargeur(Math.random() * 300);
                 Diagramme.getInstance().ajouterClasse(nouvelleClasse);
-                System.out.println(nouvelleClasse.getTypeClasseString() + " " + nouvelleClasse.getNom() + " ajoutée");
+                ajouterRelationsPourClasse(nouvelleClasse);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -471,7 +479,6 @@ public class Main extends Application {
             }
 
             vueClasse.actualiser();
-
             ligneClasse.getChildren().add(vueClasse);
         }
 
@@ -506,32 +513,37 @@ public class Main extends Application {
     private void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
 
-        // Ajout des relations de parenté (héritage et implémentation)
+        // Vérifier si des relations d'héritage existent déjà avant de les ajouter
         for (Classe parent : nouvelleClasse.getParents()) {
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
-            Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-            diagramme.ajouterRelation(relation);
+            if (!diagramme.contientRelation(nouvelleClasse, parent)) { // Vérifier l'existence de la relation
+                Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
+                diagramme.ajouterRelation(relation);
+            }
         }
 
-        // Ajout des relations d'association, d'agrégation et de composition (attributs de type classe)
+        // Vérifier et ajouter les relations d'association ou d'agrégation
         for (Attribut attribut : nouvelleClasse.getAttributs()) {
             if (attribut instanceof AttributClasse) {
                 Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
-                String typeRelation = "association"; // Par défaut, association
-                if (((AttributClasse) attribut).isHeritage()) {
-                    typeRelation = "heritage";
-                } else if (((AttributClasse) attribut).isImplementation()) {
-                    typeRelation = "implementation";
-                } else if (((AttributClasse) attribut).isAggregation()) {
+                String typeRelation = "association"; // Par défaut association
+                if (((AttributClasse) attribut).isAggregation()) {
                     typeRelation = "aggregation";
                 } else if (((AttributClasse) attribut).isComposition()) {
                     typeRelation = "composition";
                 }
-                Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
-                diagramme.ajouterRelation(relation);
+                if (!diagramme.contientRelation(nouvelleClasse, classeAssociee)) { // Vérification avant ajout
+                    Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
+                    diagramme.ajouterRelation(relation);
+                }
             }
         }
     }
+
+
+
+
+
 
 
 }

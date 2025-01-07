@@ -77,4 +77,6 @@ public class Attribut {
         return nom + " : " + type;
     }
 
+
+
 }
