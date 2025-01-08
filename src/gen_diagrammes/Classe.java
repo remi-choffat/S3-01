@@ -318,7 +318,7 @@ public class Classe {
                 this.parents.add(new Classe(c.getSimpleName(), c.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", INTERFACE));
             } else {
                 // Associe la classe parente à la classe actuelle dans la liste parents
-                this.parents.add(Diagramme.getInstance().getClasse(c.getSimpleName()));
+                this.parents.add(Diagramme.getInstance().getClasse(c.getSimpleName(), c.getPackageName()));
             }
         }
 
@@ -338,7 +338,7 @@ public class Classe {
                 this.parents.add(new Classe(superClass.getSimpleName(), superClass.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", CLASS));
             } else {
                 // Associe la classe parente à la classe actuelle dans la liste parents
-                this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName()));
+                this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName(), superClass.getPackageName()));
             }
         }
 
@@ -573,6 +573,19 @@ public class Classe {
         for (Classe c : this.getParents()) {
             c.setVisibilite(false);
         }
+    }
+
+
+    /**
+     * Définit l'égalité entre deux classes
+     * Les classes sont égales si elles ont le même nom et le même package
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Classe c) {
+            return this.nom.equals(c.getNom()) && this.nomPackage.equals(c.getNomPackage());
+        }
+        return false;
     }
 
 }

@@ -78,13 +78,23 @@ public class Diagramme implements Sujet {
      * Méthode qui permet d'ajouter une classe au diagramme
      *
      * @param c classe à ajouter au diagramme
+     * @return 1 si la classe a été ajoutée, 0 si la classe existe déjà, -1 si la classe est nulle
      */
-    public void ajouterClasse(Classe c) {
+    public int ajouterClasse(Classe c) {
         if (c == null) {
-            return;
+            return -1;
         }
+
+        // Vérifie si une classe avec le même nom et même package existe déjà
+        for (Classe classe : this.listeClasses) {
+            if (c.equals(classe)) {
+                return 0;
+            }
+        }
+
         this.listeClasses.add(c);
         this.updateClasses();
+        return 1;
     }
 
 
@@ -96,6 +106,18 @@ public class Diagramme implements Sujet {
     public void supprimerClasse(Classe c) {
         this.listeClasses.remove(c);
         this.updateClasses();
+    }
+
+
+    /**
+     * Méthode qui permet de supprimer une classe du diagramme par son nom
+     */
+    public void supprimerClasse(String nomClasse, String nomPackage) {
+        Classe classe = this.getClasse(nomClasse, nomPackage);
+        if (classe != null) {
+            this.listeClasses.remove(classe);
+            this.updateClasses();
+        }
     }
 
 
@@ -176,9 +198,9 @@ public class Diagramme implements Sujet {
      * @param simpleName nom de la classe
      * @return classe correspondante
      */
-    public Classe getClasse(String simpleName) {
+    public Classe getClasse(String simpleName, String nomPackage) {
         for (Classe c : this.listeClasses) {
-            if (c.getNom().equals(simpleName)) {
+            if (c.getNom().equals(simpleName) && c.getNomPackage().equals(nomPackage)) {
                 return c;
             }
         }

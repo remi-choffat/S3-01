@@ -315,7 +315,7 @@ public class Main extends Application {
             ListView<String> listView = new ListView<>();
             ArrayList<String> nomsClasses = new ArrayList<>();
             for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                nomsClasses.add(c.getNom());
+                nomsClasses.add(c.getNomPackage() + "." + c.getNom());
             }
             listView.getItems().addAll(nomsClasses);
             dialog.getDialogPane().setContent(listView);
@@ -328,7 +328,7 @@ public class Main extends Application {
             });
 
             dialog.showAndWait().ifPresent(result -> {
-                Classe classe = Diagramme.getInstance().getClasse(result);
+                Classe classe = Diagramme.getInstance().getClasse(result.split("\\.")[1], result.split("\\.")[0]);
                 System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
                 Diagramme.getInstance().supprimerClasse(classe);
                 afficherDiagramme();
@@ -504,8 +504,31 @@ public class Main extends Application {
             if (classe.getNom() != null) {
                 classe.setLongueur(Math.random() * 600);
                 classe.setLargeur(Math.random() * 300);
-                Diagramme.getInstance().ajouterClasse(classe);
-                System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " ajoutée");
+                int etatAjout = Diagramme.getInstance().ajouterClasse(classe);
+                if (etatAjout == 0) {
+                    // Affiche un message demandant s'il faut remplacer ou non la classe existante
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Classe existante");
+                    String typeClasse = classe.getTypeClasseString();
+                    if (typeClasse.equals("interface")) {
+                        typeClasse = "L'interface";
+                    } else {
+                        typeClasse = "La " + typeClasse;
+                    }
+                    alert.setHeaderText(typeClasse + " " + classe.getNomPackage() + "." + classe.getNom() + " est déjà présente sur le diagramme.");
+                    alert.setContentText("Voulez-vous remplacer la classe existante ?");
+                    alert.showAndWait().ifPresent(type -> {
+                        if (type == ButtonType.OK) {
+                            Diagramme.getInstance().supprimerClasse(classe.getNom(), classe.getNomPackage());
+                            Diagramme.getInstance().ajouterClasse(classe);
+                            System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " remplacée");
+                        }
+                    });
+                } else if (etatAjout == -1) {
+                    System.err.println("Erreur lors de l'ajout d'une classe nulle");
+                } else {
+                    System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " ajoutée");
+                }
             }
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
