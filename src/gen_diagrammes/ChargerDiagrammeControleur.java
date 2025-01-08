@@ -44,8 +44,7 @@ public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
         File file = fileChooser.showOpenDialog(primaryStage);
         if (file != null) {
             try {
-                Diagramme diagramme = Diagramme.chargerDiagramme(file);
-                Diagramme.setInstance(diagramme);
+                Diagramme.chargerDiagramme(file);
                 Diagramme.getInstance().updateClasses();
                 Diagramme.getInstance().afficher(Main.stackPane);
                 System.out.println("Diagramme chargé depuis " + file.getAbsolutePath());

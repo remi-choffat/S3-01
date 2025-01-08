@@ -309,7 +309,7 @@ public class Diagramme implements Sujet, Serializable {
      */
     public void sauvegarderDiagramme(File file) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
-            oos.writeObject(this);
+            oos.writeObject(this.listeClasses);
         }
     }
 
@@ -318,13 +318,12 @@ public class Diagramme implements Sujet, Serializable {
      * Charge un diagramme depuis un fichier
      *
      * @param file fichier à charger
-     * @return diagramme chargé
      * @throws IOException            erreur lors du chargement
      * @throws ClassNotFoundException classe non trouvée
      */
-    public static Diagramme chargerDiagramme(File file) throws IOException, ClassNotFoundException {
+    public static void chargerDiagramme(File file) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            return (Diagramme) ois.readObject();
+            instance.listeClasses = (ArrayList<Classe>) ois.readObject();
         }
     }
 
