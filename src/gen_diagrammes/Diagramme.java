@@ -159,6 +159,7 @@ public class Diagramme implements Sujet {
     public void notifierObservateurs() {
         for (Observateur o : this.listeObservateurs) {
             o.actualiser();
+
         }
     }
 
