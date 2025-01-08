@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 public class VueListeClasses extends VBox implements Observateur {
 
     public VueListeClasses() {
+        System.out.println("rygujioghcfhyhyfgtgyu");
         this.setPadding(new Insets(10));
         Text texteMenu = new Text("    Liste des classes du diagramme :    ");
         texteMenu.setStyle("-fx-text-fill: #ffffff;");

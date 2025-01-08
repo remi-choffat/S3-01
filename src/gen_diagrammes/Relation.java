@@ -18,4 +18,6 @@ public class Relation {
         this.type = type;
     }
 
+
+
 }

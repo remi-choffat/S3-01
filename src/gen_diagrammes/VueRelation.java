@@ -30,31 +30,25 @@ public class VueRelation extends Pane implements Observateur {
     }
 
     public void actualiser() {
-        System.out.println("oui");
+        System.out.println("Actualisation de VueRelation pour " + source.getClasse().getNom() + " -> " + destination.getClasse().getNom());
         this.layout(); // Forcer la mise à jour des dimensions de la Pane
         this.getChildren().clear();
-
         if (this.source.estVisibleClasse() && this.destination.estVisibleClasse()) {
             double destinationWidth = destination.getBoundsInParent().getWidth();
             double destinationHeight = destination.getBoundsInParent().getHeight();
-
             if (destinationWidth <= 0 || destinationHeight <= 0) {
                 destinationWidth = 150; // Valeurs par défaut
                 destinationHeight = 100;
             }
-
             double startX = source.getBoundsInParent().getMinX() + source.getBoundsInParent().getWidth() / 2;
             double startY = source.getBoundsInParent().getMinY() + source.getBoundsInParent().getHeight() / 2;
             double endX = destination.getBoundsInParent().getMinX() + destinationWidth / 2;
             double endY = destination.getBoundsInParent().getMinY() + destinationHeight / 2;
-
             double angle = Math.atan2(endY - startY, endX - startX);
-
             double deltaX = (destinationWidth / 2) / Math.abs(Math.cos(angle));
             double deltaY = (destinationHeight / 2) / Math.abs(Math.sin(angle));
             double offsetX = Math.min(deltaX, deltaY) * Math.cos(angle);
             double offsetY = Math.min(deltaX, deltaY) * Math.sin(angle);
-
             endX -= offsetX;
             endY -= offsetY;
 
@@ -72,30 +66,41 @@ public class VueRelation extends Pane implements Observateur {
             double y1 = endY - arrowLength * Math.sin(angle - Math.PI / 6);
             double x2 = endX - arrowLength * Math.cos(angle + Math.PI / 6);
             double y2 = endY - arrowLength * Math.sin(angle + Math.PI / 6);
-
             Polygon arrowHead = new Polygon(endX, endY, x1, y1, x2, y2);
 
-            if (typeRelation == TypeRelation.HERITAGE || typeRelation == TypeRelation.IMPLEMENTATION) {
-                arrowHead.setFill(Color.TRANSPARENT);
-                arrowHead.setStroke(Color.BLACK);
-                arrowHead.setStrokeWidth(1);
-                this.getChildren().add(arrowHead);
-
-                // Journal pour confirmer l'ajout de la flèche
-                System.out.println("Flèche HERITAGE ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
-                        ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
-            } else if (typeRelation == TypeRelation.ASSOCIATION) {
-                arrowHead.setFill(Color.BLACK);
-                this.getChildren().add(arrowHead);
-
-                // Journal pour confirmer l'ajout de la flèche d'association
-                System.out.println("Flèche ASSOCIATION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
-                        ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
+            switch (typeRelation) {
+                case HERITAGE:
+                    arrowHead.setFill(Color.TRANSPARENT);
+                    arrowHead.setStroke(Color.BLACK);
+                    arrowHead.setStrokeWidth(1);
+                    this.getChildren().add(arrowHead);
+                    System.out.println("Flèche HERITAGE ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
+                            ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
+                    break;
+                case IMPLEMENTATION:
+                    arrowHead.setFill(Color.TRANSPARENT);
+                    arrowHead.setStroke(Color.RED);
+                    arrowHead.setStrokeWidth(1);
+                    this.getChildren().add(arrowHead);
+                    System.out.println("Flèche IMPLEMENTATION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
+                            ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
+                    break;
+                case ASSOCIATION:
+                    arrowHead.setFill(Color.BLACK);
+                    this.getChildren().add(arrowHead);
+                    System.out.println("Flèche ASSOCIATION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
+                            ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
+                    break;
+                case AGGREGATION:
+                case COMPOSITION:
+                    arrowHead.setFill(Color.WHITE);
+                    arrowHead.setStroke(Color.BLACK);
+                    arrowHead.setStrokeWidth(1);
+                    this.getChildren().add(arrowHead);
+                    System.out.println("Flèche AGGREGATION/COMPOSITION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
+                            ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
+                    break;
             }
         }
     }
-
-
-
-
 }

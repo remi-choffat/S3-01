@@ -466,38 +466,74 @@ public class Main extends Application {
             vueClasse.relocate(c.getLongueur(), c.getLargeur());
             Diagramme.getInstance().ajouterObservateur(vueClasse);
 
-            // Appliquer les paramètres d'affichage
-            if (afficherAttributs) {
-                c.afficherAttributs();
-            } else {
-                c.masquerAttributs();
-            }
-            if (afficherMethodes) {
-                c.afficherMethodes();
-            } else {
-                c.masquerMethodes();
-            }
-
             vueClasse.actualiser();
             ligneClasse.getChildren().add(vueClasse);
+            System.out.println("Ajout de VueClasse : " + c.getNom());
+
+
+
+        // Appliquer les paramètres d'affichage
+//            if (afficherAttributs) {
+//                c.afficherAttributs();
+//            } else {
+//                c.masquerAttributs();
+//            }
+//            if (afficherMethodes) {
+//                c.afficherMethodes();
+//            } else {
+//                c.masquerMethodes();
+//            }
+
+
         }
 
         // Ajoute les relations
+        System.out.println("Contenu de ligneClasse avant le traitement des relations :");
+        for (Node node : ligneClasse.getChildren()) {
+            if (node instanceof VueClasse vueClasse) {
+                System.out.println("VueClasse présente : " + vueClasse.getClasse().getNom());
+            }
+        }
+
         for (Relation relation : diagramme.getRelations()) {
             VueClasse source = (VueClasse) ligneClasse.getChildren().stream()
-                    .filter(node -> ((VueClasse) node).getClasse().equals(relation.getSource()))
+                    .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getSource().getNom()))
                     .findFirst().orElse(null);
+
             VueClasse destination = (VueClasse) ligneClasse.getChildren().stream()
-                    .filter(node -> ((VueClasse) node).getClasse().equals(relation.getDestination()))
+                    .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getDestination().getNom()))
                     .findFirst().orElse(null);
+
+            for (Classe c : diagramme.getListeClasses()) {
+                System.out.println("Classe traitée pour VueClasse : " + c.getNom());
+            }
+
+
+
+
+
+
 
             if (source != null && destination != null) {
                 VueRelation.TypeRelation typeRelation = determineTypeRelation(relation);
                 VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
                 relations.add(vueRelation);
-                diagramme.ajouterObservateur(vueRelation);
+                diagramme.ajouterObservateur(vueRelation); // Ajout de l'observateur
                 relationPane.getChildren().add(vueRelation);
+                System.out.println("Observateur ajouté pour la relation : " + source.getClasse().getNom() + " -> " + destination.getClasse().getNom());
             }
+
+//            if (source != null && destination == null) {
+//                System.out.println("Destination manquante pour la relation avec la source : " + source.getClasse().getNom());
+//
+//                // Test d'affichage forcé
+//                Line testLine = new Line(100, 100, 300, 300);
+//                testLine.setStroke(Color.RED);
+//                testLine.setStrokeWidth(3);
+//                relationPane.getChildren().add(testLine);
+//                System.out.println("Ligne de test ajoutée pour la source : " + source.getClasse().getNom());
+//            }
+
         }
 
         // Met à jour les relations à chaque déplacement de classe
@@ -508,6 +544,7 @@ public class Main extends Application {
             }
         }
         updateRelations();
+
     }
 
     private void ajouterRelationsPourClasse(Classe nouvelleClasse) {
@@ -533,6 +570,8 @@ public class Main extends Application {
 
                 // Ajout de la relation
                 Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
+                System.out.println(parent.getNom()+"--------------------------------------------");
+                System.out.println(relation.getType());
                 diagramme.ajouterRelation(relation);
                 System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
             } else {
@@ -572,5 +611,4 @@ public class Main extends Application {
             }
         }
     }
-
 }

@@ -157,9 +157,11 @@ public class Diagramme implements Sujet {
      */
     @Override
     public void notifierObservateurs() {
-        for (Observateur o : this.listeObservateurs) {
-            o.actualiser();
+        System.out.println("Notification des observateurs");
 
+        for (Observateur o : this.listeObservateurs) {
+            System.out.println("Notification de : " + o.getClass().getSimpleName());
+            o.actualiser();
         }
     }
 
