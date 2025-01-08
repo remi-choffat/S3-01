@@ -550,10 +550,15 @@ public class Main extends Application {
         stackPane.getChildren().addAll(relationPane, ligneClasse);
 
         for (Classe c : diagramme.getListeClasses()) {
-            VueClasse vueClasse = new VueClasse(c);
-            makeDraggable(vueClasse);
-            vueClasse.relocate(c.getLongueur(), c.getLargeur());
-            Diagramme.getInstance().ajouterObservateur(vueClasse);
+            VueClasse vueClasse;
+            if(c.getObservateurs().isEmpty()) {
+                vueClasse = new VueClasse(c);
+                makeDraggable(vueClasse);
+                vueClasse.relocate(c.getLongueur(), c.getLargeur());
+                c.ajouterObservateur(vueClasse);
+            } else {
+                vueClasse = (VueClasse)c.getObservateurs().getFirst();
+            }
 
             // Appliquer les paramètres d'affichage
             if (afficherAttributs) {

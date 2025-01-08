@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,7 +18,26 @@ import java.util.List;
  * Représente une classe du diagramme
  */
 @Getter
-public class Classe {
+public class Classe implements Sujet {
+
+    @Getter
+    private ArrayList<Observateur> observateurs = new ArrayList<>();
+
+    @Override
+    public void ajouterObservateur(Observateur v) {
+        observateurs.add(v);
+    }
+
+    @Override
+    public void notifierObservateurs() {
+        for(Observateur v : observateurs) {
+            v.actualiser();
+        }
+    }
+
+    public void supprimerObservateur(Observateur v) {
+        observateurs.remove(v);
+    }
 
     public static final String PUBLIC = "public";
     public static final String PRIVATE = "private";
@@ -353,6 +373,7 @@ public class Classe {
     public void setVisibilite(boolean etat) {
         this.visible = etat;
         Diagramme.getInstance().notifierObservateurs();
+        this.notifierObservateurs();
     }
 
 
