@@ -402,6 +402,7 @@ public class Main extends Application {
             vb.setLayoutX(stackPane.getScaleX() - 0.5 * vb.getScaleX());
             vb.setLayoutY(stackPane.getScaleY() - 0.5 * vb.getScaleY());
 
+
             bOk.setOnAction(f -> {
                 Classe c = new Classe(tf.getText(), comboVisibilite.getValue(), comboType.getValue());
                 Diagramme.getInstance().ajouterClasse(c);
