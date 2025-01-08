@@ -250,4 +250,8 @@ public class VueClasse extends VBox implements Observateur {
         return new StackPane(circle);
     }
 
+    public Classe getClasse() {
+        return classe;
+    }
+
 }
