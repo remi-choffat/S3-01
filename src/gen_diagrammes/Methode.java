@@ -3,6 +3,8 @@ package gen_diagrammes;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -10,7 +12,10 @@ import java.util.ArrayList;
  */
 @Setter
 @Getter
-public class Methode {
+public class Methode implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private String nom;
     private String acces;

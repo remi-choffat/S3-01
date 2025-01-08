@@ -3,12 +3,18 @@ package gen_diagrammes;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * Représente un attribut d'une classe du diagramme
  */
 @Setter
 @Getter
-public class Attribut {
+public class Attribut implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private String nom;
     private String typeAcces;
