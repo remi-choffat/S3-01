@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +19,10 @@ import java.util.List;
  * Représente une classe du diagramme
  */
 @Getter
-public class Classe implements Sujet {
+public class Classe implements Sujet, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Getter
     private ArrayList<Observateur> observateurs = new ArrayList<>();
@@ -30,7 +34,7 @@ public class Classe implements Sujet {
 
     @Override
     public void notifierObservateurs() {
-        for(Observateur v : observateurs) {
+        for (Observateur v : observateurs) {
             v.actualiser();
         }
     }

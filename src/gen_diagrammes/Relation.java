@@ -2,11 +2,17 @@ package gen_diagrammes;
 
 import lombok.Getter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * Représente une relation entre deux classes
  */
 @Getter
-public class Relation {
+public class Relation implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final Classe source;
     private final Classe destination;

@@ -1,16 +1,24 @@
 package gen_diagrammes;
 
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
+
+import static gen_diagrammes.Main.makeDraggable;
+import static gen_diagrammes.Main.updateRelations;
 
 /**
  * Représente un diagramme de classes
  */
-public class Diagramme implements Sujet {
+public class Diagramme implements Sujet, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * Nom du package
@@ -30,6 +38,7 @@ public class Diagramme implements Sujet {
     /**
      * Instance unique de Diagramme
      */
+    @Setter
     private static Diagramme instance;
 
     @Setter
@@ -161,7 +170,6 @@ public class Diagramme implements Sujet {
     /**
      * Met à jour les attributs des classes du diagramme
      */
-
     public void updateClasses() {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();
@@ -226,7 +234,7 @@ public class Diagramme implements Sujet {
         for (Classe c : this.listeClasses) {
             c.setVisibilite(true);
         }
-        this.notifierObservateurs();
+        //this.notifierObservateurs();
     }
 
 
@@ -292,9 +300,96 @@ public class Diagramme implements Sujet {
         this.notifierObservateurs();
     }
 
+
+    /**
+     * Sauvegarde le diagramme dans un fichier
+     *
+     * @param file fichier de sauvegarde
+     * @throws IOException erreur lors de la sauvegarde
+     */
+    public void sauvegarderDiagramme(File file) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(this);
+        }
+    }
+
+
+    /**
+     * Charge un diagramme depuis un fichier
+     *
+     * @param file fichier à charger
+     * @return diagramme chargé
+     * @throws IOException            erreur lors du chargement
+     * @throws ClassNotFoundException classe non trouvée
+     */
+    public static Diagramme chargerDiagramme(File file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (Diagramme) ois.readObject();
+        }
+    }
+
+
+    /**
+     * Affiche le diagramme
+     *
+     * @param stackPane pane où afficher le diagramme
+     */
+    public void afficher(StackPane stackPane) {
+        stackPane.getChildren().clear();
+        Diagramme diagramme = Diagramme.getInstance();
+        Pane ligneClasse = new Pane();
+        Pane relationPane = new Pane();
+        stackPane.getChildren().addAll(relationPane, ligneClasse);
+
+        for (Classe c : diagramme.getListeClasses()) {
+            VueClasse vueClasse = new VueClasse(c);
+            makeDraggable(vueClasse);
+            vueClasse.relocate(c.getLongueur(), c.getLargeur());
+            Diagramme.getInstance().ajouterObservateur(vueClasse);
+
+            // Appliquer les paramètres d'affichage
+            if (Main.afficherAttributs) {
+                c.afficherAttributs();
+            } else {
+                c.masquerAttributs();
+            }
+            if (Main.afficherMethodes) {
+                c.afficherMethodes();
+            } else {
+                c.masquerMethodes();
+            }
+
+            vueClasse.actualiser();
+
+            ligneClasse.getChildren().add(vueClasse);
+        }
+
+        // Ajoute les relations
+        for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
+            VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
+            VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
+            VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
+            VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+            Main.relations.add(vueRelation);
+            diagramme.ajouterObservateur(vueRelation);
+            relationPane.getChildren().add(vueRelation);
+        }
+
+        // Met à jour les relations à chaque déplacement de classe
+        for (Node node : ligneClasse.getChildren()) {
+            if (node instanceof VueClasse vueClasse) {
+                vueClasse.layoutXProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+                vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+            }
+        }
+        updateRelations();
+    }
+
+
     public boolean getAfficherMethodes() {
         return this.afficherMethodes;
     }
+
 
     public boolean getAfficherAttributs() {
         return this.afficherAttributs;
