@@ -39,20 +39,20 @@ public class VueListeClasses extends VBox implements Observateur {
                     //On récupère la liste des classes dans le package
                     ArrayList<ContenuCellule> listeClassesDansPackage = this.listePackages.get(c.getNomPackage());
                     //On y ajoute la nouvelle classe
-                    listeClassesDansPackage.add(new ContenuCellule(c.getNom(),c));
-                    this.listePackages.put(c.getNomPackage(),listeClassesDansPackage);
+                    listeClassesDansPackage.add(new ContenuCellule(c.getNom(), c));
+                    this.listePackages.put(c.getNomPackage(), listeClassesDansPackage);
                 } else {
                     ArrayList<ContenuCellule> listeClasses = new ArrayList<>();
-                    listeClasses.add(new ContenuCellule(c.getNom(),c));
+                    listeClasses.add(new ContenuCellule(c.getNom(), c));
                     this.listePackages.put(c.getNomPackage(), listeClasses);
                 }
             } else {
-                TreeItem<ContenuCellule> classe = new TreeItem<ContenuCellule>(new ContenuCellule(c.getNom(),c));
+                TreeItem<ContenuCellule> classe = new TreeItem<ContenuCellule>(new ContenuCellule(c.getNom(), c));
                 this.racine.getChildren().add(classe);
             }
         }
 
-        for(Map.Entry<String, ArrayList<ContenuCellule>> entry : this.listePackages.entrySet()) {
+        for (Map.Entry<String, ArrayList<ContenuCellule>> entry : this.listePackages.entrySet()) {
             String key = entry.getKey();
             ArrayList<ContenuCellule> values = entry.getValue();
             TreeItem<ContenuCellule> racinePackage = new TreeItem<>(new ContenuCellule(key));
@@ -79,7 +79,7 @@ public class VueListeClasses extends VBox implements Observateur {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
                                 if (tache.getClasseDeTache() != null) {
-                                    if (tache.getClasseDeTache().isVisible()){
+                                    if (tache.getClasseDeTache().isVisible()) {
                                         tache.getClasseDeTache().setVisibilite(false);
                                     } else {
                                         tache.getClasseDeTache().setVisibilite(true);

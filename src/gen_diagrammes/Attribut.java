@@ -83,4 +83,6 @@ public class Attribut implements Serializable {
         return nom + " : " + type;
     }
 
+
+
 }

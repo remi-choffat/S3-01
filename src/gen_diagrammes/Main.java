@@ -3,6 +3,7 @@ package gen_diagrammes;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -23,6 +24,10 @@ import java.util.List;
  * Classe principale de l'application
  */
 public class Main extends Application {
+    private double dragStartX;
+    private double dragStartY;
+    private double offsetX;
+    private double offsetY;
 
     static List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
@@ -61,8 +66,6 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-
-        //------------------------------------------------INTERFACE GRAPHIQUE------------------------------------------------
         primaryStage.setTitle("Plante UML");
         primaryStage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
 
@@ -100,6 +103,7 @@ public class Main extends Application {
         menuBar.getMenus().addAll(menuFichier, menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
         menuBar.setViewOrder(-1);
 
+        Pane classContainer = new Pane(); // Conteneur pour les classes
         stackPane = new VueDiagramme();
         Diagramme.getInstance().ajouterObservateur((Observateur)stackPane);
 
@@ -122,6 +126,47 @@ public class Main extends Application {
         Scene scene = new Scene(borderPane, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // Ajout des styles pour le curseur
+        stackPane.setOnMouseEntered(event -> {
+            stackPane.setCursor(Cursor.MOVE);
+        });
+
+        stackPane.setOnMouseExited(event -> {
+            stackPane.setCursor(Cursor.DEFAULT);
+        });
+
+        // Ajout des gestionnaires d'événements pour le déplacement du fond
+        stackPane.setOnMousePressed(event -> {
+            if (event.getTarget() == stackPane) {
+                dragStartX = event.getSceneX();
+                dragStartY = event.getSceneY();
+                offsetX = stackPane.getTranslateX();
+                offsetY = stackPane.getTranslateY();
+            }
+        });
+
+        stackPane.setOnMouseDragged(event -> {
+            if (event.getTarget() == stackPane) {
+                double deltaX = event.getSceneX() - dragStartX;
+                double deltaY = event.getSceneY() - dragStartY;
+                stackPane.setTranslateX(offsetX + deltaX);
+                stackPane.setTranslateY(offsetY + deltaY);
+            }
+        });
+
+        // Ajout des classes au conteneur
+        stackPane.getChildren().add(classContainer);
+
+        // Ajout des gestionnaires d'événements pour les classes
+        for (Node node : classContainer.getChildren()) {
+            if (node instanceof VueClasse) {
+                node.setOnMousePressed(event -> {
+                    event.consume(); // Empêche la propagation de l'événement
+                });
+            }
+        }
+
 
         //------------------------------------------------FIN INTERFACE GRAPHIQUE------------------------------------------------
 
@@ -207,12 +252,17 @@ public class Main extends Application {
      * @return Type de relation
      */
     private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
-        return switch (relation.getType()) {
-            case "heritage" -> VueRelation.TypeRelation.HERITAGE;
-            case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
-            default -> VueRelation.TypeRelation.ASSOCIATION;
-        };
+        switch (relation.getType()) {
+            case "heritage":
+                return VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
+            case "implementation":
+                return VueRelation.TypeRelation.IMPLEMENTATION;
+            default:
+                return VueRelation.TypeRelation.ASSOCIATION;
+        }
     }
+
+
 
 
     /**
@@ -263,6 +313,7 @@ public class Main extends Application {
     }
 
 
+
     /**
      * Ajoute une classe à partir d'un fichier
      *
@@ -309,4 +360,63 @@ public class Main extends Application {
         Diagramme.getInstance().afficher(stackPane);
     }
 
+    private void ajouterRelationsPourClasse(Classe nouvelleClasse) {
+        Diagramme diagramme = Diagramme.getInstance();
+
+        System.out.println("Ajout des relations pour la classe : " + nouvelleClasse.getNom());
+
+        // Vérification et ajout des relations d'héritage ou d'implémentation
+        for (Classe parent : nouvelleClasse.getParents()) {
+            String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
+
+            System.out.println("Parent détecté : " + parent.getNom() + ", Type : " + parent.getType());
+
+            // Vérifiez si la relation existe déjà
+            if (!diagramme.contientRelation(nouvelleClasse, parent)) {
+                // Vérifiez si les dimensions du parent sont valides
+                if (parent.getLongueur() <= 0 || parent.getLargeur() <= 0) {
+                    System.err.println("Dimensions invalides pour le parent : " + parent.getNom());
+                    parent.setLongueur(Math.random() * 600); // Initialisation par défaut
+                    parent.setLargeur(Math.random() * 300); // Initialisation par défaut
+                    System.out.println("Dimensions corrigées pour le parent : Longueur = " + parent.getLongueur() + ", Largeur = " + parent.getLargeur());
+                }
+
+                // Ajout de la relation
+                Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
+                System.out.println(parent.getNom()+"--------------------------------------------");
+                System.out.println(relation.getType());
+                diagramme.ajouterRelation(relation);
+                System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
+            } else {
+                System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
+            }
+        }
+
+        // Vérification et ajout des relations d'association, agrégation et composition
+        for (Attribut attribut : nouvelleClasse.getAttributs()) {
+            if (attribut instanceof AttributClasse) {
+                Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
+                String typeRelation = "association"; // Par défaut association
+
+                System.out.println("Classe associée détectée : " + classeAssociee.getNom() + ", Relation : " + typeRelation);
+
+                if (!diagramme.contientRelation(nouvelleClasse, classeAssociee)) {
+                    // Vérifiez si les dimensions de la classe associée sont valides
+                    if (classeAssociee.getLongueur() <= 0 || classeAssociee.getLargeur() <= 0) {
+                        System.err.println("Dimensions invalides pour la classe associée : " + classeAssociee.getNom());
+                        classeAssociee.setLongueur(Math.random() * 600); // Initialisation par défaut
+                        classeAssociee.setLargeur(Math.random() * 300); // Initialisation par défaut
+                        System.out.println("Dimensions corrigées pour la classe associée : Longueur = " + classeAssociee.getLongueur() + ", Largeur = " + classeAssociee.getLargeur());
+                    }
+
+                    // Ajout de la relation
+                    Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
+                    diagramme.ajouterRelation(relation);
+                    System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
+                } else {
+                    System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
+                }
+            }
+        }
+    }
 }

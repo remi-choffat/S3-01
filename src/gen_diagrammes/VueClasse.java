@@ -116,6 +116,7 @@ public class VueClasse extends VBox implements Observateur {
      */
     @Override
     public void actualiser() {
+
         this.getChildren().clear();
         if (this.classe.isVisible()) {
             this.setVisible(true);
