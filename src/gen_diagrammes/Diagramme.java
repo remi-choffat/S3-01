@@ -1,8 +1,10 @@
 package gen_diagrammes;
 
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -24,10 +26,17 @@ public class Diagramme implements Sujet {
     @Getter
     private ArrayList<Classe> listeClasses;
 
+
     /**
      * Instance unique de Diagramme
      */
     private static Diagramme instance;
+
+    @Setter
+    private boolean afficherAttributs;
+
+    @Setter
+    private boolean afficherMethodes;
 
     /**
      * Liste des observateurs
@@ -43,6 +52,8 @@ public class Diagramme implements Sujet {
         this.nomPackage = null;
         this.listeClasses = new ArrayList<>();
         this.listeObservateurs = new ArrayList<>();
+        this.afficherAttributs = true;
+        this.afficherMethodes = true;
     }
 
 
@@ -155,7 +166,7 @@ public class Diagramme implements Sujet {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();
         }
-        this.notifierObservateurs();
+        //this.notifierObservateurs();
     }
 
 
@@ -215,7 +226,6 @@ public class Diagramme implements Sujet {
         for (Classe c : this.listeClasses) {
             c.setVisibilite(true);
         }
-        this.notifierObservateurs();
     }
 
 
@@ -279,6 +289,14 @@ public class Diagramme implements Sujet {
             }
         }
         this.notifierObservateurs();
+    }
+
+    public boolean getAfficherMethodes() {
+        return this.afficherMethodes;
+    }
+
+    public boolean getAfficherAttributs() {
+        return this.afficherAttributs;
     }
 
 }
