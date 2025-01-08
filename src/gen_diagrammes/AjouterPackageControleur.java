@@ -11,27 +11,27 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 
-public class AjouterClasseControleur implements EventHandler<ActionEvent> {
+public class AjouterPackageControleur implements EventHandler<ActionEvent> {
 
     private StackPane stackPane;
 
-    public AjouterClasseControleur(StackPane sp){
+    public AjouterPackageControleur(StackPane s) {
         super();
-        this.stackPane = sp;
+        stackPane = s;
     }
 
     public void handle(ActionEvent event) {
             stackPane.getChildren().clear();
-            Button btnCenter = new Button("Sélectionner un fichier");
+            Button btnOpenFolder = new Button("Sélectionner un dossier");
             ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
             imageView.setFitWidth(150);
             imageView.setFitHeight(150);
-            VBox content = new VBox(10, imageView, btnCenter);
+            VBox content = new VBox(10, imageView, btnOpenFolder);
             content.setPadding(new Insets(20));
             content.setAlignment(Pos.CENTER);
 
@@ -52,26 +52,41 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
                 boolean success = false;
                 if (db.hasFiles()) {
                     success = true;
-                    Main.ajouterClasseDepuisFichier(db.getFiles().get(0), stackPane);
+                    File selectedDirectory = db.getFiles().get(0);
+                    if (selectedDirectory.isDirectory()) {
+                        File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
+                        if (files != null) {
+                            for (File file : files) {
+                                Main.ajouterClasseDepuisFichier(file, stackPane);
+                            }
+                        }
+                    }
                 }
                 eventDrop.setDropCompleted(success);
                 eventDrop.consume();
             });
 
-            btnCenter.setOnAction(fileEvent -> {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Sélectionner un fichier");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Classes Java compilées", "*.class"));
-                Stage fileStage = (Stage) btnCenter.getScene().getWindow();
-                File file = fileChooser.showOpenDialog(fileStage);
-                if (file != null) {
-                    Main.ajouterClasseDepuisFichier(file, stackPane);
+            btnOpenFolder.setOnAction(fileEvent -> {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("Sélectionner un dossier");
+                Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
+                File selectedDirectory = directoryChooser.showDialog(fileStage);
+                if (selectedDirectory != null) {
+                    File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
+                    if (files != null && files.length > 0) {
+                        for (File file : files) {
+                            Main.ajouterClasseDepuisFichier(file, stackPane);
+                        }
+                    } else {
+                        System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
+                    }
                 }
             });
 
             StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
             StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
             stackPane.getChildren().add(rectangle);
+            //Diagramme.getInstance().notifierObservateurs();
     }
 
 }

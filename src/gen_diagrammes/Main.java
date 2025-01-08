@@ -100,7 +100,8 @@ public class Main extends Application {
         menuBar.getMenus().addAll(menuFichier, menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
         menuBar.setViewOrder(-1);
 
-        stackPane = new StackPane();
+        stackPane = new VueDiagramme();
+        Diagramme.getInstance().ajouterObservateur((Observateur)stackPane);
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
@@ -139,299 +140,46 @@ public class Main extends Application {
 
 
         // AJOUTER UNE CLASSE
-        menuAjouterClasse.setOnAction(event -> {
-            stackPane.getChildren().clear();
-            Button btnCenter = new Button("Sélectionner un fichier");
-            ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
-            imageView.setFitWidth(150);
-            imageView.setFitHeight(150);
-            VBox content = new VBox(10, imageView, btnCenter);
-            content.setPadding(new Insets(20));
-            content.setAlignment(Pos.CENTER);
-
-            StackPane rectangle = new StackPane(content);
-            rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-            rectangle.setPrefSize(300, 200);
-            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-            rectangle.setOnDragOver(eventDragOver -> {
-                if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
-                    eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-                eventDragOver.consume();
-            });
-
-            rectangle.setOnDragDropped(eventDrop -> {
-                var db = eventDrop.getDragboard();
-                boolean success = false;
-                if (db.hasFiles()) {
-                    success = true;
-                    ajouterClasseDepuisFichier(db.getFiles().get(0), stackPane);
-                }
-                eventDrop.setDropCompleted(success);
-                eventDrop.consume();
-            });
-
-            btnCenter.setOnAction(fileEvent -> {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Sélectionner un fichier");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Classes Java compilées", "*.class"));
-                Stage fileStage = (Stage) btnCenter.getScene().getWindow();
-                File file = fileChooser.showOpenDialog(fileStage);
-                if (file != null) {
-                    ajouterClasseDepuisFichier(file, stackPane);
-                }
-            });
-
-            StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
-            StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
-            stackPane.getChildren().add(rectangle);
-        });
+        menuAjouterClasse.setOnAction(new AjouterClasseControleur(stackPane));
 
 
         // AJOUTER UN PACKAGE
-        menuAjouterPackage.setOnAction(e -> {
-            stackPane.getChildren().clear();
-            Button btnOpenFolder = new Button("Sélectionner un dossier");
-            ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
-            imageView.setFitWidth(150);
-            imageView.setFitHeight(150);
-            VBox content = new VBox(10, imageView, btnOpenFolder);
-            content.setPadding(new Insets(20));
-            content.setAlignment(Pos.CENTER);
-
-            StackPane rectangle = new StackPane(content);
-            rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-            rectangle.setPrefSize(300, 200);
-            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-
-            rectangle.setOnDragOver(eventDragOver -> {
-                if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
-                    eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-                eventDragOver.consume();
-            });
-
-            rectangle.setOnDragDropped(eventDrop -> {
-                var db = eventDrop.getDragboard();
-                boolean success = false;
-                if (db.hasFiles()) {
-                    success = true;
-                    File selectedDirectory = db.getFiles().get(0);
-                    if (selectedDirectory.isDirectory()) {
-                        File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-                        if (files != null) {
-                            for (File file : files) {
-                                ajouterClasseDepuisFichier(file, stackPane);
-                            }
-                        }
-                    }
-                }
-                eventDrop.setDropCompleted(success);
-                eventDrop.consume();
-            });
-
-            btnOpenFolder.setOnAction(fileEvent -> {
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("Sélectionner un dossier");
-                Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
-                File selectedDirectory = directoryChooser.showDialog(fileStage);
-                if (selectedDirectory != null) {
-                    File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-                    if (files != null && files.length > 0) {
-                        for (File file : files) {
-                            ajouterClasseDepuisFichier(file, stackPane);
-                        }
-                    } else {
-                        System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
-                    }
-                }
-            });
-
-            StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
-            StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
-            stackPane.getChildren().add(rectangle);
-        });
+        menuAjouterPackage.setOnAction(new AjouterPackageControleur(stackPane));
 
 
         // AFFICHER LE DIAGRAMME
-        menuAfficherDiagramme.setOnAction(e -> {
-            Diagramme.getInstance().afficher(stackPane);
-        });
+        menuAfficherDiagramme.setOnAction(new AfficherDiagrammeControleur(stackPane));
 
 
         // EXPORTER UNE IMAGE
-        menuExporterImage.setOnAction(e -> {
-            // Affiche le diagramme avant de faire la capture d'écran
-            Diagramme.getInstance().afficher(stackPane);
-            ;
-            Exporter exp = new Exporter(Diagramme.getInstance());
-            exp.exportImage(primaryStage, stackPane);
-        });
+        menuExporterImage.setOnAction(new ExporterImageControleur(primaryStage, stackPane));
 
         // EXPORTER UN PLANTUML
-        menuExporterUML.setOnAction(e -> {
-            Exporter exp = new Exporter(Diagramme.getInstance());
-            exp.exportUML(primaryStage);
-        });
+        menuExporterUML.setOnAction(new ExporterPUMLControleur(primaryStage));
 
 
         // AFFICHER TOUTES LES CLASSES
-        menuAfficherToutesClasses.setOnAction(e -> {
-            Diagramme.getInstance().afficherToutesClasses();
-        });
+        menuAfficherToutesClasses.setOnAction(new AfficherToutesLesClassesControleur());
 
         // MASQUER TOUTES LES CLASSES
-        menuMasquerToutesClasses.setOnAction(e -> {
-            Diagramme.getInstance().masquerToutesClasses();
-        });
+        menuMasquerToutesClasses.setOnAction(new MasquerToutesLesClassesControleur());
 
         // AFFICHER/MASQUER TOUS LES ATTRIBUTS
         menuAfficherTousAttributs.setSelected(true);
-        menuAfficherTousAttributs.setOnAction(e -> {
-            afficherAttributs = menuAfficherTousAttributs.isSelected();
-            if (afficherAttributs) {
-                Diagramme.getInstance().afficherTousAttributs();
-            } else {
-                Diagramme.getInstance().masquerTousAttributs();
-            }
-            Diagramme.getInstance().afficher(stackPane);
-        });
+        menuAfficherTousAttributs.setOnAction(new AfficherTousAttributsControleur(stackPane));
 
         // AFFICHER/MASQUER TOUTES LES METHODES
         menuAfficherToutesMethodes.setSelected(true);
-        menuAfficherToutesMethodes.setOnAction(e -> {
-            afficherMethodes = menuAfficherToutesMethodes.isSelected();
-            if (afficherMethodes) {
-                Diagramme.getInstance().afficherToutesMethodes();
-            } else {
-                Diagramme.getInstance().masquerToutesMethodes();
-            }
-            Diagramme.getInstance().afficher(stackPane);
-        });
+        menuAfficherToutesMethodes.setOnAction(new AfficherToutesMethodesControleur(stackPane));
 
         // SUPPRIMER UNE CLASSE
-        menuSupprimerClasses.setOnAction(e -> {
-            Dialog<String> dialog = new Dialog<>();
-            dialog.setTitle("Supprimer une classe");
-            dialog.setHeaderText("Sélectionnez une classe à supprimer");
-
-            ButtonType buttonTypeOk = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
-            dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
-
-            ListView<String> listView = new ListView<>();
-            ArrayList<String> nomsClasses = new ArrayList<>();
-            for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                nomsClasses.add(c.getNomPackage() + "." + c.getNom());
-            }
-            listView.getItems().addAll(nomsClasses);
-            dialog.getDialogPane().setContent(listView);
-
-            dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == buttonTypeOk) {
-                    return listView.getSelectionModel().getSelectedItem();
-                }
-                return null;
-            });
-
-            dialog.showAndWait().ifPresent(result -> {
-                Classe classe = Diagramme.getInstance().getClasse(result.split("\\.")[1], result.split("\\.")[0]);
-                System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
-                Diagramme.getInstance().supprimerClasse(classe);
-                Diagramme.getInstance().afficher(stackPane);
-            });
-        });
+        menuSupprimerClasses.setOnAction(new SupprimerClasseControleur(stackPane));
 
         // SUPPRIMER TOUTES LES CLASSES
-        menuSupprimerToutesClasses.setOnAction(e -> {
-
-            Dialog<String> dialog = new Dialog<>();
-            dialog.setTitle("Supprimer toutes les classes");
-            dialog.setHeaderText("Voulez-vous vraiment supprimer toutes les classes du diagramme actuel ?");
-            ButtonType buttonTypeOk = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
-            dialog.getDialogPane().getButtonTypes().addAll(buttonTypeOk, ButtonType.CANCEL);
-
-            dialog.setResultConverter(dialogButton -> {
-                if (dialogButton == buttonTypeOk) {
-                    return "ok";
-                }
-                return null;
-            });
-
-            dialog.showAndWait().ifPresent(result -> {
-                if (result.equals("ok")) {
-                    Diagramme.getInstance().supprimerToutesClasses();
-                    System.out.println("Toutes les classes ont été supprimées");
-                    stackPane.getChildren().clear();
-                }
-            });
-        });
+        menuSupprimerToutesClasses.setOnAction(new SupprimerToutesLesClassesControleur(stackPane));
 
         // CRÉER UNE CLASSE
-        menuCreer.setOnAction(e -> {
-
-            // Masque le diagramme
-            stackPane.getChildren().clear();
-
-            VBox vb = new VBox();
-            Label lb = new Label("Créer une classe");
-            lb.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
-            lb.setPadding(new Insets(10));
-            TextField tf = new TextField();
-            tf.setPromptText("Nom de la classe");
-
-            ComboBox<String> comboVisibilite = new ComboBox<>();
-            comboVisibilite.getItems().addAll(Classe.PUBLIC, Classe.PRIVATE, Classe.PROTECTED);
-            comboVisibilite.setValue(Classe.PUBLIC);
-
-            ComboBox<String> comboType = new ComboBox<>();
-            comboType.getItems().addAll(Classe.CLASS, Classe.ABSTRACT_CLASS, Classe.INTERFACE);
-            comboType.setValue(Classe.CLASS);
-
-            HBox ligne = new HBox(10, comboVisibilite, comboType, tf);
-            ligne.setAlignment(Pos.CENTER);
-
-            HBox boutons = new HBox(10);
-            Button bCancel = new Button("Annuler");
-            Button bOk = new Button("Ajouter");
-            bOk.setDefaultButton(true);
-            bOk.setDisable(true);
-            bCancel.setCancelButton(true);
-            boutons.getChildren().addAll(bOk, bCancel);
-            boutons.setAlignment(Pos.CENTER);
-
-            vb.getChildren().addAll(lb, ligne, boutons);
-            vb.setSpacing(20);
-            vb.setPadding(new Insets(20));
-            vb.setAlignment(Pos.CENTER);
-
-            stackPane.getChildren().add(vb);
-            vb.setLayoutX(stackPane.getScaleX() - 0.5 * vb.getScaleX());
-            vb.setLayoutY(stackPane.getScaleY() - 0.5 * vb.getScaleY());
-
-
-            bOk.setOnAction(f -> {
-                Classe c = new Classe(tf.getText(), comboVisibilite.getValue(), comboType.getValue());
-                Diagramme.getInstance().ajouterClasse(c);
-                bCancel.fire();
-            });
-
-            bCancel.setOnAction(f -> {
-                stackPane.getChildren().remove(vb);
-                Diagramme.getInstance().afficher(stackPane);
-            });
-
-            tf.setOnKeyTyped(f -> {
-                // Désactive le bouton OK si le champ est vide
-                bOk.setDisable(tf.getText().length() <= 0);
-                // Met la première lettre de la classe en majuscule
-                if (tf.getText().length() == 1) {
-                    tf.setText(tf.getText().toUpperCase());
-                    tf.positionCaret(tf.getText().length());
-                }
-            });
-
-        });
+        menuCreer.setOnAction(new CreerClasseControleur(stackPane));
 
         // CHARGER UN DIAGRAMME
         menuFichierCharger.setOnAction(new ChargerDiagrammeControleur());
@@ -521,7 +269,7 @@ public class Main extends Application {
      * @param file      Fichier
      * @param stackPane StackPane : Conteneur du diagramme
      */
-    private void ajouterClasseDepuisFichier(File file, StackPane stackPane) {
+    public static void ajouterClasseDepuisFichier(File file, StackPane stackPane) {
         try {
             Classe classe = new Classe(file.getAbsolutePath());
             // N'affiche pas les classes anonymes (générées par Java)
