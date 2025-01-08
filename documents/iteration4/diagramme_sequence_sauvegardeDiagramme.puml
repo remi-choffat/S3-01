@@ -1,0 +1,26 @@
+@startuml
+title Sauvegarde d'un diagramme
+
+actor Utilisateur
+participant "boutonEnregistrer : MenuItem" as MenuItem
+participant "controleur : EnregistrerDiagrammeSousControleur" as EnregistrerDiagrammeSousControleur
+Utilisateur -> MenuItem : clique sur le bouton
+MenuItem -> EnregistrerDiagrammeSousControleur : handle(event)
+activate EnregistrerDiagrammeSousControleur
+EnregistrerDiagrammeSousControleur --> Utilisateur : ouvre un sélecteur de fichier
+Utilisateur -> EnregistrerDiagrammeSousControleur : choisit l'emplacement où le fichier sera enregistré
+EnregistrerDiagrammeSousControleur -> Diagramme : sauvegarderDiagramme(fichier)
+activate Diagramme
+Diagramme -> ObjectOutputStream : writeObject(listeClasses)
+activate ObjectOutputStream
+note right
+    ObjectOutputStream enregistre
+    la liste des classes sérialisées
+end note
+ObjectOutputStream --> Diagramme :
+deactivate ObjectOutputStream
+Diagramme --> EnregistrerDiagrammeSousControleur :
+deactivate Diagramme
+EnregistrerDiagrammeSousControleur --> Utilisateur : transmet la réussite de l'enregistrement
+deactivate EnregistrerDiagrammeSousControleur
+@enduml

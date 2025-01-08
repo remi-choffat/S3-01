@@ -1,0 +1,6 @@
+Itération 5 : Fonctionnalités et cas d’utilisation développés
+
+Fonctionnalités :
+    - modifier une classe existante
+    - générer le squelette d'une classe
+    - afficher/masquer les relations d'une classe

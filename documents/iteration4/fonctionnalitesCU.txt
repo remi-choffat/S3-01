@@ -6,6 +6,7 @@ Fonctionnalités :
     - afficher les flèches en fonction de la relation :
         - mettre les flèches entre les bonnes classes
         - changer l'apparence de la flèche en fonction de la relation
-    - afficher/masquer toutes les relations du diagramme
     - afficher/masquer les classes parent
+    - afficher/masquer les attribut d'une/de toutes les classes
+    - afficher/masquer les méthodes d'une/de toutes les classes
     - créer une classe
