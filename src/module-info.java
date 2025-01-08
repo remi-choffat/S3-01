@@ -5,5 +5,6 @@ module gen_diagrammes {
     requires java.desktop;
     requires javafx.swing;
     requires jdk.jshell;
+    requires jdk.compiler;
     exports gen_diagrammes;
 }

@@ -82,7 +82,11 @@ public class Classe {
 
     /**
      * Nom du package dans lequel est la classe
+     * -- GETTER --
+     *  Récupère le nom du package dans lequel est la classe
+
      */
+    @Getter
     private String nomPackage;
 
 
