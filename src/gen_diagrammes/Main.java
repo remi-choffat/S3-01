@@ -24,12 +24,12 @@ import java.util.List;
  */
 public class Main extends Application {
 
-    private List<VueRelation> relations = new ArrayList<>();
+    public static List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
     private StackPane stackPane;
 
-    private boolean afficherAttributs = true;
-    private boolean afficherMethodes = true;
+    public static boolean afficherAttributs = true;
+    public static boolean afficherMethodes = true;
 
 
     /**
@@ -93,12 +93,14 @@ public class Main extends Application {
         menuBar.getMenus().addAll(menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
         menuBar.setViewOrder(-1);
 
-        this.stackPane = new StackPane();
+        this.stackPane = new VueDiagramme();
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(menuBar);
         borderPane.setCenter(stackPane);
+
+        Diagramme.getInstance().ajouterObservateur((Observateur)stackPane);
 
         // Création du menu affichant les classes ajoutées
         VueListeClasses vueListeClasses = new VueListeClasses();
@@ -249,14 +251,16 @@ public class Main extends Application {
 
         // AFFICHER LE DIAGRAMME
         menuAfficherDiagramme.setOnAction(e -> {
-            afficherDiagramme();
+            //afficherDiagramme();
+            Diagramme.getInstance().notifierObservateurs();
         });
 
 
         // EXPORTER UNE IMAGE
         menuExporterImage.setOnAction(e -> {
             // Affiche le diagramme avant de faire la capture d'écran
-            afficherDiagramme();
+            //afficherDiagramme();
+            Diagramme.getInstance().notifierObservateurs();
             ;
             Exporter exp = new Exporter(Diagramme.getInstance());
             exp.exportImage(primaryStage, stackPane);
@@ -288,7 +292,8 @@ public class Main extends Application {
             } else {
                 Diagramme.getInstance().masquerTousAttributs();
             }
-            afficherDiagramme();
+            //afficherDiagramme();
+            Diagramme.getInstance().notifierObservateurs();
         });
 
         // AFFICHER/MASQUER TOUTES LES METHODES
@@ -300,7 +305,8 @@ public class Main extends Application {
             } else {
                 Diagramme.getInstance().masquerToutesMethodes();
             }
-            afficherDiagramme();
+            //afficherDiagramme();
+            Diagramme.getInstance().notifierObservateurs();
         });
 
         // SUPPRIMER UNE CLASSE
@@ -331,7 +337,8 @@ public class Main extends Application {
                 Classe classe = Diagramme.getInstance().getClasse(result.split("\\.")[1], result.split("\\.")[0]);
                 System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
                 Diagramme.getInstance().supprimerClasse(classe);
-                afficherDiagramme();
+                //afficherDiagramme();
+                Diagramme.getInstance().notifierObservateurs();
             });
         });
 
@@ -411,7 +418,8 @@ public class Main extends Application {
 
             bCancel.setOnAction(f -> {
                 stackPane.getChildren().remove(vb);
-                afficherDiagramme();
+                //afficherDiagramme();
+                Diagramme.getInstance().notifierObservateurs();
             });
 
             tf.setOnKeyTyped(f -> {
@@ -449,7 +457,7 @@ public class Main extends Application {
      *
      * @param node Noeud à rendre déplaçable
      */
-    private void makeDraggable(Node node) {
+    public static void makeDraggable(Node node) {
         final double[] dragDelta = new double[2];
 
         node.setOnMousePressed(e -> {
@@ -485,7 +493,7 @@ public class Main extends Application {
     /**
      * Met à jour les relations entre les classes
      */
-    private void updateRelations() {
+    public static void updateRelations() {
         for (VueRelation vueRelation : relations) {
             vueRelation.actualiser();
         }
@@ -536,6 +544,7 @@ public class Main extends Application {
         }
         stackPane.getChildren().clear();
         afficherDiagramme();
+        //Diagramme.getInstance().notifierObservateurs();
     }
 
 

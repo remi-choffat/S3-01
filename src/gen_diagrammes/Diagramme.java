@@ -226,6 +226,7 @@ public class Diagramme implements Sujet {
         for (Classe c : this.listeClasses) {
             c.setVisibilite(true);
         }
+        this.notifierObservateurs();
     }
 
 
