@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+import static gen_diagrammes.Main.ajouterClasseDepuisFichier;
+import static gen_diagrammes.Main.ajouterRelationsPourClasse;
+
 public class AjouterPackageControleur implements EventHandler<ActionEvent> {
 
     private StackPane stackPane;
@@ -47,41 +50,43 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
                 eventDragOver.consume();
             });
 
-            rectangle.setOnDragDropped(eventDrop -> {
-                var db = eventDrop.getDragboard();
-                boolean success = false;
-                if (db.hasFiles()) {
-                    success = true;
-                    File selectedDirectory = db.getFiles().get(0);
-                    if (selectedDirectory.isDirectory()) {
-                        File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-                        if (files != null) {
-                            for (File file : files) {
-                                Main.ajouterClasseDepuisFichier(file, stackPane);
-                            }
-                        }
-                    }
-                }
-                eventDrop.setDropCompleted(success);
-                eventDrop.consume();
-            });
-
-            btnOpenFolder.setOnAction(fileEvent -> {
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("Sélectionner un dossier");
-                Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
-                File selectedDirectory = directoryChooser.showDialog(fileStage);
-                if (selectedDirectory != null) {
+        rectangle.setOnDragDropped(eventDrop -> {
+            var db = eventDrop.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                success = true;
+                File selectedDirectory = db.getFiles().get(0);
+                if (selectedDirectory.isDirectory()) {
                     File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
-                    if (files != null && files.length > 0) {
+                    if (files != null) {
                         for (File file : files) {
-                            Main.ajouterClasseDepuisFichier(file, stackPane);
+                            Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                            ajouterRelationsPourClasse(nouvelleClasse);
                         }
-                    } else {
-                        System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
                     }
                 }
-            });
+            }
+            eventDrop.setDropCompleted(success);
+            eventDrop.consume();
+        });
+
+        btnOpenFolder.setOnAction(fileEvent -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Sélectionner un dossier");
+            Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
+            File selectedDirectory = directoryChooser.showDialog(fileStage);
+            if (selectedDirectory != null) {
+                File[] files = selectedDirectory.listFiles((dir, name) -> name.endsWith(".class"));
+                if (files != null && files.length > 0) {
+                    for (File file : files) {
+                        Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                        ajouterRelationsPourClasse(nouvelleClasse);
+                    }
+                } else {
+                    System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
+                }
+            }
+        });
 
             StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
             StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));

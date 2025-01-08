@@ -1,19 +1,13 @@
 package gen_diagrammes;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -105,7 +99,7 @@ public class Main extends Application {
 
         Pane classContainer = new Pane(); // Conteneur pour les classes
         stackPane = new VueDiagramme();
-        Diagramme.getInstance().ajouterObservateur((Observateur)stackPane);
+//        Diagramme.getInstance().ajouterObservateur((Observateur) stackPane);
 
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
@@ -251,18 +245,14 @@ public class Main extends Application {
      * @param relation Relation
      * @return Type de relation
      */
-    private VueRelation.TypeRelation determineTypeRelation(Relation relation) {
-        switch (relation.getType()) {
-            case "heritage":
-                return VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
-            case "implementation":
-                return VueRelation.TypeRelation.IMPLEMENTATION;
-            default:
-                return VueRelation.TypeRelation.ASSOCIATION;
-        }
+    static VueRelation.TypeRelation determineTypeRelation(Relation relation) {
+        return switch (relation.getType()) {
+            case "heritage" ->
+                    VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
+            case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
+            default -> VueRelation.TypeRelation.ASSOCIATION;
+        };
     }
-
-
 
 
     /**
@@ -313,16 +303,17 @@ public class Main extends Application {
     }
 
 
-
     /**
      * Ajoute une classe à partir d'un fichier
      *
      * @param file      Fichier
      * @param stackPane StackPane : Conteneur du diagramme
+     * @return
      */
-    public static void ajouterClasseDepuisFichier(File file, StackPane stackPane) {
+    public static Classe ajouterClasseDepuisFichier(File file, StackPane stackPane) {
+        Classe classe = null;
         try {
-            Classe classe = new Classe(file.getAbsolutePath());
+            classe = new Classe(file.getAbsolutePath());
             // N'affiche pas les classes anonymes (générées par Java)
             if (classe.getNom() != null) {
                 classe.setLongueur(Math.random() * 600);
@@ -340,11 +331,12 @@ public class Main extends Application {
                     }
                     alert.setHeaderText(typeClasse + " " + classe.getNomPackage() + "." + classe.getNom() + " est déjà présente sur le diagramme.");
                     alert.setContentText("Voulez-vous remplacer la classe existante ?");
+                    Classe finalClasse = classe;
                     alert.showAndWait().ifPresent(type -> {
                         if (type == ButtonType.OK) {
-                            Diagramme.getInstance().supprimerClasse(classe.getNom(), classe.getNomPackage());
-                            Diagramme.getInstance().ajouterClasse(classe);
-                            System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " remplacée");
+                            Diagramme.getInstance().supprimerClasse(finalClasse.getNom(), finalClasse.getNomPackage());
+                            Diagramme.getInstance().ajouterClasse(finalClasse);
+                            System.out.println(finalClasse.getTypeClasseString() + " " + finalClasse.getNom() + " remplacée");
                         }
                     });
                 } else if (etatAjout == -1) {
@@ -358,9 +350,10 @@ public class Main extends Application {
         }
         stackPane.getChildren().clear();
         Diagramme.getInstance().afficher(stackPane);
+        return classe;
     }
 
-    private void ajouterRelationsPourClasse(Classe nouvelleClasse) {
+    static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
 
         System.out.println("Ajout des relations pour la classe : " + nouvelleClasse.getNom());
@@ -383,7 +376,7 @@ public class Main extends Application {
 
                 // Ajout de la relation
                 Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-                System.out.println(parent.getNom()+"--------------------------------------------");
+                System.out.println(parent.getNom() + "--------------------------------------------");
                 System.out.println(relation.getType());
                 diagramme.ajouterRelation(relation);
                 System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());

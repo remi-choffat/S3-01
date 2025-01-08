@@ -240,7 +240,7 @@ public class Diagramme implements Sujet, Serializable {
         for (Classe c : this.listeClasses) {
             c.setVisibilite(true);
         }
-        //this.notifierObservateurs();
+        this.notifierObservateurs();
     }
 
 
@@ -370,14 +370,47 @@ public class Diagramme implements Sujet, Serializable {
         }
 
         // Ajoute les relations
-        for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
-            VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
-            VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
-            VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
-            VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
-            Main.relations.add(vueRelation);
-            diagramme.ajouterObservateur(vueRelation);
-            relationPane.getChildren().add(vueRelation);
+        System.out.println("Contenu de ligneClasse avant le traitement des relations :");
+        for (Node node : ligneClasse.getChildren()) {
+            if (node instanceof VueClasse vueClasse) {
+                System.out.println("VueClasse présente : " + vueClasse.getClasse().getNom());
+            }
+        }
+
+        for (Relation relation : diagramme.getRelations()) {
+            VueClasse source = (VueClasse) ligneClasse.getChildren().stream()
+                    .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getSource().getNom()))
+                    .findFirst().orElse(null);
+
+            VueClasse destination = (VueClasse) ligneClasse.getChildren().stream()
+                    .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getDestination().getNom()))
+                    .findFirst().orElse(null);
+
+            for (Classe c : diagramme.getListeClasses()) {
+                System.out.println("Classe traitée pour VueClasse : " + c.getNom());
+            }
+
+
+            if (source != null && destination != null) {
+                VueRelation.TypeRelation typeRelation = Main.determineTypeRelation(relation);
+                VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+                Main.relations.add(vueRelation);
+                diagramme.ajouterObservateur(vueRelation); // Ajout de l'observateur
+                relationPane.getChildren().add(vueRelation);
+                System.out.println("Observateur ajouté pour la relation : " + source.getClasse().getNom() + " -> " + destination.getClasse().getNom());
+            }
+
+//            if (source != null && destination == null) {
+//                System.out.println("Destination manquante pour la relation avec la source : " + source.getClasse().getNom());
+//
+//                // Test d'affichage forcé
+//                Line testLine = new Line(100, 100, 300, 300);
+//                testLine.setStroke(Color.RED);
+//                testLine.setStrokeWidth(3);
+//                relationPane.getChildren().add(testLine);
+//                System.out.println("Ligne de test ajoutée pour la source : " + source.getClasse().getNom());
+//            }
+
         }
 
         // Met à jour les relations à chaque déplacement de classe
@@ -387,7 +420,9 @@ public class Diagramme implements Sujet, Serializable {
                 vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
             }
         }
+
         updateRelations();
+
     }
 
 
@@ -402,7 +437,7 @@ public class Diagramme implements Sujet, Serializable {
 
     public void ajouterRelation(Relation relation) {
         relations.add(relation);
-        notifierObservateurs();
+//        notifierObservateurs();
     }
 
 

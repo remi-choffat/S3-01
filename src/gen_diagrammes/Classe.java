@@ -15,6 +15,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Représente une classe du diagramme
@@ -613,7 +614,16 @@ public class Classe implements Sujet, Serializable {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Classe c) {
-            return this.nom.equals(c.getNom()) && this.nomPackage.equals(c.getNomPackage());
+            // Si une seule des 2 classes a un nom null, on renvoie false
+            if ((this.nom == null ^ c.getNom() == null) || (this.nomPackage == null ^ c.getNomPackage() == null)) {
+                return false;
+            }
+            boolean packageEgal = this.nomPackage == null || Objects.equals(this.nomPackage, c.getNomPackage());
+            if (this.nom == null) {
+                return false;
+            }
+            boolean classeEgal = this.nom.equals(c.getNom());
+            return packageEgal && classeEgal;
         }
         return false;
     }

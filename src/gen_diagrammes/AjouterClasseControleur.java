@@ -16,62 +16,69 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+import static gen_diagrammes.Main.ajouterClasseDepuisFichier;
+import static gen_diagrammes.Main.ajouterRelationsPourClasse;
+
 public class AjouterClasseControleur implements EventHandler<ActionEvent> {
 
     private StackPane stackPane;
 
-    public AjouterClasseControleur(StackPane sp){
+    public AjouterClasseControleur(StackPane sp) {
         super();
         this.stackPane = sp;
     }
 
     public void handle(ActionEvent event) {
-            stackPane.getChildren().clear();
-            Button btnCenter = new Button("Sélectionner un fichier");
-            ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
-            imageView.setFitWidth(150);
-            imageView.setFitHeight(150);
-            VBox content = new VBox(10, imageView, btnCenter);
-            content.setPadding(new Insets(20));
-            content.setAlignment(Pos.CENTER);
+        stackPane.getChildren().clear();
+        Button btnCenter = new Button("Sélectionner un fichier");
+        ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
+        imageView.setFitWidth(150);
+        imageView.setFitHeight(150);
+        VBox content = new VBox(10, imageView, btnCenter);
+        content.setPadding(new Insets(20));
+        content.setAlignment(Pos.CENTER);
 
-            StackPane rectangle = new StackPane(content);
-            rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
-            rectangle.setPrefSize(300, 200);
-            rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        StackPane rectangle = new StackPane(content);
+        rectangle.setStyle("-fx-border-color: black; -fx-border-width: 2; -fx-background-color: lightgrey;");
+        rectangle.setPrefSize(300, 200);
+        rectangle.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-            rectangle.setOnDragOver(eventDragOver -> {
-                if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
-                    eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-                eventDragOver.consume();
-            });
+        rectangle.setOnDragOver(eventDragOver -> {
+            if (eventDragOver.getGestureSource() != rectangle && eventDragOver.getDragboard().hasFiles()) {
+                eventDragOver.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            eventDragOver.consume();
+        });
 
-            rectangle.setOnDragDropped(eventDrop -> {
-                var db = eventDrop.getDragboard();
-                boolean success = false;
-                if (db.hasFiles()) {
-                    success = true;
-                    Main.ajouterClasseDepuisFichier(db.getFiles().get(0), stackPane);
-                }
-                eventDrop.setDropCompleted(success);
-                eventDrop.consume();
-            });
+        rectangle.setOnDragDropped(eventDrop -> {
+            var db = eventDrop.getDragboard();
+            boolean success = false;
+            if (db.hasFiles()) {
+                success = true;
+                File file = db.getFiles().get(0);
+                Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                ajouterRelationsPourClasse(nouvelleClasse);
+            }
+            eventDrop.setDropCompleted(success);
+            eventDrop.consume();
+        });
 
-            btnCenter.setOnAction(fileEvent -> {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Sélectionner un fichier");
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Classes Java compilées", "*.class"));
-                Stage fileStage = (Stage) btnCenter.getScene().getWindow();
-                File file = fileChooser.showOpenDialog(fileStage);
-                if (file != null) {
-                    Main.ajouterClasseDepuisFichier(file, stackPane);
-                }
-            });
+        btnCenter.setOnAction(fileEvent -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Sélectionner un fichier");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Classes Java compilées", "*.class"));
+            Stage fileStage = (Stage) btnCenter.getScene().getWindow();
+            File file = fileChooser.showOpenDialog(fileStage);
+            if (file != null) {
+                Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
+                ajouterRelationsPourClasse(nouvelleClasse);
+            }
+        });
 
-            StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
-            StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
-            stackPane.getChildren().add(rectangle);
+
+        StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
+        StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
+        stackPane.getChildren().add(rectangle);
     }
 
 }
