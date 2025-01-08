@@ -78,7 +78,7 @@ public class VueListeClasses extends VBox implements Observateur {
                         setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                if (tache.getClasseDeTache() != null) {
+                                if ((tache != null)&&(tache.getClasseDeTache() != null)) {
                                     if (tache.getClasseDeTache().isVisible()){
                                         tache.getClasseDeTache().setVisibilite(false);
                                     } else {

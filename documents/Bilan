@@ -40,10 +40,17 @@ Les classes sont déplaçables.
 Compte rendu itération 4 :
 
 Répartition :
-    Rémi : charger une classe de n'importe quel package + afficher/masquer les classes parent + afficher/masquer toutes les relations du diagramme
-    Tuline : afficher le package dans le menu (se baser sur l'exemple donné sur arche)
-    Gabin : créer une classe
+    Rémi : afficher/masquer les attributs d'une classe + afficher/masquer les méthodes d'une classe + charger une classe de n'importe quel package
+           + afficher/masquer les classes parent + possibilité de sauvegarder et charger le diagramme
+    Tuline : afficher le package dans le menu (VueListeClasse + ContenuCellule)
+    Gabin : créer une classe + nettoyage du main + réorganisation globale pour mise en place plus concrète du patron MVC
     Noah : afficher les flèches en fonction de la relation
+
+Bilan : L'utilisateur peut dérouler dans le menu à gauche les différentes classes des packages qu'il a importé.
+Lorsqu'il clique sur une classe elle peut s'afficher ou se masquer.
+Les flèches représentant les relations sont justes et leur apparence est la bonne (implémentation, héritage...).
+L'utilisateur peut importer ou exporter un diagramme créé.
+Il peut également afficher/masquer les méthodes d'une/de toutes les classes, les attributs d'une/de toutes les classes et les classes parent d'une classe.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
