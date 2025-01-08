@@ -1,14 +1,24 @@
 package gen_diagrammes;
 
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.*;
 import java.util.ArrayList;
+
+import static gen_diagrammes.Main.makeDraggable;
+import static gen_diagrammes.Main.updateRelations;
 
 /**
  * Représente un diagramme de classes
  */
-public class Diagramme implements Sujet {
+public class Diagramme implements Sujet, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
      * Nom du package
@@ -24,10 +34,18 @@ public class Diagramme implements Sujet {
     @Getter
     private ArrayList<Classe> listeClasses;
 
+
     /**
      * Instance unique de Diagramme
      */
+    @Setter
     private static Diagramme instance;
+
+    @Setter
+    private boolean afficherAttributs;
+
+    @Setter
+    private boolean afficherMethodes;
 
     /**
      * Liste des observateurs
@@ -43,6 +61,8 @@ public class Diagramme implements Sujet {
         this.nomPackage = null;
         this.listeClasses = new ArrayList<>();
         this.listeObservateurs = new ArrayList<>();
+        this.afficherAttributs = true;
+        this.afficherMethodes = true;
     }
 
 
@@ -78,13 +98,23 @@ public class Diagramme implements Sujet {
      * Méthode qui permet d'ajouter une classe au diagramme
      *
      * @param c classe à ajouter au diagramme
+     * @return 1 si la classe a été ajoutée, 0 si la classe existe déjà, -1 si la classe est nulle
      */
-    public void ajouterClasse(Classe c) {
+    public int ajouterClasse(Classe c) {
         if (c == null) {
-            return;
+            return -1;
         }
+
+        // Vérifie si une classe avec le même nom et même package existe déjà
+        for (Classe classe : this.listeClasses) {
+            if (c.equals(classe)) {
+                return 0;
+            }
+        }
+
         this.listeClasses.add(c);
         this.updateClasses();
+        return 1;
     }
 
 
@@ -96,6 +126,18 @@ public class Diagramme implements Sujet {
     public void supprimerClasse(Classe c) {
         this.listeClasses.remove(c);
         this.updateClasses();
+    }
+
+
+    /**
+     * Méthode qui permet de supprimer une classe du diagramme par son nom
+     */
+    public void supprimerClasse(String nomClasse, String nomPackage) {
+        Classe classe = this.getClasse(nomClasse, nomPackage);
+        if (classe != null) {
+            this.listeClasses.remove(classe);
+            this.updateClasses();
+        }
     }
 
 
@@ -128,12 +170,11 @@ public class Diagramme implements Sujet {
     /**
      * Met à jour les attributs des classes du diagramme
      */
-
     public void updateClasses() {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();
         }
-        this.notifierObservateurs();
+        //this.notifierObservateurs();
     }
 
 
@@ -176,9 +217,9 @@ public class Diagramme implements Sujet {
      * @param simpleName nom de la classe
      * @return classe correspondante
      */
-    public Classe getClasse(String simpleName) {
+    public Classe getClasse(String simpleName, String nomPackage) {
         for (Classe c : this.listeClasses) {
-            if (c.getNom().equals(simpleName)) {
+            if (c.getNom().equals(simpleName) && c.getNomPackage().equals(nomPackage)) {
                 return c;
             }
         }
@@ -193,7 +234,7 @@ public class Diagramme implements Sujet {
         for (Classe c : this.listeClasses) {
             c.setVisibilite(true);
         }
-        this.notifierObservateurs();
+        //this.notifierObservateurs();
     }
 
 
@@ -257,6 +298,101 @@ public class Diagramme implements Sujet {
             }
         }
         this.notifierObservateurs();
+    }
+
+
+    /**
+     * Sauvegarde le diagramme dans un fichier
+     *
+     * @param file fichier de sauvegarde
+     * @throws IOException erreur lors de la sauvegarde
+     */
+    public void sauvegarderDiagramme(File file) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file))) {
+            oos.writeObject(this);
+        }
+    }
+
+
+    /**
+     * Charge un diagramme depuis un fichier
+     *
+     * @param file fichier à charger
+     * @return diagramme chargé
+     * @throws IOException            erreur lors du chargement
+     * @throws ClassNotFoundException classe non trouvée
+     */
+    public static Diagramme chargerDiagramme(File file) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (Diagramme) ois.readObject();
+        }
+    }
+
+
+    /**
+     * Affiche le diagramme
+     *
+     * @param stackPane pane où afficher le diagramme
+     */
+    public void afficher(StackPane stackPane) {
+        stackPane.getChildren().clear();
+        Diagramme diagramme = Diagramme.getInstance();
+        Pane ligneClasse = new Pane();
+        Pane relationPane = new Pane();
+        stackPane.getChildren().addAll(relationPane, ligneClasse);
+
+        for (Classe c : diagramme.getListeClasses()) {
+            VueClasse vueClasse = new VueClasse(c);
+            makeDraggable(vueClasse);
+            vueClasse.relocate(c.getLongueur(), c.getLargeur());
+            Diagramme.getInstance().ajouterObservateur(vueClasse);
+
+            // Appliquer les paramètres d'affichage
+            if (Main.afficherAttributs) {
+                c.afficherAttributs();
+            } else {
+                c.masquerAttributs();
+            }
+            if (Main.afficherMethodes) {
+                c.afficherMethodes();
+            } else {
+                c.masquerMethodes();
+            }
+
+            vueClasse.actualiser();
+
+            ligneClasse.getChildren().add(vueClasse);
+        }
+
+        // Ajoute les relations
+        for (int i = 0; i < diagramme.getListeClasses().size() - 1; i++) {
+            VueClasse source = (VueClasse) ligneClasse.getChildren().get(i);
+            VueClasse destination = (VueClasse) ligneClasse.getChildren().get(i + 1);
+            VueRelation.TypeRelation typeRelation = VueRelation.TypeRelation.ASSOCIATION; // Change ce type selon tes besoins
+            VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+            Main.relations.add(vueRelation);
+            diagramme.ajouterObservateur(vueRelation);
+            relationPane.getChildren().add(vueRelation);
+        }
+
+        // Met à jour les relations à chaque déplacement de classe
+        for (Node node : ligneClasse.getChildren()) {
+            if (node instanceof VueClasse vueClasse) {
+                vueClasse.layoutXProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+                vueClasse.layoutYProperty().addListener((observable, oldValue, newValue) -> updateRelations());
+            }
+        }
+        updateRelations();
+    }
+
+
+    public boolean getAfficherMethodes() {
+        return this.afficherMethodes;
+    }
+
+
+    public boolean getAfficherAttributs() {
+        return this.afficherAttributs;
     }
 
 }

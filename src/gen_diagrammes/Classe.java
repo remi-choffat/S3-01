@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.io.Serial;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,7 +19,29 @@ import java.util.List;
  * Représente une classe du diagramme
  */
 @Getter
-public class Classe {
+public class Classe implements Sujet, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @Getter
+    private ArrayList<Observateur> observateurs = new ArrayList<>();
+
+    @Override
+    public void ajouterObservateur(Observateur v) {
+        observateurs.add(v);
+    }
+
+    @Override
+    public void notifierObservateurs() {
+        for (Observateur v : observateurs) {
+            v.actualiser();
+        }
+    }
+
+    public void supprimerObservateur(Observateur v) {
+        observateurs.remove(v);
+    }
 
     public static final String PUBLIC = "public";
     public static final String PRIVATE = "private";
@@ -322,7 +346,7 @@ public class Classe {
                 this.parents.add(new Classe(c.getSimpleName(), c.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", INTERFACE));
             } else {
                 // Associe la classe parente à la classe actuelle dans la liste parents
-                this.parents.add(Diagramme.getInstance().getClasse(c.getSimpleName()));
+                this.parents.add(Diagramme.getInstance().getClasse(c.getSimpleName(), c.getPackageName()));
             }
         }
 
@@ -342,7 +366,7 @@ public class Classe {
                 this.parents.add(new Classe(superClass.getSimpleName(), superClass.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", CLASS));
             } else {
                 // Associe la classe parente à la classe actuelle dans la liste parents
-                this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName()));
+                this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName(), superClass.getPackageName()));
             }
         }
 
@@ -357,6 +381,7 @@ public class Classe {
     public void setVisibilite(boolean etat) {
         this.visible = etat;
         Diagramme.getInstance().notifierObservateurs();
+        this.notifierObservateurs();
     }
 
 
@@ -577,6 +602,19 @@ public class Classe {
         for (Classe c : this.getParents()) {
             c.setVisibilite(false);
         }
+    }
+
+
+    /**
+     * Définit l'égalité entre deux classes
+     * Les classes sont égales si elles ont le même nom et le même package
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Classe c) {
+            return this.nom.equals(c.getNom()) && this.nomPackage.equals(c.getNomPackage());
+        }
+        return false;
     }
 
 }
