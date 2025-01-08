@@ -363,10 +363,6 @@ public class Main extends Application {
                 return VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
             case "implementation":
                 return VueRelation.TypeRelation.IMPLEMENTATION;
-            case "aggregation":
-                return VueRelation.TypeRelation.AGGREGATION;
-            case "composition":
-                return VueRelation.TypeRelation.COMPOSITION;
             default:
                 return VueRelation.TypeRelation.ASSOCIATION;
         }
@@ -584,11 +580,6 @@ public class Main extends Application {
             if (attribut instanceof AttributClasse) {
                 Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
                 String typeRelation = "association"; // Par défaut association
-                if (((AttributClasse) attribut).isAggregation()) {
-                    typeRelation = "aggregation";
-                } else if (((AttributClasse) attribut).isComposition()) {
-                    typeRelation = "composition";
-                }
 
                 System.out.println("Classe associée détectée : " + classeAssociee.getNom() + ", Relation : " + typeRelation);
 

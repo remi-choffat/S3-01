@@ -56,6 +56,10 @@ public class VueRelation extends Pane implements Observateur {
             Line line = new Line(startX, startY, endX, endY);
             line.setStroke(Color.BLACK);
             line.setStrokeWidth(2);
+            if(typeRelation == TypeRelation.IMPLEMENTATION) {
+                line.getStrokeDashArray().setAll(10.0, 5.0); // motif de tirets
+                line.setStrokeDashOffset(0); // décalage des tirets
+            }
             this.getChildren().add(line);
             System.out.println("Ligne ajoutée avec coordonnées : StartX = " + startX + ", StartY = " + startY +
                     ", EndX = " + endX + ", EndY = " + endY);
@@ -70,7 +74,7 @@ public class VueRelation extends Pane implements Observateur {
 
             switch (typeRelation) {
                 case HERITAGE:
-                    arrowHead.setFill(Color.TRANSPARENT);
+                    arrowHead.setFill(Color.WHITE);
                     arrowHead.setStroke(Color.BLACK);
                     arrowHead.setStrokeWidth(1);
                     this.getChildren().add(arrowHead);
@@ -78,9 +82,9 @@ public class VueRelation extends Pane implements Observateur {
                             ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
                     break;
                 case IMPLEMENTATION:
-                    arrowHead.setFill(Color.TRANSPARENT);
-                    arrowHead.setStroke(Color.RED);
-                    arrowHead.setStrokeWidth(1);
+                    arrowHead.setFill(Color.WHITE);
+                    arrowHead.setStroke(Color.BLACK);
+                    arrowHead.setStrokeWidth(0.5);
                     this.getChildren().add(arrowHead);
                     System.out.println("Flèche IMPLEMENTATION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
                             ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
@@ -91,15 +95,7 @@ public class VueRelation extends Pane implements Observateur {
                     System.out.println("Flèche ASSOCIATION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
                             ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
                     break;
-                case AGGREGATION:
-                case COMPOSITION:
-                    arrowHead.setFill(Color.WHITE);
-                    arrowHead.setStroke(Color.BLACK);
-                    arrowHead.setStrokeWidth(1);
-                    this.getChildren().add(arrowHead);
-                    System.out.println("Flèche AGGREGATION/COMPOSITION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
-                            ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
-                    break;
+
             }
         }
     }
