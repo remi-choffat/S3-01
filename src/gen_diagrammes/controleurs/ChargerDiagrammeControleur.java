@@ -1,6 +1,7 @@
 package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.vues.VueDiagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -44,6 +45,8 @@ public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
         } else {
             chargerDiagramme();
         }
+        VueDiagramme vd = (VueDiagramme)stackPane;
+        vd.afficher();
         Diagramme.getInstance().notifierObservateurs();
     }
 
