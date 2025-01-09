@@ -1,5 +1,5 @@
 @startuml
-title Ajout d'une classe
+title Affichage du diagramme
 
 actor "Vincent" as Utilisateur
 participant "main : Main" as Main

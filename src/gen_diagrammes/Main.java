@@ -12,7 +12,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -201,16 +203,16 @@ public class Main extends Application {
         // Déplacement avec les flèches du clavier
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case S:
+                case DOWN:
                     stackPane.setTranslateY(stackPane.getTranslateY() - 20);
                     break;
-                case Z:
+                case UP:
                     stackPane.setTranslateY(stackPane.getTranslateY() + 20);
                     break;
-                case D:
+                case RIGHT:
                     stackPane.setTranslateX(stackPane.getTranslateX() - 20);
                     break;
-                case Q:
+                case LEFT:
                     stackPane.setTranslateX(stackPane.getTranslateX() + 20);
                     break;
                 default:
