@@ -7,7 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -356,13 +358,9 @@ public class Main extends Application {
     static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
 
-        System.out.println("Ajout des relations pour la classe : " + nouvelleClasse.getNom());
-
         // Vérification et ajout des relations d'héritage ou d'implémentation
         for (Classe parent : nouvelleClasse.getParents()) {
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
-
-            System.out.println("Parent détecté : " + parent.getNom() + ", Type : " + parent.getType());
 
             // Vérifiez si la relation existe déjà
             if (!diagramme.contientRelation(nouvelleClasse, parent)) {
@@ -376,12 +374,12 @@ public class Main extends Application {
 
                 // Ajout de la relation
                 Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-                System.out.println(parent.getNom() + "--------------------------------------------");
-                System.out.println(relation.getType());
+//                System.out.println(parent.getNom() + "--------------------------------------------");
+//                System.out.println(relation.getType());
                 diagramme.ajouterRelation(relation);
-                System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
+//                System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
             } else {
-                System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
+//                System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
             }
         }
 
@@ -391,7 +389,7 @@ public class Main extends Application {
                 Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
                 String typeRelation = "association"; // Par défaut association
 
-                System.out.println("Classe associée détectée : " + classeAssociee.getNom() + ", Relation : " + typeRelation);
+//                System.out.println("Classe associée détectée : " + classeAssociee.getNom() + ", Relation : " + typeRelation);
 
                 if (!diagramme.contientRelation(nouvelleClasse, classeAssociee)) {
                     // Vérifiez si les dimensions de la classe associée sont valides
@@ -405,9 +403,9 @@ public class Main extends Application {
                     // Ajout de la relation
                     Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
                     diagramme.ajouterRelation(relation);
-                    System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
+//                    System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
                 } else {
-                    System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
+//                    System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
                 }
             }
         }

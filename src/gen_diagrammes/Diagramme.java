@@ -208,10 +208,7 @@ public class Diagramme implements Sujet, Serializable {
      */
     @Override
     public void notifierObservateurs() {
-        System.out.println("Notification des observateurs");
-
         for (Observateur o : this.listeObservateurs) {
-            System.out.println("Notification de : " + o.getClass().getSimpleName());
             o.actualiser();
         }
     }
@@ -370,13 +367,6 @@ public class Diagramme implements Sujet, Serializable {
         }
 
         // Ajoute les relations
-        System.out.println("Contenu de ligneClasse avant le traitement des relations :");
-        for (Node node : ligneClasse.getChildren()) {
-            if (node instanceof VueClasse vueClasse) {
-                System.out.println("VueClasse présente : " + vueClasse.getClasse().getNom());
-            }
-        }
-
         for (Relation relation : diagramme.getRelations()) {
             VueClasse source = (VueClasse) ligneClasse.getChildren().stream()
                     .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getSource().getNom()))
@@ -386,10 +376,6 @@ public class Diagramme implements Sujet, Serializable {
                     .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getDestination().getNom()))
                     .findFirst().orElse(null);
 
-            for (Classe c : diagramme.getListeClasses()) {
-                System.out.println("Classe traitée pour VueClasse : " + c.getNom());
-            }
-
 
             if (source != null && destination != null) {
                 VueRelation.TypeRelation typeRelation = Main.determineTypeRelation(relation);
@@ -397,7 +383,6 @@ public class Diagramme implements Sujet, Serializable {
                 Main.relations.add(vueRelation);
                 diagramme.ajouterObservateur(vueRelation); // Ajout de l'observateur
                 relationPane.getChildren().add(vueRelation);
-                System.out.println("Observateur ajouté pour la relation : " + source.getClasse().getNom() + " -> " + destination.getClasse().getNom());
             }
 
 //            if (source != null && destination == null) {

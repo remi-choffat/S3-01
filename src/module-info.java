@@ -4,7 +4,5 @@ module gen_diagrammes {
     requires static lombok;
     requires java.desktop;
     requires javafx.swing;
-    requires jdk.jshell;
-    requires jdk.compiler;
     exports gen_diagrammes;
 }
