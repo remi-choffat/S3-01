@@ -7,14 +7,13 @@ import gen_diagrammes.vues.VueDiagramme;
 import gen_diagrammes.vues.VueListeClasses;
 import gen_diagrammes.vues.VueRelation;
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -29,10 +28,6 @@ import java.util.List;
  */
 public class Main extends Application {
 
-    private double dragStartX;
-    private double dragStartY;
-    private double offsetX;
-    private double offsetY;
     public static List<VueRelation> relations = new ArrayList<>();
     public static double scaleFactor = 1.0;
     public static VueDiagramme stackPane;
@@ -140,24 +135,6 @@ public class Main extends Application {
             stackPane.setCursor(Cursor.DEFAULT);
         });
 
-//        // Ajout des gestionnaires d'événements pour le déplacement du fond
-//        stackPane.setOnMousePressed(event -> {
-//            if (event.getTarget() == stackPane) {
-//                dragStartX = event.getSceneX();
-//                dragStartY = event.getSceneY();
-//                offsetX = stackPane.getTranslateX();
-//                offsetY = stackPane.getTranslateY();
-//            }
-//        });
-//
-//        stackPane.setOnMouseDragged(event -> {
-//            if (event.getTarget() == stackPane) {
-//                double deltaX = event.getSceneX() - dragStartX;
-//                double deltaY = event.getSceneY() - dragStartY;
-//                stackPane.setTranslateX(offsetX + deltaX);
-//                stackPane.setTranslateY(offsetY + deltaY);
-//            }
-//        });
 
         // Ajout des classes au conteneur
         stackPane.getChildren().add(classContainer);
@@ -165,9 +142,8 @@ public class Main extends Application {
         // Ajout des gestionnaires d'événements pour les classes
         for (Node node : classContainer.getChildren()) {
             if (node instanceof VueClasse) {
-                node.setOnMousePressed(event -> {
-                    event.consume(); // Empêche la propagation de l'événement
-                });
+                // Empêche la propagation de l'événement
+                node.setOnMousePressed(Event::consume);
             }
         }
 
@@ -327,6 +303,7 @@ public class Main extends Application {
 
     }
 
+
     /**
      * Détermine le type de relation à partir de la relation
      *
@@ -377,6 +354,7 @@ public class Main extends Application {
         });
     }
 
+
     /**
      * Met à jour les relations entre les classes
      */
@@ -392,6 +370,7 @@ public class Main extends Application {
             vueRelation.actualiser();
         }
     }
+
 
     /**
      * Ajoute une classe à partir d'un fichier
@@ -449,6 +428,11 @@ public class Main extends Application {
     }
 
 
+    /**
+     * Ajoute les relations concernant une classe spécifique
+     *
+     * @param nouvelleClasse Classe
+     */
     public static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
 
@@ -493,4 +477,5 @@ public class Main extends Application {
             }
         }
     }
+
 }
