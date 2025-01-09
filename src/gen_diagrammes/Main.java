@@ -128,11 +128,9 @@ public class Main extends Application {
 
         Diagramme.getInstance().ajouterObservateur(vueListeClasses);
 
-        // création de la scène et l'ajouter à la fenêtre principale
-        // Récupère les dimensions de l'écran
+        primaryStage.setMaximized(true);
         Scene scene = new Scene(borderPane, 1067, 600);
         primaryStage.setScene(scene);
-        primaryStage.setMaximized(true);
         primaryStage.show();
 
         // Ajout des styles pour le curseur
@@ -436,6 +434,8 @@ public class Main extends Application {
                     System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " ajoutée");
                 }
             }
+            // Met à jour les parents de toutes les classes du diagramme
+            Classe.updateParents();
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
         }
@@ -445,6 +445,7 @@ public class Main extends Application {
         Diagramme.getInstance().notifierObservateurs();
         return classe;
     }
+
 
     public static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
@@ -457,17 +458,17 @@ public class Main extends Application {
         for (Classe parent : nouvelleClasse.getParents()) {
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
             // Vérifiez si la relation existe déjà
-            if (!diagramme.contientRelation(nouvelleClasse, parent)) {
-                // Vérifiez si les dimensions du parent sont valides
-                if (parent.getLongueur() <= 0 || parent.getLargeur() <= 0) {
-                    parent.setLongueur(Math.random() * 600);
-                    parent.setLargeur(Math.random() * 300);
-                }
-
-                // Ajout de la relation
-                Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-                diagramme.ajouterRelation(relation);
+//            if (!diagramme.contientRelation(nouvelleClasse, parent)) {  // TODO - Optimiser la vérification des relations
+            // Vérifiez si les dimensions du parent sont valides
+            if (parent.getLongueur() <= 0 || parent.getLargeur() <= 0) {
+                parent.setLongueur(Math.random() * 600);
+                parent.setLargeur(Math.random() * 300);
             }
+
+            // Ajout de la relation
+            Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
+            diagramme.ajouterRelation(relation);
+//            }
         }
 
         // Vérification et ajout des relations d'association, agrégation et composition
@@ -476,19 +477,17 @@ public class Main extends Application {
                 Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
                 String typeRelation = "association"; // Par défaut association
 
-                if (!diagramme.contientRelation(nouvelleClasse, classeAssociee)) {
-                    // Vérifiez si les dimensions de la classe associée sont valides
-                    if (classeAssociee.getLongueur() <= 0 || classeAssociee.getLargeur() <= 0) {
-                        System.err.println("Dimensions invalides pour la classe associée : " + classeAssociee.getNom());
-                        classeAssociee.setLongueur(Math.random() * 600);
-                        classeAssociee.setLargeur(Math.random() * 300);
-                        System.out.println("Dimensions corrigées pour la classe associée : Longueur = " + classeAssociee.getLongueur() + ", Largeur = " + classeAssociee.getLargeur());
-                    }
-
-                    // Ajout de la relation
-                    Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
-                    diagramme.ajouterRelation(relation);
+//                if (!diagramme.contientRelation(nouvelleClasse, classeAssociee)) {
+                // Vérifiez si les dimensions de la classe associée sont valides
+                if (classeAssociee.getLongueur() <= 0 || classeAssociee.getLargeur() <= 0) {
+                    classeAssociee.setLongueur(Math.random() * 600);
+                    classeAssociee.setLargeur(Math.random() * 300);
                 }
+
+                // Ajout de la relation
+                Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
+                diagramme.ajouterRelation(relation);
+//                }
             }
         }
     }

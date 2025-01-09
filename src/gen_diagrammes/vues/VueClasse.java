@@ -138,8 +138,6 @@ public class VueClasse extends VBox implements Observateur {
     @Override
     public void actualiser() {
 
-        System.out.println("Actualisation de la vue de la classe : " + this.classe.getNom());
-
         this.getChildren().clear();
         if (this.classe.isVisible()) {
             this.setVisible(true);

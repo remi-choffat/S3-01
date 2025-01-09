@@ -23,6 +23,7 @@ public class Relation implements Sujet {
         this.destination = destination;
         this.type = type;
         this.observateurs = new ArrayList<>();
+//        System.out.println("NOUVEAU : " + this);
     }
 
     public void ajouterObservateur(Observateur observateur) {
@@ -33,11 +34,14 @@ public class Relation implements Sujet {
         this.observateurs.remove(observateur);
     }
 
-    public void notifierObservateurs(){
-        for(Observateur o : this.observateurs){
+    public void notifierObservateurs() {
+        for (Observateur o : this.observateurs) {
             o.actualiser();
         }
     }
 
+    public String toString() {
+        return "Relation d'" + type + " entre " + source.getNom() + " et " + destination.getNom();
+    }
 
 }

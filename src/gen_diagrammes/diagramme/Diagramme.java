@@ -366,7 +366,7 @@ public class Diagramme implements Sujet, Serializable {
 
     public void ajouterRelation(Relation relation) {
         relations.add(relation);
-//        notifierObservateurs();
+        notifierObservateurs();
     }
 
 
