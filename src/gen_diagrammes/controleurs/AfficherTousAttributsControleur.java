@@ -2,6 +2,8 @@ package gen_diagrammes.controleurs;
 
 import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.gInterface.Observateur;
+import gen_diagrammes.vues.VueClasse;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
@@ -20,13 +22,18 @@ public class AfficherTousAttributsControleur implements EventHandler<ActionEvent
 
     public void handle(ActionEvent event) {
         CheckMenuItem c = (CheckMenuItem) event.getSource();
-        Main.afficherAttributs = c.isSelected();
-        if (Main.afficherAttributs) {
+        boolean isSelected = c.isSelected();
+        Main.afficherAttributs = isSelected;
+        if (isSelected) {
             Diagramme.getInstance().afficherTousAttributs();
         } else {
             Diagramme.getInstance().masquerTousAttributs();
         }
-        //Diagramme.getInstance().afficher(stackPane);
+        for (Observateur observateur : Diagramme.getInstance().getListeObservateurs()) {
+            if (observateur instanceof VueClasse) {
+                ((VueClasse) observateur).updateShowAttributesCheckMenuItem(isSelected);
+            }
+        }
         Diagramme.getInstance().notifierObservateurs();
     }
 

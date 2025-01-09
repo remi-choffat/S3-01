@@ -129,8 +129,10 @@ public class Main extends Application {
         Diagramme.getInstance().ajouterObservateur(vueListeClasses);
 
         // création de la scène et l'ajouter à la fenêtre principale
-        Scene scene = new Scene(borderPane, 800, 600);
+        // Récupère les dimensions de l'écran
+        Scene scene = new Scene(borderPane, 1067, 600);
         primaryStage.setScene(scene);
+        primaryStage.setMaximized(true);
         primaryStage.show();
 
         // Ajout des styles pour le curseur

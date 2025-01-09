@@ -1,8 +1,8 @@
 package gen_diagrammes.vues;
 
+import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.diagramme.Diagramme;
-import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Relation;
 import gen_diagrammes.gInterface.Observateur;
 import javafx.scene.Node;
@@ -14,17 +14,19 @@ import static gen_diagrammes.Main.updateRelations;
 
 public class VueDiagramme extends StackPane implements Observateur {
 
-    public VueDiagramme(){
+    public VueDiagramme() {
         super();
     }
 
     @Override
     public void actualiser() {
-        //Diagramme.getInstance().afficher(Main.stackPane);
         afficher();
     }
 
 
+    /**
+     * Affiche le diagramme
+     */
     public void afficher() {
         this.getChildren().clear();
         Diagramme diagramme = Diagramme.getInstance();
@@ -34,16 +36,16 @@ public class VueDiagramme extends StackPane implements Observateur {
 
         for (Classe c : diagramme.getListeClasses()) {
 
-            VueClasse vueClasse; //
+            VueClasse vueClasse;
 
-            if (c.getObservateurs().isEmpty()){ //
+            if (c.getObservateurs().isEmpty()) {
                 vueClasse = new VueClasse(c);
                 makeDraggable(vueClasse);
                 vueClasse.relocate(c.getLongueur(), c.getLargeur());
                 Diagramme.getInstance().ajouterObservateur(vueClasse);
                 c.ajouterObservateur(vueClasse);
-            } else {//
-                vueClasse = (VueClasse)c.getObservateurs().getFirst();
+            } else {
+                vueClasse = (VueClasse) c.getObservateurs().getFirst();
             }
 
             // Appliquer les paramètres d'affichage
@@ -66,7 +68,7 @@ public class VueDiagramme extends StackPane implements Observateur {
         // Ajoute les relations
         for (Relation relation : diagramme.getRelations()) {
 
-            if( ! relation.getObservateurs().isEmpty()){
+            if (!relation.getObservateurs().isEmpty()) {
                 relation.getObservateurs().clear();
             }
 
