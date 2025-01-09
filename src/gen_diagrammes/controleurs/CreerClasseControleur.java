@@ -10,9 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 public class CreerClasseControleur implements EventHandler<ActionEvent> {
 
@@ -24,7 +23,12 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
 
     public void handle(ActionEvent event) {
         // Masque le diagramme
-        stackPane.getChildren().clear();
+        Pane pane = new Pane();
+        pane.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
+        pane.setScaleX(stackPane.getScaleX());
+        pane.setScaleY(stackPane.getScaleY());
+        stackPane.getChildren().add(pane);
+        //stackPane.getChildren().clear();
 
         VBox vb = new VBox();
         Label lb = new Label("Créer une classe");
@@ -71,7 +75,9 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
 
         bCancel.setOnAction(f -> {
             stackPane.getChildren().remove(vb);
-            Diagramme.getInstance().afficher(stackPane);
+            stackPane.getChildren().remove(pane);
+            //Diagramme.getInstance().afficher(stackPane);
+            Diagramme.getInstance().notifierObservateurs();
         });
 
         tf.setOnKeyTyped(f -> {

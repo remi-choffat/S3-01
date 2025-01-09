@@ -349,10 +349,18 @@ public class Diagramme implements Sujet, Serializable {
         stackPane.getChildren().addAll(relationPane, ligneClasse);
 
         for (Classe c : diagramme.getListeClasses()) {
-            VueClasse vueClasse = new VueClasse(c);
-            makeDraggable(vueClasse);
-            vueClasse.relocate(c.getLongueur(), c.getLargeur());
-            Diagramme.getInstance().ajouterObservateur(vueClasse);
+
+            VueClasse vueClasse; //
+
+            if (c.getObservateurs().isEmpty()){ //
+                vueClasse = new VueClasse(c);
+                makeDraggable(vueClasse);
+                vueClasse.relocate(c.getLongueur(), c.getLargeur());
+                Diagramme.getInstance().ajouterObservateur(vueClasse);
+                c.ajouterObservateur(vueClasse);
+            } else {//
+                vueClasse = (VueClasse)c.getObservateurs().getFirst();
+            }
 
             // Appliquer les paramètres d'affichage
             if (Main.afficherAttributs) {
@@ -373,22 +381,28 @@ public class Diagramme implements Sujet, Serializable {
 
         // Ajoute les relations
         for (Relation relation : diagramme.getRelations()) {
-            VueClasse source = (VueClasse) ligneClasse.getChildren().stream()
-                    .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getSource().getNom()))
-                    .findFirst().orElse(null);
 
-            VueClasse destination = (VueClasse) ligneClasse.getChildren().stream()
-                    .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getDestination().getNom()))
-                    .findFirst().orElse(null);
+                if( ! relation.getObservateurs().isEmpty()){
+                    relation.getObservateurs().clear();
+                }
+
+                VueClasse source = (VueClasse) ligneClasse.getChildren().stream()
+                        .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getSource().getNom()))
+                        .findFirst().orElse(null);
+
+                VueClasse destination = (VueClasse) ligneClasse.getChildren().stream()
+                        .filter(node -> ((VueClasse) node).getClasse().getNom().equals(relation.getDestination().getNom()))
+                        .findFirst().orElse(null);
 
 
-            if (source != null && destination != null) {
-                VueRelation.TypeRelation typeRelation = Main.determineTypeRelation(relation);
-                VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
-                Main.relations.add(vueRelation);
-                diagramme.ajouterObservateur(vueRelation); // Ajout de l'observateur
-                relationPane.getChildren().add(vueRelation);
-            }
+                if (source != null && destination != null) {
+                    VueRelation.TypeRelation typeRelation = Main.determineTypeRelation(relation);
+                    VueRelation vueRelation = new VueRelation(source, destination, typeRelation);
+                    Main.relations.add(vueRelation);
+                    diagramme.ajouterObservateur(vueRelation); // Ajout de l'observateur
+                    relationPane.getChildren().add(vueRelation);
+                    relation.ajouterObservateur(vueRelation);
+                }
 
 //            if (source != null && destination == null) {
 //                System.out.println("Destination manquante pour la relation avec la source : " + source.getClasse().getNom());
