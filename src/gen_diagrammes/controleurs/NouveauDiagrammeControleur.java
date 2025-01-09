@@ -1,7 +1,7 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.diagramme.Diagramme;
 import gen_diagrammes.Main;
+import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -10,7 +10,7 @@ import javafx.scene.layout.StackPane;
 
 public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
 
-    private StackPane stackPane;
+    private final StackPane stackPane;
 
     public NouveauDiagrammeControleur(StackPane stackPane) {
         this.stackPane = stackPane;
@@ -25,13 +25,13 @@ public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
             alert.setHeaderText("Voulez-vous enregistrer le diagramme actuel avant d'en créer un nouveau ?");
             alert.showAndWait().ifPresent(type -> {
                 if (type == ButtonType.YES) {
-                    new EnregistrerDiagrammeSousControleur(stackPane).handle(event);
-                } else if (type == ButtonType.NO) {
-                    Diagramme.getInstance().supprimerToutesClasses();
-                    stackPane.getChildren().clear();
-                } else {
+                    new EnregistrerDiagrammeControleur().handle(event);
+                } else if (type != ButtonType.NO) {
                     alert.close();
                 }
+                Diagramme.getInstance().setFichier(null);
+                Diagramme.getInstance().supprimerToutesClasses();
+                stackPane.getChildren().clear();
             });
         }
     }

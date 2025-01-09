@@ -32,6 +32,10 @@ public class Diagramme implements Sujet, Serializable {
     @Setter
     @Getter
     private String nomPackage;
+
+    /**
+     * Liste des relations entre les classes
+     */
     @Getter
     private List<Relation> relations = new ArrayList<>();
 
@@ -41,7 +45,6 @@ public class Diagramme implements Sujet, Serializable {
     @Setter
     @Getter
     private ArrayList<Classe> listeClasses;
-
 
     /**
      * Instance unique de Diagramme
@@ -61,6 +64,14 @@ public class Diagramme implements Sujet, Serializable {
     @Getter
     private ArrayList<Observateur> listeObservateurs;
 
+    /**
+     * Nom du fichier dans lequel est enregistré le diagramme
+     * (pour sauvegarde et chargement)
+     */
+    @Getter
+    @Setter
+    private String fichier;
+
 
     /**
      * Constructeur privé pour empêcher l'instanciation directe
@@ -71,6 +82,7 @@ public class Diagramme implements Sujet, Serializable {
         this.listeObservateurs = new ArrayList<>();
         this.afficherAttributs = true;
         this.afficherMethodes = true;
+        this.fichier = null;
     }
 
 

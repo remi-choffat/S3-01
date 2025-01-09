@@ -244,7 +244,6 @@ public class Main extends Application {
 
         // ENREGISTRER UN DIAGRAMME EXISTANT
         menuFichierEnregistrer.setOnAction(new EnregistrerDiagrammeControleur());
-        menuFichierEnregistrer.setDisable(true);
 
         // QUITTER L'APPLICATION
         menuFichierQuitter.setOnAction(new QuitterAppliControleur(stackPane));
