@@ -4,6 +4,7 @@ import gen_diagrammes.diagramme.Diagramme;
 import gen_diagrammes.Main;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -12,12 +13,18 @@ import java.io.IOException;
 
 public class EnregistrerDiagrammeSousControleur implements EventHandler<ActionEvent> {
 
+    private StackPane stackPane;
+
+    public EnregistrerDiagrammeSousControleur(StackPane stackPane) {
+        this.stackPane = stackPane;
+    }
+
     @Override
     public void handle(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Sauvegarder le diagramme");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers de diagramme", "*.diag"));
-        Stage primaryStage = (Stage) Main.stackPane.getScene().getWindow();
+        Stage primaryStage = (Stage) stackPane.getScene().getWindow();
         File file = fileChooser.showSaveDialog(primaryStage);
         if (file != null) {
             try {

@@ -6,14 +6,21 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class QuitterAppliControleur implements EventHandler<ActionEvent> {
 
+    private StackPane stackPane;
+
+    public QuitterAppliControleur(StackPane stackPane) {
+        this.stackPane = stackPane;
+    }
+
     @Override
     public void handle(ActionEvent event) {
 
-        Stage primaryStage = (Stage) Main.stackPane.getScene().getWindow();
+        Stage primaryStage = (Stage) stackPane.getScene().getWindow();
         // Demande si l'utilisateur souhaite enregistrer le diagramme actuel (s'il contient au moins une classe)
         if (!Diagramme.getInstance().getListeClasses().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
@@ -21,7 +28,7 @@ public class QuitterAppliControleur implements EventHandler<ActionEvent> {
             alert.setHeaderText("Voulez-vous enregistrer le diagramme actuel avant de quitter ?");
             alert.showAndWait().ifPresent(type -> {
                 if (type == ButtonType.YES) {
-                    new EnregistrerDiagrammeSousControleur().handle(event);
+                    new EnregistrerDiagrammeSousControleur(stackPane).handle(event);
                 } else if (type == ButtonType.NO) {
                     primaryStage.close();
                 } else {

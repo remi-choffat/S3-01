@@ -1,6 +1,7 @@
 package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Classe;
+import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

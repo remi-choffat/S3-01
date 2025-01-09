@@ -6,8 +6,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.StackPane;
 
 public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
+
+    private StackPane stackPane;
+
+    public NouveauDiagrammeControleur(StackPane stackPane) {
+        this.stackPane = stackPane;
+    }
 
     @Override
     public void handle(ActionEvent event) {
@@ -18,10 +25,10 @@ public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
             alert.setHeaderText("Voulez-vous enregistrer le diagramme actuel avant d'en créer un nouveau ?");
             alert.showAndWait().ifPresent(type -> {
                 if (type == ButtonType.YES) {
-                    new EnregistrerDiagrammeSousControleur().handle(event);
+                    new EnregistrerDiagrammeSousControleur(stackPane).handle(event);
                 } else if (type == ButtonType.NO) {
                     Diagramme.getInstance().supprimerToutesClasses();
-                    Main.stackPane.getChildren().clear();
+                    stackPane.getChildren().clear();
                 } else {
                     alert.close();
                 }

@@ -229,20 +229,20 @@ public class Main extends Application {
         menuCreer.setOnAction(new CreerClasseControleur(stackPane));
 
         // CHARGER UN DIAGRAMME
-        menuFichierCharger.setOnAction(new ChargerDiagrammeControleur());
+        menuFichierCharger.setOnAction(new ChargerDiagrammeControleur(stackPane));
 
         // NOUVEAU DIAGRAMME
-        menuFichierNouveau.setOnAction(new NouveauDiagrammeControleur());
+        menuFichierNouveau.setOnAction(new NouveauDiagrammeControleur(stackPane));
 
         // ENREGISTRER UN DIAGRAMME DANS UN FICHIER
-        menuFichierEnregistrerSous.setOnAction(new EnregistrerDiagrammeSousControleur());
+        menuFichierEnregistrerSous.setOnAction(new EnregistrerDiagrammeSousControleur(stackPane));
 
         // ENREGISTRER UN DIAGRAMME EXISTANT
         menuFichierEnregistrer.setOnAction(new EnregistrerDiagrammeControleur());
         menuFichierEnregistrer.setDisable(true);
 
         // QUITTER L'APPLICATION
-        menuFichierQuitter.setOnAction(new QuitterAppliControleur());
+        menuFichierQuitter.setOnAction(new QuitterAppliControleur(stackPane));
 
     }
 
