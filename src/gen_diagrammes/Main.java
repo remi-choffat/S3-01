@@ -31,18 +31,15 @@ public class Main extends Application {
     private double dragStartY;
     private double offsetX;
     private double offsetY;
-    private double scaleFactor = 1.0;
-
     public static List<VueRelation> relations = new ArrayList<>();
-    static StackPane stackPane;
-
+    private double scaleFactor = 1.0;
+    public static StackPane stackPane;
     public static boolean afficherAttributs = true;
     public static boolean afficherMethodes = true;
     public static boolean afficherRelations = true;
     public static boolean afficherAssociations = true;
     public static boolean afficherHeritages = true;
     public static boolean afficherImplementations = true;
-
 
     /**
      * Méthode principale

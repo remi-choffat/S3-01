@@ -1,0 +1,58 @@
+@startuml
+
+title "diagramme de séquence sur la création d'une nouvelle classe"
+actor Utilisateur as usr
+participant "creerClasseControleur : CreerClasseControleur" as ctrl
+participant "okButton : Button" as obtn
+participant "okButtonHandler : OkButtonHandler" as obh
+participant "textField : TextField" as txf
+participant "typeBox : ComboBox" as cb1
+participant "VisibiliteBox : ComboBox" as cb2
+participant "classe : Classe" as cls
+participant "diagramme : Diagramme" as dg
+
+activate usr
+activate ctrl
+ctrl -> usr : envoi d'un formulaire
+
+usr -> cb2 : envoi d'un type de visibilité pour la classe (public, protected...)
+activate cb2
+
+usr -> cb1 : envoi d'un type pour la classe (abstract, interface...)
+activate cb1
+
+usr -> txf : envoi d'un nom pour la classe
+activate txf
+
+usr --> ctrl
+usr -> obtn : clic sur le bouton "ok"
+activate obtn
+obtn -> obh : handle (ActionEvent e)
+activate obh
+obh -> txf : getText()
+txf --> obh : String
+deactivate txf
+obh -> cb1 : getValue()
+cb1 --> obh : String
+deactivate cb1
+obh -> cb2 : getValue()
+cb2 --> obh : String
+deactivate cb2
+obh -> cls : Classe(nom, visibilité, type)
+activate cls
+cls --> obh : Classe
+deactivate cls
+obh -> dg : getInstance()
+activate dg
+dg --> obh : Diagramme
+obh -> dg : ajouterClasse(classe)
+dg --> obh
+deactivate dg
+obh --> obtn
+deactivate obh
+obtn --> ctrl
+deactivate obtn
+ctrl --> usr
+deactivate ctrl
+deactivate usr
+@enduml
