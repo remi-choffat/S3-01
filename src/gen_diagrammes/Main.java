@@ -1,5 +1,11 @@
 package gen_diagrammes;
 
+import gen_diagrammes.controleurs.*;
+import gen_diagrammes.diagramme.*;
+import gen_diagrammes.vues.VueClasse;
+import gen_diagrammes.vues.VueDiagramme;
+import gen_diagrammes.vues.VueListeClasses;
+import gen_diagrammes.vues.VueRelation;
 import javafx.application.Application;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -228,20 +234,20 @@ public class Main extends Application {
         menuCreer.setOnAction(new CreerClasseControleur(stackPane));
 
         // CHARGER UN DIAGRAMME
-        menuFichierCharger.setOnAction(new ChargerDiagrammeControleur());
+        menuFichierCharger.setOnAction(new ChargerDiagrammeControleur(stackPane));
 
         // NOUVEAU DIAGRAMME
-        menuFichierNouveau.setOnAction(new NouveauDiagrammeControleur());
+        menuFichierNouveau.setOnAction(new NouveauDiagrammeControleur(stackPane));
 
         // ENREGISTRER UN DIAGRAMME DANS UN FICHIER
-        menuFichierEnregistrerSous.setOnAction(new EnregistrerDiagrammeSousControleur());
+        menuFichierEnregistrerSous.setOnAction(new EnregistrerDiagrammeSousControleur(stackPane));
 
         // ENREGISTRER UN DIAGRAMME EXISTANT
         menuFichierEnregistrer.setOnAction(new EnregistrerDiagrammeControleur());
         menuFichierEnregistrer.setDisable(true);
 
         // QUITTER L'APPLICATION
-        menuFichierQuitter.setOnAction(new QuitterAppliControleur());
+        menuFichierQuitter.setOnAction(new QuitterAppliControleur(stackPane));
 
         // AFFICHER TOUTES LES RELATIONS
         menuAfficherToutesRelations.setOnAction(event -> {
@@ -293,7 +299,7 @@ public class Main extends Application {
      * @param relation Relation
      * @return Type de relation
      */
-    static VueRelation.TypeRelation determineTypeRelation(Relation relation) {
+    public static VueRelation.TypeRelation determineTypeRelation(Relation relation) {
         return switch (relation.getType()) {
             case "heritage" -> VueRelation.TypeRelation.HERITAGE;
             case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
@@ -307,7 +313,7 @@ public class Main extends Application {
      *
      * @param node Noeud à rendre déplaçable
      */
-    static void makeDraggable(Node node) {
+    public static void makeDraggable(Node node) {
         final double[] dragDelta = new double[2];
         node.setOnMousePressed(e -> {
             dragDelta[0] = node.getLayoutX() - e.getSceneX();
@@ -338,7 +344,7 @@ public class Main extends Application {
     /**
      * Met à jour les relations entre les classes
      */
-    static void updateRelations() {
+    public static void updateRelations() {
         for (VueRelation vueRelation : relations) {
             if (afficherRelations) {
                 if ((vueRelation.getTypeRelation() == VueRelation.TypeRelation.ASSOCIATION && afficherAssociations) ||
@@ -405,7 +411,7 @@ public class Main extends Application {
         return classe;
     }
 
-    static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
+    public static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
         // Vérification et ajout des relations d'héritage ou d'implémentation
         for (Classe parent : nouvelleClasse.getParents()) {

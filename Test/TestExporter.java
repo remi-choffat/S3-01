@@ -1,5 +1,5 @@
-import gen_diagrammes.Diagramme;
-import gen_diagrammes.Exporter;
+import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.gInterface.Exporter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

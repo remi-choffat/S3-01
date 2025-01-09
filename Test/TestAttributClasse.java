@@ -1,5 +1,5 @@
-import gen_diagrammes.AttributClasse;
-import gen_diagrammes.Classe;
+import gen_diagrammes.diagramme.AttributClasse;
+import gen_diagrammes.diagramme.Classe;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
