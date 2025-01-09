@@ -18,7 +18,8 @@ public class AfficherDiagrammeControleur implements EventHandler<ActionEvent> {
     }
 
     public void handle(ActionEvent event) {
-        Diagramme.getInstance().afficher(stackPane);
+        //Diagramme.getInstance().afficher(stackPane);
+        Diagramme.getInstance().notifierObservateurs();
     }
 
 }

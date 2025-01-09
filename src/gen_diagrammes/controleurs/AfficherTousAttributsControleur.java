@@ -26,7 +26,8 @@ public class AfficherTousAttributsControleur implements EventHandler<ActionEvent
         } else {
             Diagramme.getInstance().masquerTousAttributs();
         }
-        Diagramme.getInstance().afficher(stackPane);
+        //Diagramme.getInstance().afficher(stackPane);
+        Diagramme.getInstance().notifierObservateurs();
     }
 
 }

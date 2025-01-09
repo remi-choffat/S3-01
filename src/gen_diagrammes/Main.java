@@ -32,7 +32,7 @@ public class Main extends Application {
     private double offsetX;
     private double offsetY;
     public static List<VueRelation> relations = new ArrayList<>();
-    private double scaleFactor = 1.0;
+    public static double scaleFactor = 1.0;
     public static StackPane stackPane;
     public static boolean afficherAttributs = true;
     public static boolean afficherMethodes = true;
@@ -234,7 +234,7 @@ public class Main extends Application {
         menuSupprimerToutesClasses.setOnAction(new SupprimerToutesLesClassesControleur(stackPane));
 
         // CRÉER UNE CLASSE
-        menuCreer.setOnAction(new CreerClasseControleur(stackPane));
+        menuCreer.setOnAction(new CreerClasseControleur(stackPane, borderPane));
 
         // CHARGER UN DIAGRAMME
         menuFichierCharger.setOnAction(new ChargerDiagrammeControleur(stackPane));

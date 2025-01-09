@@ -26,7 +26,8 @@ public class AfficherToutesMethodesControleur implements EventHandler<ActionEven
         } else {
             Diagramme.getInstance().masquerToutesMethodes();
         }
-        Diagramme.getInstance().afficher(stackPane);
+        //Diagramme.getInstance().afficher(stackPane);
+        Diagramme.getInstance().notifierObservateurs();
     }
 
 }

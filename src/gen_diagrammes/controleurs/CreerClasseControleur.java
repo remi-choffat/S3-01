@@ -1,33 +1,39 @@
 package gen_diagrammes.controleurs;
 
+import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 /**
  * Contrôleur pour la création manuelle d'une classe
  */
 public class CreerClasseControleur implements EventHandler<ActionEvent> {
 
-    private final StackPane stackPane;
+    StackPane stackPane ;
+    BorderPane borderPane ;
 
-    public CreerClasseControleur(StackPane stackPane) {
+    public CreerClasseControleur(StackPane stackPane, BorderPane borderPane) {
         this.stackPane = stackPane;
+        this.borderPane = borderPane;
     }
 
     public void handle(ActionEvent event) {
         // Masque le diagramme
-        stackPane.getChildren().clear();
+        StackPane pane = new StackPane();
+        pane.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
+        borderPane.setCenter(pane);
+        //stackPane.getChildren().clear();
 
         VBox vb = new VBox();
         Label lb = new Label("Créer une classe");
@@ -61,7 +67,7 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
         vb.setPadding(new Insets(20));
         vb.setAlignment(Pos.CENTER);
 
-        stackPane.getChildren().add(vb);
+        pane.getChildren().add(vb);
         vb.setLayoutX(stackPane.getScaleX() - 0.5 * vb.getScaleX());
         vb.setLayoutY(stackPane.getScaleY() - 0.5 * vb.getScaleY());
 
@@ -73,8 +79,13 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
         });
 
         bCancel.setOnAction(f -> {
-            stackPane.getChildren().remove(vb);
-            Diagramme.getInstance().afficher(stackPane);
+            pane.getChildren().remove(vb);
+            borderPane.setCenter(stackPane);
+            Node n = borderPane.getLeft();
+            borderPane.setLeft(null);
+            borderPane.setLeft(n);
+            //Diagramme.getInstance().afficher(stackPane);
+            Diagramme.getInstance().notifierObservateurs();
         });
 
         tf.setOnKeyTyped(f -> {
