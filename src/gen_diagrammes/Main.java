@@ -349,24 +349,26 @@ public class Main extends Application {
     public static void makeDraggable(Node node) {
         final double[] dragDelta = new double[2];
         node.setOnMousePressed(e -> {
-            dragDelta[0] = node.getLayoutX() - e.getSceneX();
-            dragDelta[1] = node.getLayoutY() - e.getSceneY();
+            dragDelta[0] = node.getLayoutX() - e.getSceneX() / scaleFactor;
+            dragDelta[1] = node.getLayoutY() - e.getSceneY() / scaleFactor;
             node.setCursor(javafx.scene.Cursor.MOVE);
         });
 
         node.setOnMouseReleased(e -> node.setCursor(javafx.scene.Cursor.HAND));
 
         node.setOnMouseDragged(e -> {
-            double newX = e.getSceneX() + dragDelta[0];
-            double newY = e.getSceneY() + dragDelta[1];
+            double newX = e.getSceneX() / scaleFactor + dragDelta[0];
+            double newY = e.getSceneY() / scaleFactor + dragDelta[1];
             node.setLayoutX(newX);
             node.setLayoutY(newY);
         });
+
         node.setOnMouseEntered(e -> {
             if (!e.isPrimaryButtonDown()) {
                 node.setCursor(javafx.scene.Cursor.HAND);
             }
         });
+
         node.setOnMouseExited(e -> {
             if (!e.isPrimaryButtonDown()) {
                 node.setCursor(javafx.scene.Cursor.DEFAULT);
