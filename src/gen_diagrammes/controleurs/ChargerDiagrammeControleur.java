@@ -44,6 +44,7 @@ public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
         } else {
             chargerDiagramme();
         }
+        Diagramme.getInstance().notifierObservateurs();
     }
 
 

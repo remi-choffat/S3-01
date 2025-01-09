@@ -3,6 +3,8 @@ package gen_diagrammes.controleurs;
 import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.vues.VueClasse;
+import gen_diagrammes.vues.VueDiagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -75,6 +77,9 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
         bOk.setOnAction(f -> {
             Classe c = new Classe(tf.getText(), comboVisibilite.getValue(), comboType.getValue());
             Diagramme.getInstance().ajouterClasse(c);
+            VueClasse vc = new VueClasse(c);
+            Diagramme.getInstance().ajouterObservateur(vc);
+            Diagramme.getInstance().notifierObservateurs();
             bCancel.fire();
         });
 
@@ -85,7 +90,8 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
             borderPane.setLeft(null);
             borderPane.setLeft(n);
             //Diagramme.getInstance().afficher(stackPane);
-            Diagramme.getInstance().notifierObservateurs();
+            VueDiagramme vd = (VueDiagramme)(stackPane);
+            vd.afficher();
         });
 
         tf.setOnKeyTyped(f -> {
