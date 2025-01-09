@@ -17,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +26,23 @@ import java.util.List;
  * Classe principale de l'application
  */
 public class Main extends Application {
+
     private double dragStartX;
     private double dragStartY;
     private double offsetX;
     private double offsetY;
-    static List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
+
+    public static List<VueRelation> relations = new ArrayList<>();
     static StackPane stackPane;
-    static boolean afficherAttributs = true;
-    static boolean afficherMethodes = true;
-    static boolean afficherRelations = true;
-    static boolean afficherAssociations = true;
-    static boolean afficherHeritages = true;
-    static boolean afficherImplementations = true;
+
+    public static boolean afficherAttributs = true;
+    public static boolean afficherMethodes = true;
+    public static boolean afficherRelations = true;
+    public static boolean afficherAssociations = true;
+    public static boolean afficherHeritages = true;
+    public static boolean afficherImplementations = true;
+
 
     /**
      * Méthode principale
@@ -68,6 +73,7 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+
         primaryStage.setTitle("Plante UML");
         primaryStage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
 
@@ -243,7 +249,7 @@ public class Main extends Application {
         menuFichierEnregistrerSous.setOnAction(new EnregistrerDiagrammeSousControleur(stackPane));
 
         // ENREGISTRER UN DIAGRAMME EXISTANT
-        menuFichierEnregistrer.setOnAction(new EnregistrerDiagrammeControleur());
+        menuFichierEnregistrer.setOnAction(new EnregistrerDiagrammeControleur(stackPane));
 
         // QUITTER L'APPLICATION
         menuFichierQuitter.setOnAction(new QuitterAppliControleur(stackPane));
@@ -346,13 +352,9 @@ public class Main extends Application {
     public static void updateRelations() {
         for (VueRelation vueRelation : relations) {
             if (afficherRelations) {
-                if ((vueRelation.getTypeRelation() == VueRelation.TypeRelation.ASSOCIATION && afficherAssociations) ||
+                vueRelation.setVisible((vueRelation.getTypeRelation() == VueRelation.TypeRelation.ASSOCIATION && afficherAssociations) ||
                         (vueRelation.getTypeRelation() == VueRelation.TypeRelation.HERITAGE && afficherHeritages) ||
-                        (vueRelation.getTypeRelation() == VueRelation.TypeRelation.IMPLEMENTATION && afficherImplementations)) {
-                    vueRelation.setVisible(true);
-                } else {
-                    vueRelation.setVisible(false);
-                }
+                        (vueRelation.getTypeRelation() == VueRelation.TypeRelation.IMPLEMENTATION && afficherImplementations));
             } else {
                 vueRelation.setVisible(false);
             }
@@ -365,7 +367,7 @@ public class Main extends Application {
      *
      * @param file      Fichier
      * @param stackPane StackPane : Conteneur du diagramme
-     * @return
+     * @return Classe
      */
     public static Classe ajouterClasseDepuisFichier(File file, StackPane stackPane) {
         Classe classe = null;
@@ -419,19 +421,13 @@ public class Main extends Application {
             if (!diagramme.contientRelation(nouvelleClasse, parent)) {
                 // Vérifiez si les dimensions du parent sont valides
                 if (parent.getLongueur() <= 0 || parent.getLargeur() <= 0) {
-                    System.err.println("Dimensions invalides pour le parent : " + parent.getNom());
-                    parent.setLongueur(Math.random() * 600); // Initialisation par défaut
-                    parent.setLargeur(Math.random() * 300); // Initialisation par défaut
-                    System.out.println("Dimensions corrigées pour le parent : Longueur = " + parent.getLongueur() + ", Largeur = " + parent.getLargeur());
+                    parent.setLongueur(Math.random() * 600);
+                    parent.setLargeur(Math.random() * 300);
                 }
 
                 // Ajout de la relation
                 Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-//                System.out.println(parent.getNom() + "--------------------------------------------");
-//                System.out.println(relation.getType());
                 diagramme.ajouterRelation(relation);
-//                System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
-//                System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
             }
         }
 
@@ -441,23 +437,18 @@ public class Main extends Application {
                 Classe classeAssociee = ((AttributClasse) attribut).getAttribut();
                 String typeRelation = "association"; // Par défaut association
 
-//                System.out.println("Classe associée détectée : " + classeAssociee.getNom() + ", Relation : " + typeRelation);
-
                 if (!diagramme.contientRelation(nouvelleClasse, classeAssociee)) {
                     // Vérifiez si les dimensions de la classe associée sont valides
                     if (classeAssociee.getLongueur() <= 0 || classeAssociee.getLargeur() <= 0) {
                         System.err.println("Dimensions invalides pour la classe associée : " + classeAssociee.getNom());
-                        classeAssociee.setLongueur(Math.random() * 600); // Initialisation par défaut
-                        classeAssociee.setLargeur(Math.random() * 300); // Initialisation par défaut
+                        classeAssociee.setLongueur(Math.random() * 600);
+                        classeAssociee.setLargeur(Math.random() * 300);
                         System.out.println("Dimensions corrigées pour la classe associée : Longueur = " + classeAssociee.getLongueur() + ", Largeur = " + classeAssociee.getLargeur());
                     }
 
                     // Ajout de la relation
                     Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
                     diagramme.ajouterRelation(relation);
-//                    System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
-                } else {
-//                    System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + classeAssociee.getNom());
                 }
             }
         }

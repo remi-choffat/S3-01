@@ -1,6 +1,5 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,7 +14,7 @@ import java.io.IOException;
 
 public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
 
-    private StackPane stackPane;
+    private final StackPane stackPane;
 
     public ChargerDiagrammeControleur(StackPane stackPane) {
         this.stackPane = stackPane;
@@ -30,7 +29,7 @@ public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
             alert.setHeaderText("Voulez-vous enregistrer le diagramme actuel avant d'en créer un nouveau ?");
             alert.showAndWait().ifPresent(type -> {
                 if (type == ButtonType.YES) {
-                    new EnregistrerDiagrammeControleur().handle(event);
+                    new EnregistrerDiagrammeControleur(stackPane).handle(event);
                 } else if (type != ButtonType.NO) {
                     alert.close();
                 }

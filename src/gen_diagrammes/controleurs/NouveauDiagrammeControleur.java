@@ -25,7 +25,7 @@ public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
             alert.setHeaderText("Voulez-vous enregistrer le diagramme actuel avant d'en créer un nouveau ?");
             alert.showAndWait().ifPresent(type -> {
                 if (type == ButtonType.YES) {
-                    new EnregistrerDiagrammeControleur().handle(event);
+                    new EnregistrerDiagrammeControleur(stackPane).handle(event);
                 } else if (type != ButtonType.NO) {
                     alert.close();
                 }

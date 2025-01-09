@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class EnregistrerDiagrammeSousControleur implements EventHandler<ActionEvent> {
 
-    private StackPane stackPane;
+    private final StackPane stackPane;
 
     public EnregistrerDiagrammeSousControleur(StackPane stackPane) {
         this.stackPane = stackPane;
