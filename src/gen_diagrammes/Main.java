@@ -138,32 +138,30 @@ public class Main extends Application {
         primaryStage.show();
 
         // Ajout des styles pour le curseur
-        stackPane.setOnMouseEntered(event -> {
-            stackPane.setCursor(Cursor.MOVE);
-        });
+
 
         stackPane.setOnMouseExited(event -> {
             stackPane.setCursor(Cursor.DEFAULT);
         });
 
-        // Ajout des gestionnaires d'événements pour le déplacement du fond
-        stackPane.setOnMousePressed(event -> {
-            if (event.getTarget() == stackPane) {
-                dragStartX = event.getSceneX();
-                dragStartY = event.getSceneY();
-                offsetX = stackPane.getTranslateX();
-                offsetY = stackPane.getTranslateY();
-            }
-        });
-
-        stackPane.setOnMouseDragged(event -> {
-            if (event.getTarget() == stackPane) {
-                double deltaX = event.getSceneX() - dragStartX;
-                double deltaY = event.getSceneY() - dragStartY;
-                stackPane.setTranslateX(offsetX + deltaX);
-                stackPane.setTranslateY(offsetY + deltaY);
-            }
-        });
+//        // Ajout des gestionnaires d'événements pour le déplacement du fond
+//        stackPane.setOnMousePressed(event -> {
+//            if (event.getTarget() == stackPane) {
+//                dragStartX = event.getSceneX();
+//                dragStartY = event.getSceneY();
+//                offsetX = stackPane.getTranslateX();
+//                offsetY = stackPane.getTranslateY();
+//            }
+//        });
+//
+//        stackPane.setOnMouseDragged(event -> {
+//            if (event.getTarget() == stackPane) {
+//                double deltaX = event.getSceneX() - dragStartX;
+//                double deltaY = event.getSceneY() - dragStartY;
+//                stackPane.setTranslateX(offsetX + deltaX);
+//                stackPane.setTranslateY(offsetY + deltaY);
+//            }
+//        });
 
         // Ajout des classes au conteneur
         stackPane.getChildren().add(classContainer);
@@ -182,14 +180,27 @@ public class Main extends Application {
 
 
         // Ajout du gestionnaire d'événements de la molette pour zoomer/dezoomer
-        stackPane.addEventFilter(ScrollEvent.SCROLL, event -> {
+        scene.addEventFilter(ScrollEvent.SCROLL, event -> {
+            double oldScale = scaleFactor;
             if (event.getDeltaY() > 0) {
                 scaleFactor *= 1.1;
             } else {
                 scaleFactor /= 1.1;
             }
+            double f = (scaleFactor / oldScale) - 1;
+
+            // Calculer les décalages en fonction de la position du curseur
+            double dx = (event.getSceneX() - (stackPane.getBoundsInParent().getWidth() / 2 + stackPane.getBoundsInParent().getMinX()));
+            double dy = (event.getSceneY() - (stackPane.getBoundsInParent().getHeight() / 2 + stackPane.getBoundsInParent().getMinY()));
+
+            // Appliquer le facteur de zoom
             stackPane.setScaleX(scaleFactor);
             stackPane.setScaleY(scaleFactor);
+
+            // Ajuster les coordonnées de translation pour centrer le zoom sur le curseur
+            stackPane.setTranslateX(stackPane.getTranslateX() - f * dx);
+            stackPane.setTranslateY(stackPane.getTranslateY() - f * dy);
+
             event.consume();
         });
 
