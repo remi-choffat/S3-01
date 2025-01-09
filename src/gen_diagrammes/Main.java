@@ -206,16 +206,16 @@ public class Main extends Application {
         // Déplacement avec les flèches du clavier
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
-                case DOWN:
+                case S:
                     stackPane.setTranslateY(stackPane.getTranslateY() - 20);
                     break;
-                case UP:
+                case Z:
                     stackPane.setTranslateY(stackPane.getTranslateY() + 20);
                     break;
-                case RIGHT:
+                case D:
                     stackPane.setTranslateX(stackPane.getTranslateX() - 20);
                     break;
-                case LEFT:
+                case Q:
                     stackPane.setTranslateX(stackPane.getTranslateX() + 20);
                     break;
                 default:
