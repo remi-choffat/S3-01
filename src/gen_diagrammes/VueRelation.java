@@ -4,6 +4,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import lombok.Getter;
 
 /**
  * Affichage d'une relation entre deux classes
@@ -20,6 +21,7 @@ public class VueRelation extends Pane implements Observateur {
 
     private final VueClasse source;
     private final VueClasse destination;
+    @Getter
     private final TypeRelation typeRelation;
 
     public VueRelation(VueClasse source, VueClasse destination, TypeRelation typeRelation) {
@@ -99,4 +101,5 @@ public class VueRelation extends Pane implements Observateur {
             }
         }
     }
+
 }

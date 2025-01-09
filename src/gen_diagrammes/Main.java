@@ -11,7 +11,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +23,15 @@ public class Main extends Application {
     private double dragStartY;
     private double offsetX;
     private double offsetY;
-
     static List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
     static StackPane stackPane;
-
     static boolean afficherAttributs = true;
     static boolean afficherMethodes = true;
-
+    static boolean afficherRelations = true;
+    static boolean afficherAssociations = true;
+    static boolean afficherHeritages = true;
+    static boolean afficherImplementations = true;
 
     /**
      * Méthode principale
@@ -90,19 +90,24 @@ public class Main extends Application {
         MenuItem menuAfficherDiagramme = new MenuItem("Afficher le diagramme");
         MenuItem menuAfficherToutesClasses = new MenuItem("Afficher toutes les classes");
         MenuItem menuMasquerToutesClasses = new MenuItem("Masquer toutes les classes");
+        MenuItem menuAfficherToutesRelations = new MenuItem("Afficher toutes les relations");
+        MenuItem menuMasquerToutesRelations = new MenuItem("Masquer toutes les relations");
         CheckMenuItem menuAfficherTousAttributs = new CheckMenuItem("Afficher tous les attributs");
         CheckMenuItem menuAfficherToutesMethodes = new CheckMenuItem("Afficher toutes les méthodes");
+        CheckMenuItem menuAfficherAssociations = new CheckMenuItem("Afficher les associations");
+        CheckMenuItem menuAfficherHeritages = new CheckMenuItem("Afficher les héritages");
+        CheckMenuItem menuAfficherImplementations = new CheckMenuItem("Afficher les implémentations");
+
         menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
         menuSupprimer.getItems().addAll(menuSupprimerClasses, menuSupprimerToutesClasses);
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
-        menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses, menuAfficherTousAttributs, menuAfficherToutesMethodes);
+        menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses, menuAfficherToutesRelations, menuMasquerToutesRelations, new SeparatorMenuItem(), menuAfficherTousAttributs, menuAfficherToutesMethodes, menuAfficherAssociations, menuAfficherHeritages, menuAfficherImplementations);
         menuBar.getMenus().addAll(menuFichier, menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
         menuBar.setViewOrder(-1);
 
         Pane classContainer = new Pane(); // Conteneur pour les classes
         stackPane = new VueDiagramme();
-//        Diagramme.getInstance().ajouterObservateur((Observateur) stackPane);
-
+        // Diagramme.getInstance().ajouterObservateur((Observateur) stackPane);
         // création de la mise en page principale
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(menuBar);
@@ -238,8 +243,49 @@ public class Main extends Application {
         // QUITTER L'APPLICATION
         menuFichierQuitter.setOnAction(new QuitterAppliControleur());
 
-    }
+        // AFFICHER TOUTES LES RELATIONS
+        menuAfficherToutesRelations.setOnAction(event -> {
+            afficherAssociations = true;
+            afficherHeritages = true;
+            afficherImplementations = true;
+            menuAfficherHeritages.setSelected(true);
+            menuAfficherAssociations.setSelected(true);
+            menuAfficherImplementations.setSelected(true);
+            updateRelations();
+        });
 
+        // MASQUER TOUTES LES RELATIONS
+        menuMasquerToutesRelations.setOnAction(event -> {
+            afficherAssociations = false;
+            afficherHeritages = false;
+            afficherImplementations = false;
+            menuAfficherHeritages.setSelected(false);
+            menuAfficherAssociations.setSelected(false);
+            menuAfficherImplementations.setSelected(false);
+            updateRelations();
+        });
+
+        // AFFICHER/MASQUER LES ASSOCIATIONS
+        menuAfficherAssociations.setSelected(true);
+        menuAfficherAssociations.setOnAction(event -> {
+            afficherAssociations = menuAfficherAssociations.isSelected();
+            updateRelations();
+        });
+
+        // AFFICHER/MASQUER LES HERITAGES
+        menuAfficherHeritages.setSelected(true);
+        menuAfficherHeritages.setOnAction(event -> {
+            afficherHeritages = menuAfficherHeritages.isSelected();
+            updateRelations();
+        });
+
+        // AFFICHER/MASQUER LES IMPLEMENTATIONS
+        menuAfficherImplementations.setSelected(true);
+        menuAfficherImplementations.setOnAction(event -> {
+            afficherImplementations = menuAfficherImplementations.isSelected();
+            updateRelations();
+        });
+    }
 
     /**
      * Détermine le type de relation à partir de la relation
@@ -249,8 +295,7 @@ public class Main extends Application {
      */
     static VueRelation.TypeRelation determineTypeRelation(Relation relation) {
         return switch (relation.getType()) {
-            case "heritage" ->
-                    VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
+            case "heritage" -> VueRelation.TypeRelation.HERITAGE;
             case "implementation" -> VueRelation.TypeRelation.IMPLEMENTATION;
             default -> VueRelation.TypeRelation.ASSOCIATION;
         };
@@ -264,7 +309,6 @@ public class Main extends Application {
      */
     static void makeDraggable(Node node) {
         final double[] dragDelta = new double[2];
-
         node.setOnMousePressed(e -> {
             dragDelta[0] = node.getLayoutX() - e.getSceneX();
             dragDelta[1] = node.getLayoutY() - e.getSceneY();
@@ -276,17 +320,14 @@ public class Main extends Application {
         node.setOnMouseDragged(e -> {
             double newX = e.getSceneX() + dragDelta[0];
             double newY = e.getSceneY() + dragDelta[1];
-
             node.setLayoutX(newX);
             node.setLayoutY(newY);
         });
-
         node.setOnMouseEntered(e -> {
             if (!e.isPrimaryButtonDown()) {
                 node.setCursor(javafx.scene.Cursor.HAND);
             }
         });
-
         node.setOnMouseExited(e -> {
             if (!e.isPrimaryButtonDown()) {
                 node.setCursor(javafx.scene.Cursor.DEFAULT);
@@ -294,16 +335,25 @@ public class Main extends Application {
         });
     }
 
-
     /**
      * Met à jour les relations entre les classes
      */
     static void updateRelations() {
         for (VueRelation vueRelation : relations) {
+            if (afficherRelations) {
+                if ((vueRelation.getTypeRelation() == VueRelation.TypeRelation.ASSOCIATION && afficherAssociations) ||
+                        (vueRelation.getTypeRelation() == VueRelation.TypeRelation.HERITAGE && afficherHeritages) ||
+                        (vueRelation.getTypeRelation() == VueRelation.TypeRelation.IMPLEMENTATION && afficherImplementations)) {
+                    vueRelation.setVisible(true);
+                } else {
+                    vueRelation.setVisible(false);
+                }
+            } else {
+                vueRelation.setVisible(false);
+            }
             vueRelation.actualiser();
         }
     }
-
 
     /**
      * Ajoute une classe à partir d'un fichier
@@ -357,11 +407,9 @@ public class Main extends Application {
 
     static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
-
         // Vérification et ajout des relations d'héritage ou d'implémentation
         for (Classe parent : nouvelleClasse.getParents()) {
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
-
             // Vérifiez si la relation existe déjà
             if (!diagramme.contientRelation(nouvelleClasse, parent)) {
                 // Vérifiez si les dimensions du parent sont valides
@@ -378,7 +426,6 @@ public class Main extends Application {
 //                System.out.println(relation.getType());
                 diagramme.ajouterRelation(relation);
 //                System.out.println("Relation ajoutée : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
-            } else {
 //                System.out.println("Relation déjà existante : " + typeRelation + " entre " + nouvelleClasse.getNom() + " et " + parent.getNom());
             }
         }
