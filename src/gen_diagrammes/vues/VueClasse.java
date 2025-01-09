@@ -18,10 +18,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import lombok.Getter;
 
 /**
  * Affichage d'une classe
  */
+@Getter
 public class VueClasse extends VBox implements Observateur {
 
     /**
@@ -78,10 +80,8 @@ public class VueClasse extends VBox implements Observateur {
             }
             actualiser();
         });
-        MenuItem modify = new MenuItem("Modifier");
-        modify.setDisable(true); // TODO - Implémenter la modification ?
 
-        contextMenu.getItems().addAll(title, new SeparatorMenuItem(), hideClass, new SeparatorMenuItem(), showAttributes, showMethods, showParentClasses, new SeparatorMenuItem(), modify);
+        contextMenu.getItems().addAll(title, new SeparatorMenuItem(), hideClass, new SeparatorMenuItem(), showAttributes, showMethods, showParentClasses);
 
         hideClass.setOnAction(event -> this.classe.setVisibilite(false));
         showAttributes.setOnAction(event -> {
@@ -129,10 +129,24 @@ public class VueClasse extends VBox implements Observateur {
             // Met le texte en gras, et aussi en italique si la classe est abstraite
             classNameText.setStyle("-fx-font-weight: bold;" + (this.classe.getType().equals(Classe.ABSTRACT_CLASS) ? "-fx-font-style: italic;" : ""));
 
+            // Affiche le nom de la classe
             HBox header = new HBox(typeIndicator, classNameText);
             header.setSpacing(5);
-            header.setPadding(new Insets(5));
+            header.setPadding(new Insets(5, 5, 3, 5));
             header.setAlignment(Pos.CENTER);
+            this.getChildren().add(header);
+
+            // Affiche le nom du package si la classe en a un
+            String packageString = this.classe.getNomPackage();
+            if (packageString != null) {
+                Text packageText = new Text(packageString);
+                packageText.setStyle("-fx-font-size: 10px;");
+                HBox packageBox = new HBox(packageText);
+                packageBox.setSpacing(5);
+                packageBox.setPadding(new Insets(0, 5, 5, 5));
+                packageBox.setAlignment(Pos.CENTER);
+                this.getChildren().add(packageBox);
+            }
 
             VBox vbox2 = new VBox();
             for (Attribut attribut : this.classe.getAttributs()) {
@@ -183,7 +197,7 @@ public class VueClasse extends VBox implements Observateur {
             separator2.setStyle("-fx-background-color: black;");
             separator2.setPrefHeight(2);
 
-            this.getChildren().addAll(header, separator1, vbox2, separator2, vbox3);
+            this.getChildren().addAll(separator1, vbox2, separator2, vbox3);
         } else {
             this.setVisible(false);
         }
@@ -253,10 +267,6 @@ public class VueClasse extends VBox implements Observateur {
                 break;
         }
         return new StackPane(circle);
-    }
-
-    public Classe getClasse() {
-        return classe;
     }
 
 }
