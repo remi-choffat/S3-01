@@ -13,9 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -123,12 +121,8 @@ public class Main extends Application {
 
         // Création du menu affichant les classes ajoutées
         VueListeClasses vueListeClasses = new VueListeClasses();
-        // ScrollPane pour afficher toute la liste
-        ScrollPane scrollPane = new ScrollPane(vueListeClasses);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFocusTraversable(false);
-        borderPane.setLeft(scrollPane);
+        borderPane.setLeft(vueListeClasses);
+
         Diagramme.getInstance().ajouterObservateur(vueListeClasses);
 
         // création de la scène et l'ajouter à la fenêtre principale
