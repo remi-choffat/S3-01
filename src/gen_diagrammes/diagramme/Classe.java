@@ -255,7 +255,7 @@ public class Classe implements Sujet, Serializable {
 
         // Remplit la liste des attributs
         for (Field a : classe.getDeclaredFields()) {
-
+            
             String type = a.getGenericType().getTypeName().replaceAll("\\b[a-zA-Z_]+\\.", "");
             int modAttribut = a.getModifiers();
             String accesAttribut;

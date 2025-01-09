@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Classe principale de l'application
  */
@@ -123,12 +124,8 @@ public class Main extends Application {
 
         // Création du menu affichant les classes ajoutées
         VueListeClasses vueListeClasses = new VueListeClasses();
-        // ScrollPane pour afficher toute la liste
-        ScrollPane scrollPane = new ScrollPane(vueListeClasses);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setFocusTraversable(false);
-        borderPane.setLeft(scrollPane);
+        borderPane.setLeft(vueListeClasses);
+
         Diagramme.getInstance().ajouterObservateur(vueListeClasses);
 
         // création de la scène et l'ajouter à la fenêtre principale
@@ -137,8 +134,6 @@ public class Main extends Application {
         primaryStage.show();
 
         // Ajout des styles pour le curseur
-
-
         stackPane.setOnMouseExited(event -> {
             stackPane.setCursor(Cursor.DEFAULT);
         });
@@ -323,6 +318,11 @@ public class Main extends Application {
             afficherImplementations = menuAfficherImplementations.isSelected();
             updateRelations();
         });
+
+        // Affiche le diagramme
+        menuAfficherDiagramme.fire();
+        stackPane.requestFocus();
+
     }
 
     /**
@@ -438,8 +438,9 @@ public class Main extends Application {
             System.err.println(ex.getMessage());
         }
         stackPane.getChildren().clear();
-        VueDiagramme v = (VueDiagramme)stackPane;
+        VueDiagramme v = (VueDiagramme) stackPane;
         v.actualiser();
+        Diagramme.getInstance().notifierObservateurs();
         return classe;
     }
 

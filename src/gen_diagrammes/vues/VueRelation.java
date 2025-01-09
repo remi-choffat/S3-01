@@ -1,6 +1,13 @@
 package gen_diagrammes.vues;
 
+import gen_diagrammes.diagramme.Attribut;
+import gen_diagrammes.diagramme.Relation;
 import gen_diagrammes.gInterface.Observateur;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -95,6 +102,15 @@ public class VueRelation extends Pane implements Observateur {
                 case ASSOCIATION:
                     arrowHead.setFill(Color.BLACK);
                     this.getChildren().add(arrowHead);
+                    for(Attribut a : source.getClasse().getAttributs()) {
+                        if(a.getType().equals(destination.getClasse().getNom())) {
+                            Label lNom = new Label(a.getNom());
+                            this.getChildren().add(lNom);
+                            lNom.setLayoutX((startX+endX)/2);
+                            lNom.setLayoutY((startY +endY)/2);
+                            lNom.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, Insets.EMPTY)));
+                        }
+                    }
 //                    System.out.println("Flèche ASSOCIATION ajoutée avec coordonnées : EndX = " + endX + ", EndY = " + endY +
 //                            ", X1 = " + x1 + ", Y1 = " + y1 + ", X2 = " + x2 + ", Y2 = " + y2);
                     break;
