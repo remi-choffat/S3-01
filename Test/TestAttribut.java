@@ -1,4 +1,4 @@
-import gen_diagrammes.Attribut;
+import gen_diagrammes.diagramme.Attribut;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

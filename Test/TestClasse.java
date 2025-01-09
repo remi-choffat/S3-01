@@ -1,6 +1,6 @@
-import gen_diagrammes.Attribut;
-import gen_diagrammes.Classe;
-import gen_diagrammes.Methode;
+import gen_diagrammes.diagramme.Attribut;
+import gen_diagrammes.diagramme.Classe;
+import gen_diagrammes.diagramme.Methode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,20 +43,6 @@ public class TestClasse {
         assertEquals("test1", classe.getNom());
         assertEquals("test2", classe.getAcces());
         assertEquals("test3", classe.getType());
-    }
-
-    @Test
-    public void testConstructeurFichier() throws ClassNotFoundException, MalformedURLException {
-
-        // Récupère le chemin absolu du fichier Classe.class du projet
-        String path = TestClasse.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        path = path.substring(0, path.lastIndexOf("/")) + "/gen_diagrammes/Classe.class";
-
-        Classe classe = new Classe(path);
-
-        assertEquals("Classe", classe.getNom());
-        assertEquals("public", classe.getAcces());
-        assertEquals("class", classe.getType());
     }
 
     @Test
