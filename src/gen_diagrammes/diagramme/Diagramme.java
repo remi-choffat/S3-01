@@ -194,7 +194,7 @@ public class Diagramme implements Sujet, Serializable {
         for (Classe c : this.listeClasses) {
             c.updateAttributs();
         }
-        //this.notifierObservateurs();
+        this.notifierObservateurs();
     }
 
 
