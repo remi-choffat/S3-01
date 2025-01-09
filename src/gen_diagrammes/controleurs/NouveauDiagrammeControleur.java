@@ -1,6 +1,5 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,6 +7,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.StackPane;
 
+/**
+ * Contrôleur pour créer un nouveau diagramme (projet)
+ */
 public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
 
     private final StackPane stackPane;

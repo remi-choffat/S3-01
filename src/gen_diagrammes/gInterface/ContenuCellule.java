@@ -3,12 +3,15 @@ package gen_diagrammes.gInterface;
 import gen_diagrammes.diagramme.Classe;
 import lombok.Getter;
 
+/**
+ * Classe représentant le contenu d'une cellule du répertoire des classes
+ */
 public class ContenuCellule {
 
     @Getter
     private String nom;
 
-    private Classe classe;
+    private final Classe classe;
 
     public ContenuCellule(String nom, Classe c) {
         this.nom = nom;

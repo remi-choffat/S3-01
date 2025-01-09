@@ -1,7 +1,6 @@
 package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Classe;
-import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -23,6 +22,9 @@ import java.util.List;
 import static gen_diagrammes.Main.ajouterClasseDepuisFichier;
 import static gen_diagrammes.Main.ajouterRelationsPourClasse;
 
+/**
+ * Controleur permettant d'ajouter un package (toutes les classes qu'il contient) au diagramme
+ */
 public class AjouterPackageControleur implements EventHandler<ActionEvent> {
 
     private final StackPane stackPane;
@@ -33,6 +35,7 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
     }
 
     public void handle(ActionEvent event) {
+
         stackPane.getChildren().clear();
         Button btnOpenFolder = new Button("Sélectionner un dossier");
         ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));

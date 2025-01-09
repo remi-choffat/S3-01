@@ -20,9 +20,12 @@ import java.io.File;
 import static gen_diagrammes.Main.ajouterClasseDepuisFichier;
 import static gen_diagrammes.Main.ajouterRelationsPourClasse;
 
+/**
+ * Controleur permettant d'ajouter une classe au diagramme
+ */
 public class AjouterClasseControleur implements EventHandler<ActionEvent> {
 
-    private StackPane stackPane;
+    private final StackPane stackPane;
 
     public AjouterClasseControleur(StackPane sp) {
         super();
@@ -75,7 +78,6 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
                 ajouterRelationsPourClasse(nouvelleClasse);
             }
         });
-
 
         StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
         StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));

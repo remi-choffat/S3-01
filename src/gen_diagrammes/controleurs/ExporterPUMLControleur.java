@@ -6,9 +6,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
+/**
+ * Contrôleur pour exporter le diagramme en un fichier .puml
+ */
 public class ExporterPUMLControleur implements EventHandler<ActionEvent> {
 
-    private Stage primaryStage;
+    private final Stage primaryStage;
 
     public ExporterPUMLControleur(Stage primaryStage) {
         this.primaryStage = primaryStage;

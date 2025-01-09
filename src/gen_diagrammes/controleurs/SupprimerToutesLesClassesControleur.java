@@ -8,9 +8,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.StackPane;
 
+/**
+ * Contrôleur pour supprimer toutes les classes du diagramme
+ */
 public class SupprimerToutesLesClassesControleur implements EventHandler<ActionEvent> {
 
-    StackPane stackPane;
+    private final StackPane stackPane;
 
     public SupprimerToutesLesClassesControleur(StackPane stackPane) {
         this.stackPane = stackPane;

@@ -8,6 +8,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+/**
+ * Contrôleur pour quitter l'application
+ */
 public class QuitterAppliControleur implements EventHandler<ActionEvent> {
 
     private final StackPane stackPane;
