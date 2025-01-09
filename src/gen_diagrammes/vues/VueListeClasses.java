@@ -1,8 +1,8 @@
 package gen_diagrammes.vues;
 
 import gen_diagrammes.diagramme.Classe;
-import gen_diagrammes.gInterface.ContenuCellule;
 import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.gInterface.ContenuCellule;
 import gen_diagrammes.gInterface.Observateur;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeCell;
@@ -25,14 +25,14 @@ public class VueListeClasses extends VBox implements Observateur {
     private TreeItem<ContenuCellule> racine;
 
     public VueListeClasses() {
-        this.racine = new TreeItem<>(new ContenuCellule("    Liste des classes du diagramme :    "));
+        this.racine = new TreeItem<>(new ContenuCellule("    Liste des classes du diagramme    "));
         this.listePackages = new HashMap<>();
     }
 
-    public void updateListe() {
+    public void actualiser() {
         this.getChildren().clear();
         this.listePackages = new HashMap<>();
-        this.racine = new TreeItem<>(new ContenuCellule("    Liste des classes du diagramme :    "));
+        this.racine = new TreeItem<>(new ContenuCellule("    Liste des classes du diagramme    "));
         this.racine.setExpanded(true);
 
         for (Classe c : Diagramme.getInstance().getListeClasses()) {
@@ -73,7 +73,7 @@ public class VueListeClasses extends VBox implements Observateur {
         treeView.setCellFactory(new Callback<TreeView<ContenuCellule>, TreeCell<ContenuCellule>>() {
             @Override
             public TreeCell call(TreeView treeView) {
-                TreeCell<ContenuCellule> cell = new TreeCell<ContenuCellule>() {
+                return new TreeCell<ContenuCellule>() {
                     @Override
                     protected void updateItem(ContenuCellule tache, boolean empty) {
                         // une TreeCell peut changer de tâche, donc changer de TreeItem
@@ -82,7 +82,7 @@ public class VueListeClasses extends VBox implements Observateur {
                         setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
-                                if (tache.getClasseDeTache() != null) {
+                                if (tache != null && tache.getClasseDeTache() != null) {
                                     tache.getClasseDeTache().setVisibilite(!tache.getClasseDeTache().isVisible());
                                 }
                             }
@@ -104,15 +104,9 @@ public class VueListeClasses extends VBox implements Observateur {
                         }
                     }
                 };
-                return cell;
             }
         });
         this.getChildren().add(treeView);
-    }
-
-    @Override
-    public void actualiser() {
-        this.updateListe();
     }
 
 }
