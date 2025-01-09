@@ -1,7 +1,8 @@
 Itération 5 : Fonctionnalités et cas d’utilisation développés
 
 Fonctionnalités :
-    - afficher/masquer les relations d'une classe
+    //- afficher/masquer les relations d'une classe
     - afficher les cardinalités
-    - modifier une classe existante
-    - générer le squelette d'une classe
+    //- modifier une classe existante
+    //- générer le squelette d'une classe
+    - se déplacer sur la page (ZQSD)
