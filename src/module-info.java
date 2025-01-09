@@ -6,6 +6,5 @@ module gen_diagrammes {
     requires javafx.swing;
     requires jdk.jshell;
     requires jdk.compiler;
-    requires kotlin.stdlib;
     exports gen_diagrammes;
 }
