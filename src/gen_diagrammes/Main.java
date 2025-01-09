@@ -1,5 +1,11 @@
 package gen_diagrammes;
 
+import gen_diagrammes.controleurs.*;
+import gen_diagrammes.diagramme.*;
+import gen_diagrammes.vues.VueClasse;
+import gen_diagrammes.vues.VueDiagramme;
+import gen_diagrammes.vues.VueListeClasses;
+import gen_diagrammes.vues.VueRelation;
 import javafx.application.Application;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -25,12 +31,12 @@ public class Main extends Application {
     private double offsetX;
     private double offsetY;
 
-    static List<VueRelation> relations = new ArrayList<>();
+    public static List<VueRelation> relations = new ArrayList<>();
     private double scaleFactor = 1.0;
-    static StackPane stackPane;
+    public static StackPane stackPane;
 
-    static boolean afficherAttributs = true;
-    static boolean afficherMethodes = true;
+    public static boolean afficherAttributs = true;
+    public static boolean afficherMethodes = true;
 
 
     /**
@@ -247,7 +253,7 @@ public class Main extends Application {
      * @param relation Relation
      * @return Type de relation
      */
-    static VueRelation.TypeRelation determineTypeRelation(Relation relation) {
+    public static VueRelation.TypeRelation determineTypeRelation(Relation relation) {
         return switch (relation.getType()) {
             case "heritage" ->
                     VueRelation.TypeRelation.HERITAGE; // Vérifier que "HERITAGE" est bien géré dans VueRelation
@@ -262,7 +268,7 @@ public class Main extends Application {
      *
      * @param node Noeud à rendre déplaçable
      */
-    static void makeDraggable(Node node) {
+    public static void makeDraggable(Node node) {
         final double[] dragDelta = new double[2];
 
         node.setOnMousePressed(e -> {
@@ -298,7 +304,7 @@ public class Main extends Application {
     /**
      * Met à jour les relations entre les classes
      */
-    static void updateRelations() {
+    public static void updateRelations() {
         for (VueRelation vueRelation : relations) {
             vueRelation.actualiser();
         }
@@ -355,7 +361,7 @@ public class Main extends Application {
         return classe;
     }
 
-    static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
+    public static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
 
         // Vérification et ajout des relations d'héritage ou d'implémentation

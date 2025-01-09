@@ -1,6 +1,6 @@
-import gen_diagrammes.Attribut;
-import gen_diagrammes.Classe;
-import gen_diagrammes.Methode;
+import gen_diagrammes.diagramme.Attribut;
+import gen_diagrammes.diagramme.Classe;
+import gen_diagrammes.diagramme.Methode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
