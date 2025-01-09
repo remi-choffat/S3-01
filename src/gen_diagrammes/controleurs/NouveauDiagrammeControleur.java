@@ -34,6 +34,7 @@ public class NouveauDiagrammeControleur implements EventHandler<ActionEvent> {
                 Diagramme.getInstance().setFichier(null);
                 Diagramme.getInstance().supprimerToutesClasses();
                 stackPane.getChildren().clear();
+                System.out.println("Nouveau diagramme créé");
             });
         }
     }

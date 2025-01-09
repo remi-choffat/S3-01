@@ -385,7 +385,8 @@ public class Main extends Application {
                     } else {
                         typeClasse = "La " + typeClasse;
                     }
-                    alert.setHeaderText(typeClasse + " " + classe.getNomPackage() + "." + classe.getNom() + " est déjà présente sur le diagramme.");
+                    String nomClassePackage = classe.getNomPackage() != null ? classe.getNomPackage() + "." + classe.getNom() : classe.getNom();
+                    alert.setHeaderText(typeClasse + " " + nomClassePackage + " est déjà présente sur le diagramme.");
                     alert.setContentText("Voulez-vous remplacer la classe existante ?");
                     Classe finalClasse = classe;
                     alert.showAndWait().ifPresent(type -> {
@@ -411,6 +412,11 @@ public class Main extends Application {
 
     public static void ajouterRelationsPourClasse(Classe nouvelleClasse) {
         Diagramme diagramme = Diagramme.getInstance();
+
+        if (nouvelleClasse == null) {
+            return;
+        }
+
         // Vérification et ajout des relations d'héritage ou d'implémentation
         for (Classe parent : nouvelleClasse.getParents()) {
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
