@@ -22,7 +22,8 @@ public class ExporterImageControleur implements EventHandler<ActionEvent> {
 
     public void handle(ActionEvent event) {
         // Affiche le diagramme avant de faire la capture d'écran
-        Diagramme.getInstance().afficher(stackPane);
+        //Diagramme.getInstance().afficher(stackPane);
+        Diagramme.getInstance().notifierObservateurs();
         Exporter exp = new Exporter(Diagramme.getInstance());
         exp.exportImage(primaryStage, stackPane);
     }

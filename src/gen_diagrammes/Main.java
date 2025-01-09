@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * Classe principale de l'application
  */
@@ -33,7 +32,7 @@ public class Main extends Application {
     private double offsetY;
     public static List<VueRelation> relations = new ArrayList<>();
     public static double scaleFactor = 1.0;
-    public static StackPane stackPane;
+    public static VueDiagramme stackPane;
     public static boolean afficherAttributs = true;
     public static boolean afficherMethodes = true;
     public static boolean afficherRelations = true;
@@ -439,7 +438,8 @@ public class Main extends Application {
             System.err.println(ex.getMessage());
         }
         stackPane.getChildren().clear();
-        Diagramme.getInstance().afficher(stackPane);
+        VueDiagramme v = (VueDiagramme)stackPane;
+        v.actualiser();
         return classe;
     }
 
