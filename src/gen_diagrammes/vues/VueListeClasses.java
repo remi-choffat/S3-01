@@ -69,6 +69,10 @@ public class VueListeClasses extends VBox implements Observateur {
         TreeView<ContenuCellule> treeView = new TreeView<>(this.racine);
         // Adapte la taille de l'arbre à la taille de la fenêtre
         VBox.setVgrow(treeView, Priority.ALWAYS);
+        setFocused(false);
+        setFocusTraversable(false);
+        treeView.setFocusTraversable(false);
+        treeView.setShowRoot(false);
 
         treeView.setCellFactory(new Callback<>() {
             @Override

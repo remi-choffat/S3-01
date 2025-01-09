@@ -13,12 +13,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  * Classe principale de l'application
  */
@@ -131,8 +134,6 @@ public class Main extends Application {
         primaryStage.show();
 
         // Ajout des styles pour le curseur
-
-
         stackPane.setOnMouseExited(event -> {
             stackPane.setCursor(Cursor.DEFAULT);
         });
@@ -317,6 +318,11 @@ public class Main extends Application {
             afficherImplementations = menuAfficherImplementations.isSelected();
             updateRelations();
         });
+
+        // Affiche le diagramme
+        menuAfficherDiagramme.fire();
+        stackPane.requestFocus();
+
     }
 
     /**
@@ -432,7 +438,7 @@ public class Main extends Application {
             System.err.println(ex.getMessage());
         }
         stackPane.getChildren().clear();
-        VueDiagramme v = (VueDiagramme)stackPane;
+        VueDiagramme v = (VueDiagramme) stackPane;
         v.actualiser();
         Diagramme.getInstance().notifierObservateurs();
         return classe;
