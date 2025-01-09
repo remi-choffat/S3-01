@@ -193,6 +193,26 @@ public class Main extends Application {
             event.consume();
         });
 
+        // Déplacement avec les flèches du clavier
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case DOWN:
+                    stackPane.setTranslateY(stackPane.getTranslateY() - 20);
+                    break;
+                case UP:
+                    stackPane.setTranslateY(stackPane.getTranslateY() + 20);
+                    break;
+                case RIGHT:
+                    stackPane.setTranslateX(stackPane.getTranslateX() - 20);
+                    break;
+                case LEFT:
+                    stackPane.setTranslateX(stackPane.getTranslateX() + 20);
+                    break;
+                default:
+                    break;
+            }
+        });
+
 
         // AJOUTER UNE CLASSE
         menuAjouterClasse.setOnAction(new AjouterClasseControleur(stackPane));
