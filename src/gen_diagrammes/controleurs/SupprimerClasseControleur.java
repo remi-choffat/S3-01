@@ -12,9 +12,12 @@ import javafx.scene.layout.StackPane;
 
 import java.util.ArrayList;
 
+/**
+ * Contrôleur pour supprimer une classe du diagramme
+ */
 public class SupprimerClasseControleur implements EventHandler<ActionEvent> {
 
-    private StackPane stackPane;
+    private final StackPane stackPane;
 
     public SupprimerClasseControleur(StackPane stackPane) {
         this.stackPane = stackPane;

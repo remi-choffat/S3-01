@@ -15,6 +15,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+/**
+ * Contrôleur pour la création manuelle d'une classe
+ */
 public class CreerClasseControleur implements EventHandler<ActionEvent> {
 
     StackPane stackPane ;
@@ -91,6 +94,11 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
             // Met la première lettre de la classe en majuscule
             if (tf.getText().length() == 1) {
                 tf.setText(tf.getText().toUpperCase());
+                tf.positionCaret(tf.getText().length());
+            }
+            // Empêche la saisie d'espaces
+            if (tf.getText().contains(" ")) {
+                tf.setText(tf.getText().replace(" ", ""));
                 tf.positionCaret(tf.getText().length());
             }
         });

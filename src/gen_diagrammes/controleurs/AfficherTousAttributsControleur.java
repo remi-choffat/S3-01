@@ -1,15 +1,18 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.diagramme.Diagramme;
 import gen_diagrammes.Main;
+import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.layout.StackPane;
 
+/**
+ * Controleur permettant d'afficher tous les attributs des classes du diagramme
+ */
 public class AfficherTousAttributsControleur implements EventHandler<ActionEvent> {
 
-    StackPane stackPane;
+    private final StackPane stackPane;
 
     public AfficherTousAttributsControleur(StackPane stackPane) {
         this.stackPane = stackPane;

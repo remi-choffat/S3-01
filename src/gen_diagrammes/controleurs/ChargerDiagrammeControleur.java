@@ -12,6 +12,9 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Contrôleur permettant de charger un diagramme depuis un fichier
+ */
 public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
 
     private final StackPane stackPane;
@@ -44,6 +47,9 @@ public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
     }
 
 
+    /**
+     * Charge un diagramme depuis un fichier .plante
+     */
     private void chargerDiagramme() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Charger un diagramme");

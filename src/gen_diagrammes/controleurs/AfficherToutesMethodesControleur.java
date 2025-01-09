@@ -7,9 +7,12 @@ import javafx.event.EventHandler;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.layout.StackPane;
 
+/**
+ * Controleur permettant d'afficher toutes les méthodes des classes du diagramme
+ */
 public class AfficherToutesMethodesControleur implements EventHandler<ActionEvent> {
 
-    private StackPane stackPane;
+    private final StackPane stackPane;
 
     public AfficherToutesMethodesControleur(StackPane s) {
         stackPane = s;

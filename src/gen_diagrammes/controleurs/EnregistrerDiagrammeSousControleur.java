@@ -1,6 +1,5 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Diagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,6 +10,9 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Contrôleur pour sauvegarder le diagramme dans un nouveau fichier
+ */
 public class EnregistrerDiagrammeSousControleur implements EventHandler<ActionEvent> {
 
     private final StackPane stackPane;

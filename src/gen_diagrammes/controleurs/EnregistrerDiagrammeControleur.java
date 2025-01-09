@@ -7,6 +7,10 @@ import javafx.scene.layout.StackPane;
 
 import java.io.File;
 
+/**
+ * Contrôleur pour sauvegarder le diagramme
+ * Enregistre le diagramme dans le fichier existant ou appelle le contrôleur pour enregistrer sous
+ */
 public class EnregistrerDiagrammeControleur implements EventHandler<ActionEvent> {
 
     private final StackPane stackPane;
