@@ -438,6 +438,7 @@ public class Main extends Application {
         stackPane.getChildren().clear();
         VueDiagramme v = (VueDiagramme)stackPane;
         v.actualiser();
+        Diagramme.getInstance().notifierObservateurs();
         return classe;
     }
 
