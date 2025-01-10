@@ -443,9 +443,7 @@ public class Main extends Application {
         // Vérification et ajout des relations d'héritage ou d'implémentation
         for (Classe parent : nouvelleClasse.getParents()) {
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
-            // Vérifiez si la relation existe déjà
 //            if (!diagramme.contientRelation(nouvelleClasse, parent)) {  // TODO - Optimiser la vérification des relations
-            // Vérifiez si les dimensions du parent sont valides
             if (parent.getLongueur() <= 0 || parent.getLargeur() <= 0) {
                 parent.setLongueur(Math.random() * 600);
                 parent.setLargeur(Math.random() * 300);
@@ -453,7 +451,12 @@ public class Main extends Application {
 
             // Ajout de la relation
             Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-            diagramme.ajouterRelation(relation);
+            if(!diagramme.getRelations().contains(relation)){
+                System.out.println("ajout parent !" + nouvelleClasse + " enfant de " + parent);
+                diagramme.ajouterRelation(relation);
+            }
+
+
 //            }
         }
 
@@ -471,8 +474,16 @@ public class Main extends Application {
                 }
 
                 // Ajout de la relation
-                Relation relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
-                diagramme.ajouterRelation(relation);
+                Relation relation;
+                if(typeRelation.equals("association")){
+                    relation = new Relation(nouvelleClasse, classeAssociee, attribut.getNom());
+                } else {
+                    relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
+                }
+
+                if(! diagramme.getRelations().contains(relation)){
+                    diagramme.ajouterRelation(relation);
+                }
 //                }
             }
         }
