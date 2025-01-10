@@ -463,13 +463,10 @@ public class Main extends Application {
 
             // Ajout de la relation
             Relation relation = new Relation(nouvelleClasse, parent, typeRelation);
-            if(!diagramme.getRelations().contains(relation)){
-                System.out.println("ajout parent !" + nouvelleClasse + " enfant de " + parent);
+            if (!diagramme.getRelations().contains(relation)) {
                 diagramme.ajouterRelation(relation);
             }
 
-
-//            }
         }
 
         // Vérification et ajout des relations d'association, agrégation et composition
@@ -487,13 +484,13 @@ public class Main extends Application {
 
                 // Ajout de la relation
                 Relation relation;
-                if(typeRelation.equals("association")){
+                if (typeRelation.equals("association")) {
                     relation = new Relation(nouvelleClasse, classeAssociee, attribut.getNom());
                 } else {
                     relation = new Relation(nouvelleClasse, classeAssociee, typeRelation);
                 }
 
-                if(! diagramme.getRelations().contains(relation)){
+                if (!diagramme.getRelations().contains(relation)) {
                     diagramme.ajouterRelation(relation);
                 }
 //                }

@@ -6,9 +6,7 @@ import gen_diagrammes.gInterface.Sujet;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.File;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -32,7 +30,7 @@ public class Classe implements Sujet, Serializable {
     private ArrayList<String> parentsManquants = new ArrayList<>();
 
     @Getter
-    private ArrayList<Observateur> observateurs = new ArrayList<>();
+    private transient ArrayList<Observateur> observateurs = new ArrayList<>();
 
     @Override
     public void ajouterObservateur(Observateur v) {
@@ -368,15 +366,14 @@ public class Classe implements Sujet, Serializable {
                 }
             }
 
-            if (!isPresent && ! this.parentsManquants.contains(superClass.getPackageName() + "." + superClass.getSimpleName())) {
+            if (!isPresent && !this.parentsManquants.contains(superClass.getPackageName() + "." + superClass.getSimpleName())) {
                 this.parentsManquants.add(superClass.getPackageName() + "." + superClass.getSimpleName());
-            }
-             else {
-            // Associe la classe parente à la classe actuelle dans la liste parents
+            } else {
+                // Associe la classe parente à la classe actuelle dans la liste parents
                 Classe c = Diagramme.getInstance().getClasse(superClass.getSimpleName(), superClass.getPackageName());
                 //if(!this.parents.contains(c)){
-                    //System.out.println("yohoho !1");
-                    this.parents.add(c);
+                //System.out.println("yohoho !1");
+                this.parents.add(c);
                 //}
             }
         }
@@ -647,7 +644,6 @@ public class Classe implements Sujet, Serializable {
             for (Classe c2 : Diagramme.getInstance().getListeClasses()) {
                 if (c1.getParentsManquants().contains(c2.getNomPackage() + "." + c2.getNom())) {
                     c1.addParent(c2);
-                    System.out.println("suppression de parent manquant : " + c1 + " enfant de "+ c2);
                     c1.parentsManquants.remove(c2.getNomPackage() + "." + c2.getNom());
                 }
             }
@@ -655,6 +651,18 @@ public class Classe implements Sujet, Serializable {
         for (Classe c : Diagramme.getInstance().getListeClasses()) {
             Main.ajouterRelationsPourClasse(c);
         }
+    }
+
+
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.observateurs = new ArrayList<>();
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
 }

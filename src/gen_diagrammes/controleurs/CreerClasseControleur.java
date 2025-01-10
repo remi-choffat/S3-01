@@ -1,6 +1,5 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.diagramme.Diagramme;
 import gen_diagrammes.vues.VueClasse;
@@ -22,8 +21,8 @@ import javafx.scene.paint.Color;
  */
 public class CreerClasseControleur implements EventHandler<ActionEvent> {
 
-    StackPane stackPane ;
-    BorderPane borderPane ;
+    StackPane stackPane;
+    BorderPane borderPane;
 
     public CreerClasseControleur(StackPane stackPane, BorderPane borderPane) {
         this.stackPane = stackPane;
@@ -78,6 +77,7 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
             Classe c = new Classe(tf.getText(), comboVisibilite.getValue(), comboType.getValue());
             Diagramme.getInstance().ajouterClasse(c);
             VueClasse vc = new VueClasse(c);
+            System.out.println("Classe " + c.getNom() + " créée");
             Diagramme.getInstance().ajouterObservateur(vc);
             Diagramme.getInstance().notifierObservateurs();
             bCancel.fire();
@@ -90,7 +90,7 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
             borderPane.setLeft(null);
             borderPane.setLeft(n);
             //Diagramme.getInstance().afficher(stackPane);
-            VueDiagramme vd = (VueDiagramme)(stackPane);
+            VueDiagramme vd = (VueDiagramme) (stackPane);
             vd.afficher();
         });
 
