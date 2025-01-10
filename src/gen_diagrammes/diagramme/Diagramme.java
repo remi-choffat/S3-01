@@ -144,9 +144,9 @@ public class Diagramme implements Sujet, Serializable {
      */
     public void supprimerClasse(Classe c) {
         this.listeClasses.remove(c);
+        c.setVisibilite(false);
         this.updateClasses();
     }
-
 
     /**
      * Méthode qui permet de supprimer une classe du diagramme par son nom
