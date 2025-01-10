@@ -50,7 +50,6 @@ public class SupprimerClasseControleur implements EventHandler<ActionEvent> {
             Classe classe = Diagramme.getInstance().getClasse(result.split("\\.")[1], result.split("\\.")[0]);
             System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
             Diagramme.getInstance().supprimerClasse(classe);
-            //Diagramme.getInstance().afficher(stackPane);
             Diagramme.getInstance().notifierObservateurs();
         });
     }
