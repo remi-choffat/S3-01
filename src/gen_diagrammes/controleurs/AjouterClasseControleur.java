@@ -1,6 +1,8 @@
 package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Classe;
+import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.vues.VueDiagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -35,10 +37,11 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
     public void handle(ActionEvent event) {
         stackPane.getChildren().clear();
         Button btnCenter = new Button("Sélectionner un fichier");
+        Button btnCancel = new Button("Annuler");
         ImageView imageView = new ImageView(new Image("file:ressource/logo_importe.png"));
         imageView.setFitWidth(150);
         imageView.setFitHeight(150);
-        VBox content = new VBox(10, imageView, btnCenter);
+        VBox content = new VBox(10, imageView, btnCenter, btnCancel);
         content.setPadding(new Insets(20));
         content.setAlignment(Pos.CENTER);
 
@@ -79,9 +82,16 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
             }
         });
 
+        btnCancel.setOnAction(cancelEvent -> {
+            stackPane.getChildren().clear();
+            // Réafficher le diagramme
+            VueDiagramme vueDiagramme = new VueDiagramme();
+            stackPane.getChildren().add(vueDiagramme);
+            Diagramme.getInstance().notifierObservateurs();
+        });
+
         StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
         StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
         stackPane.getChildren().add(rectangle);
     }
-
 }
