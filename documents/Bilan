@@ -17,7 +17,7 @@ Répartition :
     Noah : interface graphique + fonctionnalité sélection fichier (recherche manuelle ou glissement) + début VueRelation + possibilité de sélectionner et changer la place d'une classe
 
 Bilan : L'utilisateur peut cliquer sur différents boutons :
-    - ajouter une classe, qui lui permet d'ajputer une classe au diagramme de l'application
+    - ajouter une classe, qui lui permet d'ajouter une classe au diagramme de l'application
     - afficher, qui permet d'afficher le diagramme en fonction des classes ajoutées
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,8 +26,7 @@ Compte rendu itération 3 :
 Répartition :
     Rémi : exporter le diagramme sous forme d’image + afficher/masquer une classe
     Tuline : afficher/masquer une classe
-    Gabin : ? malade ?
-    Noah : afficher des flèches entre les classe + déplacer les classes
+    Noah : afficher des flèches entre les classe + déplacer les classes + zoomer/dézoomer
 
 Bilan : L'utilisateur peut voir dans une barre à gauche la liste des classes ajoutées. Il peut, en cliquant dessus, les afficher ou les cacher.
 Les flèches sont également visibles et changent de direction en fonction du placement des classes. Néanmoins, elles ne sont pas justes car
@@ -57,7 +56,21 @@ Il peut également afficher/masquer les méthodes d'une/de toutes les classes, l
 
 Compte rendu itération 5 :
 
+Répartition :
+    Rémi : correction de bugs + graphe de scène
+    Tuline : diagramme de classes global + diagrammes de classes détaillés + diagrammes de séquence
+    + graphe de scène détaillé + compte rendu global et préparation à la soutenance
+    Gabin :
+    Noah : se déplacer sur la page avec les touches ZQSD
+
+Bilan :
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 Compte rendu itération 6 :
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Bilan final :

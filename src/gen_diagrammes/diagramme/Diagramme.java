@@ -1,22 +1,13 @@
 package gen_diagrammes.diagramme;
 
-import gen_diagrammes.Main;
 import gen_diagrammes.gInterface.Observateur;
 import gen_diagrammes.gInterface.Sujet;
-import gen_diagrammes.vues.VueClasse;
-import gen_diagrammes.vues.VueRelation;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static gen_diagrammes.Main.makeDraggable;
-import static gen_diagrammes.Main.updateRelations;
 
 /**
  * Représente un diagramme de classes
@@ -52,9 +43,17 @@ public class Diagramme implements Sujet, Serializable {
     @Setter
     private static Diagramme instance;
 
+    /**
+     * Booléen qui indique si les attributs sont affichés par défaut
+     */
+    @Getter
     @Setter
     private boolean afficherAttributs;
 
+    /**
+     * Booléen qui indique si les méthodes sont affichées par défaut
+     */
+    @Getter
     @Setter
     private boolean afficherMethodes;
 
@@ -349,27 +348,23 @@ public class Diagramme implements Sujet, Serializable {
 
 
     /**
-     * Affiche le diagramme
+     * Ajoute une relation entre deux classes
      *
-     * @param stackPane pane où afficher le diagramme
+     * @param relation relation à ajouter
      */
-
-
-    public boolean getAfficherMethodes() {
-        return this.afficherMethodes;
-    }
-
-
-    public boolean getAfficherAttributs() {
-        return this.afficherAttributs;
-    }
-
     public void ajouterRelation(Relation relation) {
         relations.add(relation);
-//        notifierObservateurs();
+        notifierObservateurs();
     }
 
 
+    /**
+     * Vérifie si une relation existe entre deux classes
+     *
+     * @param source      classe source
+     * @param destination classe destination
+     * @return true si une relation existe, false sinon
+     */
     public boolean contientRelation(Classe source, Classe destination) {
         for (Relation relation : relations) {
             // Vérifier si la relation est entre ces deux classes, dans un ordre quelconque

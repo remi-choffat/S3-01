@@ -1,5 +1,6 @@
 package gen_diagrammes.diagramme;
 
+import gen_diagrammes.Main;
 import gen_diagrammes.gInterface.Observateur;
 import gen_diagrammes.gInterface.Sujet;
 import lombok.Getter;
@@ -14,7 +15,9 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Représente une classe du diagramme
@@ -26,11 +29,10 @@ public class Classe implements Sujet, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private ArrayList<Observateur> observateurs = new ArrayList<>();
+    private ArrayList<String> parentsManquants = new ArrayList<>();
 
-    //treemap qui référence le nombre de relations attribut par classe, et le nombre de vueRelations créées
     @Getter
-    private TreeMap<String, Integer[]> nbRelations = new TreeMap<>();
+    private ArrayList<Observateur> observateurs = new ArrayList<>();
 
     @Override
     public void ajouterObservateur(Observateur v) {
@@ -106,8 +108,8 @@ public class Classe implements Sujet, Serializable {
     private double largeur;
 
 
-    @Getter
-    private final List<Relation> relations = new ArrayList<>();
+//    @Getter
+//    private final List<Relation> relations = new ArrayList<>();
 
     /**
      * Nom du package dans lequel est la classe
@@ -288,12 +290,12 @@ public class Classe implements Sujet, Serializable {
             if (!isClassPresent) {
                 this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
             }
+
             if (Modifier.isStatic(modAttribut)) {
                 this.attributs.getLast().setStaticAttr(true);
             }
 
         }
-        this.updateAttributs();
         // Trie les attributs par nom
         this.attributs.sort((a1, a2) -> a1.getNom().compareTo(a2.getNom()));
 
@@ -340,14 +342,14 @@ public class Classe implements Sujet, Serializable {
             // Vérifie si l'interface est déjà présente dans le diagramme
             boolean isPresent = false;
             for (Classe p : Diagramme.getInstance().getListeClasses()) {
-                if (p.getNom().equals(c.getSimpleName())) {
+                if (p.getNom().equals(c.getSimpleName()) && p.getNomPackage().equals(c.getPackageName())) {
                     isPresent = true;
                     break;
                 }
             }
 
             if (!isPresent) {
-                this.parents.add(new Classe(c.getSimpleName(), c.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", INTERFACE));
+                this.parentsManquants.add(c.getPackageName() + "." + c.getSimpleName());
             } else {
                 // Associe la classe parente à la classe actuelle dans la liste parents
                 this.parents.add(Diagramme.getInstance().getClasse(c.getSimpleName(), c.getPackageName()));
@@ -360,14 +362,14 @@ public class Classe implements Sujet, Serializable {
             // Vérifie si la classe parente est déjà présente dans le diagramme
             boolean isPresent = false;
             for (Classe p : Diagramme.getInstance().getListeClasses()) {
-                if (p.getNom().equals(superClass.getSimpleName())) {
+                if (p.getNom().equals(superClass.getSimpleName()) && p.getNomPackage().equals(superClass.getPackageName())) {
                     isPresent = true;
                     break;
                 }
             }
 
             if (!isPresent) {
-                this.parents.add(new Classe(superClass.getSimpleName(), superClass.getModifiers() == Modifier.PUBLIC ? PUBLIC : "", CLASS));
+                this.parentsManquants.add(superClass.getPackageName() + "." + superClass.getSimpleName());
             } else {
                 // Associe la classe parente à la classe actuelle dans la liste parents
                 this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName(), superClass.getPackageName()));
@@ -416,12 +418,11 @@ public class Classe implements Sujet, Serializable {
      */
     public void addParent(Classe c) {
         // Vérifie s'il est encore possible d'ajouter un parent à la classe
-        if (this.parents.isEmpty()) {
+        // C'est-à-dire si la classe n'a pas encore de parents
+        // Ou si tous ses parents sont des interfaces
+        // Ou si la classe à ajouter est une interface
+        if (this.parents.isEmpty() || c.getType().equals(INTERFACE) || this.parents.stream().filter(p -> p.getType().equals(INTERFACE)).count() == this.parents.size()) {
             parents.add(c);
-        } else if (this.parents.size() == 1) {
-            if (!this.parents.getFirst().getType().equals(c.getType())) {
-                parents.add(c);
-            }
         }
     }
 
@@ -449,7 +450,6 @@ public class Classe implements Sujet, Serializable {
      * Met à jour les attributs de la classe
      */
     public void updateAttributs() {
-        this.nbRelations.clear();
         ArrayList<Attribut> res = new ArrayList<>();
         Iterator<Attribut> iterator = this.attributs.iterator();
         while (iterator.hasNext()) {
@@ -464,12 +464,6 @@ public class Classe implements Sujet, Serializable {
                 // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
                 if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
                     res.add(new AttributClasse(nomAttribut, accesAttribut, type, "", "", c, false, false));
-                    if(this.nbRelations.containsKey(a.getType())){
-                        this.nbRelations.get(a.getType())[0] +=1;
-                    } else {
-                        Integer[] integers = {0,0};
-                        this.nbRelations.put(a.getType(), integers);
-                    }
                     isClassPresent = true;
                     break;
                 }
@@ -526,10 +520,10 @@ public class Classe implements Sujet, Serializable {
     }
 
 
-    public void ajouterRelation(Relation relation) {
-        relations.add(relation);
-        Diagramme.getInstance().notifierObservateurs();
-    }
+//    public void ajouterRelation(Relation relation) {
+//        relations.add(relation);
+//        Diagramme.getInstance().notifierObservateurs();
+//    }
 
 
     /**
@@ -636,6 +630,25 @@ public class Classe implements Sujet, Serializable {
             return packageEgal && classeEgal;
         }
         return false;
+    }
+
+
+    /**
+     * Met à jour les parents de la classe
+     */
+    public static void updateParents() {
+        Diagramme.getInstance().getRelations().clear();
+        for (Classe c1 : Diagramme.getInstance().getListeClasses()) {
+            for (Classe c2 : Diagramme.getInstance().getListeClasses()) {
+                if (c1.getParentsManquants().contains(c2.getNomPackage() + "." + c2.getNom())) {
+                    c1.addParent(c2);
+                    c1.parentsManquants.remove(c2.getNomPackage() + "." + c2.getNom());
+                }
+            }
+        }
+        for (Classe c : Diagramme.getInstance().getListeClasses()) {
+            Main.ajouterRelationsPourClasse(c);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package gen_diagrammes.vues;
 
+import gen_diagrammes.Main;
 import gen_diagrammes.diagramme.Attribut;
 import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.diagramme.Methode;
@@ -31,6 +32,11 @@ public class VueClasse extends VBox implements Observateur {
      */
     private final Classe classe;
 
+    /**
+     * Menu contextuel attaché à la vue
+     */
+    private ContextMenu contextMenu;
+
 
     /**
      * Constructeur
@@ -39,6 +45,7 @@ public class VueClasse extends VBox implements Observateur {
      */
     public VueClasse(Classe c) {
         this.classe = c;
+        this.contextMenu = null;
         this.initialiserComportement();
         this.actualiser();
     }
@@ -54,7 +61,7 @@ public class VueClasse extends VBox implements Observateur {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> this.toFront());
 
         // CRÉE UN MENU CONTEXTUEL
-        ContextMenu contextMenu = new ContextMenu();
+        this.contextMenu = new ContextMenu();
 
         // Crée un titre au menu
         MenuItem title = new MenuItem(this.classe.getTypeClasseString() + " " + this.classe.getNom());
@@ -84,6 +91,11 @@ public class VueClasse extends VBox implements Observateur {
         contextMenu.getItems().addAll(title, new SeparatorMenuItem(), hideClass, new SeparatorMenuItem(), showAttributes, showMethods, showParentClasses);
 
         hideClass.setOnAction(event -> this.classe.setVisibilite(false));
+
+        if (!Main.afficherAttributs) {
+            showAttributes.setSelected(false);
+            classe.masquerAttributs();
+        }
         showAttributes.setOnAction(event -> {
             if (showAttributes.isSelected()) {
                 this.classe.afficherAttributs();
@@ -92,6 +104,11 @@ public class VueClasse extends VBox implements Observateur {
             }
             actualiser();
         });
+
+        if (!Main.afficherMethodes) {
+            showMethods.setSelected(false);
+            classe.masquerMethodes();
+        }
         showMethods.setOnAction(event -> {
             if (showMethods.isSelected()) {
                 this.classe.afficherMethodes();
@@ -198,6 +215,7 @@ public class VueClasse extends VBox implements Observateur {
             separator2.setPrefHeight(2);
 
             this.getChildren().addAll(separator1, vbox2, separator2, vbox3);
+            updateContextMenu();
         } else {
             this.setVisible(false);
         }
@@ -267,6 +285,35 @@ public class VueClasse extends VBox implements Observateur {
                 break;
         }
         return new StackPane(circle);
+    }
+
+
+    /**
+     * Met à jour le menu contextuel
+     */
+    private void updateContextMenu() {
+        // Si la classe n'a pas de parent, on désactive l'option
+        contextMenu.getItems().get(6).setDisable(this.classe.getParents().isEmpty());
+    }
+
+
+    /**
+     * Met à jour le menu contextuel pour afficher ou masquer les attributs
+     *
+     * @param isSelected true si les attributs sont affichés, false sinon
+     */
+    public void updateShowAttributesCheckMenuItem(boolean isSelected) {
+        ((CheckMenuItem) contextMenu.getItems().get(4)).setSelected(isSelected);
+    }
+
+
+    /**
+     * Met à jour le menu contextuel pour afficher ou masquer les méthodes
+     *
+     * @param isSelected true si les méthodes sont affichées, false sinon
+     */
+    public void updateShowMethodsCheckMenuItem(boolean isSelected) {
+        ((CheckMenuItem) contextMenu.getItems().get(5)).setSelected(isSelected);
     }
 
 }
