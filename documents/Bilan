@@ -57,20 +57,21 @@ Il peut également afficher/masquer les méthodes d'une/de toutes les classes, l
 Compte rendu itération 5 :
 
 Répartition :
-    Rémi : correction de bugs + graphe de scène
+    Rémi : correction de bugs + graphe de scène + visibilité des sous-package dans le menu
     Tuline : diagramme de classes global + diagrammes de classes détaillés + diagrammes de séquence
     + graphe de scène détaillé + compte rendu global et préparation à la soutenance
-    Gabin :
-    Noah : se déplacer sur la page avec les touches ZQSD
+    Gabin : correction de bugs
+    Noah : se déplacer sur la page avec les flèches directionnelles + gérer l'écart entre les flèches qui se superposent
 
-Bilan :
+Bilan : L'utilisateur peut se déplacer sur la page avec les flèches directionnelles afin de mieux voir le diagramme créé.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-Compte rendu itération 6 :
+Compte rendu itération 6 : Aucune
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Bilan final :
+Voir PDF
