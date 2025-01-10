@@ -368,11 +368,16 @@ public class Classe implements Sujet, Serializable {
                 }
             }
 
-            if (!isPresent) {
+            if (!isPresent && ! this.parentsManquants.contains(superClass.getPackageName() + "." + superClass.getSimpleName())) {
                 this.parentsManquants.add(superClass.getPackageName() + "." + superClass.getSimpleName());
-            } else {
-                // Associe la classe parente à la classe actuelle dans la liste parents
-                this.parents.add(Diagramme.getInstance().getClasse(superClass.getSimpleName(), superClass.getPackageName()));
+            }
+             else {
+            // Associe la classe parente à la classe actuelle dans la liste parents
+                Classe c = Diagramme.getInstance().getClasse(superClass.getSimpleName(), superClass.getPackageName());
+                //if(!this.parents.contains(c)){
+                    //System.out.println("yohoho !1");
+                    this.parents.add(c);
+                //}
             }
         }
 
@@ -637,11 +642,12 @@ public class Classe implements Sujet, Serializable {
      * Met à jour les parents de la classe
      */
     public static void updateParents() {
-        Diagramme.getInstance().getRelations().clear();
+        //Diagramme.getInstance().getRelations().clear();
         for (Classe c1 : Diagramme.getInstance().getListeClasses()) {
             for (Classe c2 : Diagramme.getInstance().getListeClasses()) {
                 if (c1.getParentsManquants().contains(c2.getNomPackage() + "." + c2.getNom())) {
                     c1.addParent(c2);
+                    System.out.println("suppression de parent manquant : " + c1 + " enfant de "+ c2);
                     c1.parentsManquants.remove(c2.getNomPackage() + "." + c2.getNom());
                 }
             }

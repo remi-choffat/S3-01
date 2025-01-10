@@ -5,8 +5,9 @@ import gen_diagrammes.gInterface.Sujet;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-/**
+/**Classe source, Classe destination, String type
  * Représente une relation entre deux classes
  */
 @Getter
@@ -43,5 +44,15 @@ public class Relation implements Sujet {
     public String toString() {
         return "Relation d'" + type + " entre " + source.getNom() + " et " + destination.getNom();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Relation relation = (Relation) o;
+        return type == relation.getType() && source.equals(relation.getSource()) && destination.equals(relation.getDestination());
+    }
+
+
 
 }
