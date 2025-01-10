@@ -52,6 +52,14 @@ public class VueRelation extends Pane implements Observateur {
             }
             double startX = source.getBoundsInParent().getMinX() + source.getBoundsInParent().getWidth() / 2;
             double startY = source.getBoundsInParent().getMinY() + source.getBoundsInParent().getHeight() / 2;
+
+            System.out.println("yohoho !");
+            if(source.getClasse().getNbRelations().get(destination.getClasse().getType())[0] > 0){
+                startX += (source.getClasse().getNbRelations().get(destination.getClasse().getType())[1]/source.getClasse().getNbRelations().get(destination.getClasse().getType())[0]) * (source.getWidth()/2);
+                startY += (source.getClasse().getNbRelations().get(destination.getClasse().getType())[1]/source.getClasse().getNbRelations().get(destination.getClasse().getType())[0]) * (source.getHeight()/2);
+                source.getClasse().getNbRelations().get(destination.getClasse().getType())[1] += 1;
+            }
+
             double endX = destination.getBoundsInParent().getMinX() + destinationWidth / 2;
             double endY = destination.getBoundsInParent().getMinY() + destinationHeight / 2;
             double angle = Math.atan2(endY - startY, endX - startX);

@@ -14,10 +14,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Représente une classe du diagramme
@@ -30,6 +27,10 @@ public class Classe implements Sujet, Serializable {
 
     @Getter
     private ArrayList<Observateur> observateurs = new ArrayList<>();
+
+    //treemap qui référence le nombre de relations attribut par classe, et le nombre de vueRelations créées
+    @Getter
+    private TreeMap<String, Integer[]> nbRelations = new TreeMap<>();
 
     @Override
     public void ajouterObservateur(Observateur v) {
@@ -255,7 +256,7 @@ public class Classe implements Sujet, Serializable {
 
         // Remplit la liste des attributs
         for (Field a : classe.getDeclaredFields()) {
-            
+
             String type = a.getGenericType().getTypeName().replaceAll("\\b[a-zA-Z_]+\\.", "");
             int modAttribut = a.getModifiers();
             String accesAttribut;
@@ -287,12 +288,12 @@ public class Classe implements Sujet, Serializable {
             if (!isClassPresent) {
                 this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
             }
-
             if (Modifier.isStatic(modAttribut)) {
                 this.attributs.getLast().setStaticAttr(true);
             }
 
         }
+        this.updateAttributs();
         // Trie les attributs par nom
         this.attributs.sort((a1, a2) -> a1.getNom().compareTo(a2.getNom()));
 
@@ -448,6 +449,7 @@ public class Classe implements Sujet, Serializable {
      * Met à jour les attributs de la classe
      */
     public void updateAttributs() {
+        this.nbRelations.clear();
         ArrayList<Attribut> res = new ArrayList<>();
         Iterator<Attribut> iterator = this.attributs.iterator();
         while (iterator.hasNext()) {
@@ -462,6 +464,12 @@ public class Classe implements Sujet, Serializable {
                 // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
                 if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
                     res.add(new AttributClasse(nomAttribut, accesAttribut, type, "", "", c, false, false));
+                    if(this.nbRelations.containsKey(a.getType())){
+                        this.nbRelations.get(a.getType())[0] +=1;
+                    } else {
+                        Integer[] integers = {0,0};
+                        this.nbRelations.put(a.getType(), integers);
+                    }
                     isClassPresent = true;
                     break;
                 }
