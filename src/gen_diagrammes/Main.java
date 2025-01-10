@@ -198,11 +198,23 @@ public class Main extends Application {
 
 
         // AJOUTER UNE CLASSE
-        menuAjouterClasse.setOnAction(new AjouterClasseControleur(stackPane));
+        menuAjouterClasse.setOnAction(event -> {
+            new AjouterClasseControleur(stackPane).handle(event);
+            stackPane.setTranslateX(0);
+            stackPane.setTranslateY(0);
+            stackPane.setScaleX(1.0);
+            stackPane.setScaleY(1.0);
+        });
 
 
         // AJOUTER UN PACKAGE
-        menuAjouterPackage.setOnAction(new AjouterPackageControleur(stackPane));
+        menuAjouterPackage.setOnAction(event -> {
+            new AjouterPackageControleur(stackPane).handle(event);
+            stackPane.setTranslateX(0);
+            stackPane.setTranslateY(0);
+            stackPane.setScaleX(1.0);
+            stackPane.setScaleY(1.0);
+        });
 
 
         // AFFICHER LE DIAGRAMME
