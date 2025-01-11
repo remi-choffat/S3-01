@@ -1,6 +1,7 @@
 package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Diagramme;
+import gen_diagrammes.vues.VueDiagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.StackPane;
@@ -18,7 +19,7 @@ public class AfficherDiagrammeControleur implements EventHandler<ActionEvent> {
     }
 
     public void handle(ActionEvent event) {
-        //Diagramme.getInstance().afficher(stackPane);
+        ((VueDiagramme) stackPane).afficher();
         Diagramme.getInstance().notifierObservateurs();
     }
 

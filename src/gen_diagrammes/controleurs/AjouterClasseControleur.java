@@ -84,10 +84,7 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
 
         btnCancel.setOnAction(cancelEvent -> {
             stackPane.getChildren().clear();
-            // Réafficher le diagramme
-            VueDiagramme vueDiagramme = new VueDiagramme();
-            stackPane.getChildren().add(vueDiagramme);
-            Diagramme.getInstance().notifierObservateurs();
+            ((VueDiagramme) stackPane).afficher();
         });
 
         StackPane.setAlignment(rectangle, Pos.TOP_CENTER);

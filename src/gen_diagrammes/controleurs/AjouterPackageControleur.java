@@ -1,7 +1,6 @@
 package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Classe;
-import gen_diagrammes.diagramme.Diagramme;
 import gen_diagrammes.vues.VueDiagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -98,10 +97,7 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
 
         btnCancel.setOnAction(cancelEvent -> {
             stackPane.getChildren().clear();
-            // Réafficher le diagramme
-            VueDiagramme vueDiagramme = new VueDiagramme();
-            stackPane.getChildren().add(vueDiagramme);
-            Diagramme.getInstance().notifierObservateurs();
+            ((VueDiagramme) stackPane).afficher();
         });
 
         StackPane.setAlignment(rectangle, Pos.TOP_CENTER);
