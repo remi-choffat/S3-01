@@ -34,7 +34,11 @@ public class SupprimerClasseControleur implements EventHandler<ActionEvent> {
         ListView<String> listView = new ListView<>();
         ArrayList<String> nomsClasses = new ArrayList<>();
         for (Classe c : Diagramme.getInstance().getListeClasses()) {
-            nomsClasses.add(c.getNomPackage() + "." + c.getNom());
+            if (c.getNomPackage() == null) {
+                nomsClasses.add(c.getNom());
+            } else {
+                nomsClasses.add(c.getNomPackage() + "." + c.getNom());
+            }
         }
         listView.getItems().addAll(nomsClasses);
         dialog.getDialogPane().setContent(listView);
@@ -47,7 +51,14 @@ public class SupprimerClasseControleur implements EventHandler<ActionEvent> {
         });
 
         dialog.showAndWait().ifPresent(result -> {
-            Classe classe = Diagramme.getInstance().getClasse(result.split("\\.")[1], result.split("\\.")[0]);
+            boolean hasPackage = result.contains(".");
+            String nomPackage = null;
+            String nomClasse = result;
+            if (hasPackage) {
+                nomPackage = result.substring(0, result.lastIndexOf("."));
+                nomClasse = result.substring(result.lastIndexOf(".") + 1);
+            }
+            Classe classe = Diagramme.getInstance().getClasse(nomClasse, nomPackage);
             System.out.println(classe.getTypeClasseString() + " " + classe.getNom() + " supprimée");
             Diagramme.getInstance().supprimerClasse(classe);
             Diagramme.getInstance().notifierObservateurs();

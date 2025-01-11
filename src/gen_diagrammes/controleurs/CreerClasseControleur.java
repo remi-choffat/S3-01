@@ -34,7 +34,6 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
         StackPane pane = new StackPane();
         pane.setBackground(new Background(new BackgroundFill(Color.web("#FFFFFF"), CornerRadii.EMPTY, Insets.EMPTY)));
         borderPane.setCenter(pane);
-        //stackPane.getChildren().clear();
 
         VBox vb = new VBox();
         Label lb = new Label("Créer une classe");
@@ -72,6 +71,7 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
         vb.setLayoutX(stackPane.getScaleX() - 0.5 * vb.getScaleX());
         vb.setLayoutY(stackPane.getScaleY() - 0.5 * vb.getScaleY());
 
+        tf.requestFocus();
 
         bOk.setOnAction(f -> {
             Classe c = new Classe(tf.getText(), comboVisibilite.getValue(), comboType.getValue());
@@ -89,7 +89,6 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
             Node n = borderPane.getLeft();
             borderPane.setLeft(null);
             borderPane.setLeft(n);
-            //Diagramme.getInstance().afficher(stackPane);
             VueDiagramme vd = (VueDiagramme) (stackPane);
             vd.afficher();
         });
@@ -102,12 +101,13 @@ public class CreerClasseControleur implements EventHandler<ActionEvent> {
                 tf.setText(tf.getText().toUpperCase());
                 tf.positionCaret(tf.getText().length());
             }
-            // Empêche la saisie d'espaces
-            if (tf.getText().contains(" ")) {
-                tf.setText(tf.getText().replace(" ", ""));
+            // Empêche la saisie d'espaces et de points
+            if (tf.getText().contains(" ") || tf.getText().contains(".")) {
+                tf.setText(tf.getText().replace(" ", "").replace(".", ""));
                 tf.positionCaret(tf.getText().length());
             }
         });
+
     }
 
 }
