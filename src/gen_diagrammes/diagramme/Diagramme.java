@@ -239,7 +239,7 @@ public class Diagramme implements Sujet, Serializable {
     public Classe getClasse(String simpleName, String nomPackage) {
         for (Classe c : this.listeClasses) {
             if (c.getNom().equals(simpleName)) {
-                if ((nomPackage == null && c.getNomPackage() == null) || (c.getNomPackage().equals(nomPackage))) {
+                if ((nomPackage == null && c.getNomPackage() == null) || (c.getNomPackage() != null && c.getNomPackage().equals(nomPackage))) {
                     return c;
                 }
             }

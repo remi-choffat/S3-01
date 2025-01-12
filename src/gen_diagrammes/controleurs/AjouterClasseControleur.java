@@ -63,8 +63,7 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
             if (db.hasFiles()) {
                 success = true;
                 File file = db.getFiles().get(0);
-                Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
-                ajouterRelationsPourClasse(nouvelleClasse);
+                ajouterClasseDepuisFichier(file, stackPane);
             }
             eventDrop.setDropCompleted(success);
             eventDrop.consume();

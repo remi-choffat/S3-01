@@ -2,11 +2,15 @@ package gen_diagrammes.controleurs;
 
 import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.vues.VueDiagramme;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
@@ -85,11 +89,42 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
             if (selectedDirectory != null) {
                 List<File> files = getClassFilesRecursively(selectedDirectory);
                 if (!files.isEmpty()) {
-                    for (File file : files) {
-                        Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
-                        ajouterRelationsPourClasse(nouvelleClasse);
-                    }
+
+                    ProgressBar progressBar = new ProgressBar(0);
+
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Chargement du package");
+                    alert.setHeaderText("Chargement des classes en cours...");
+                    alert.getDialogPane().setContent(progressBar);
+                    alert.show();
+
+                    Task<Void> task = new Task<>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            for (int i = 0; i < files.size(); i++) {
+                                File file = files.get(i);
+                                Platform.runLater(() -> {
+                                    ajouterClasseDepuisFichier(file, stackPane);
+                                });
+                                updateProgress(i + 1, files.size());
+                                Thread.sleep(75); // Simulate time-consuming task
+                            }
+                            return null;
+                        }
+                    };
+
+                    progressBar.progressProperty().bind(task.progressProperty());
+
+                    task.setOnSucceeded(e -> Platform.runLater(alert::close));
+                    task.setOnFailed(e -> Platform.runLater(alert::close));
+
+                    new Thread(task).start();
                 } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Erreur");
+                    alert.setHeaderText("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName() + ", ni dans ses sous-répertoires.");
+                    alert.showAndWait();
+
                     System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
                 }
             }

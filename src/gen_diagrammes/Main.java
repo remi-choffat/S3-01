@@ -17,6 +17,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -70,7 +71,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Plante UML");
         primaryStage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
-
+        
         // Création de la barre de menu
         MenuBar menuBar = new MenuBar();
         Menu menuFichier = new Menu("Fichier");
@@ -104,11 +105,43 @@ public class Main extends Application {
         CheckMenuItem menuAfficherHeritages = new CheckMenuItem("Afficher les héritages");
         CheckMenuItem menuAfficherImplementations = new CheckMenuItem("Afficher les implémentations");
 
+        // Création du menu d'informations
+        Label creditsIcon = new Label("ⓘ");
+        creditsIcon.setTooltip(new Tooltip("Informations sur l'application"));
+
+        creditsIcon.setOnMouseClicked(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
+            alert.setTitle("Plante UML - Informations");
+            alert.setHeaderText("Plante UML");
+            Hyperlink contactLink = new Hyperlink("Nous contacter");
+            contactLink.setOnAction(e -> {
+                getHostServices().showDocument("mailto:remi.choffat@gmail.com?subject=Plante%20UML");
+            });
+            VBox content = new VBox();
+            content.getChildren().addAll(new Label("""
+                     Version : 0.5.1
+                     Date de création : décembre 2024
+                     Date de sortie de la version : 11 janvier 2025
+                     Auteurs : Rémi Choffat, Noah Laghlali, Tuline Leveque, Gabin Mathieu
+                     \t\tIUT Nancy-Charlemagne, Département Informatique
+
+                     Description : Plante UML est une application permettant de créer et de gérer des diagrammes de classes de manière automatique.\n
+                    """), contactLink);
+
+            alert.getDialogPane().setContent(content);
+            alert.showAndWait();
+        });
+
+        Menu menuInfos = new Menu();
+        menuInfos.setGraphic(creditsIcon);
+
         menuAjouter.getItems().addAll(menuAjouterPackage, menuAjouterClasse);
         menuSupprimer.getItems().addAll(menuSupprimerClasses, menuSupprimerToutesClasses);
         menuExporter.getItems().addAll(menuExporterImage, menuExporterUML);
         menuAffichage.getItems().addAll(menuAfficherDiagramme, new SeparatorMenuItem(), menuAfficherToutesClasses, menuMasquerToutesClasses, menuAfficherToutesRelations, menuMasquerToutesRelations, new SeparatorMenuItem(), menuAfficherTousAttributs, menuAfficherToutesMethodes, menuAfficherAssociations, menuAfficherHeritages, menuAfficherImplementations);
-        menuBar.getMenus().addAll(menuFichier, menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage);
+        menuBar.getMenus().addAll(menuFichier, menuAjouter, menuSupprimer, menuExporter, menuGenerer, menuAffichage, menuInfos);
         menuBar.setViewOrder(-1);
 
         Pane classContainer = new Pane(); // Conteneur pour les classes
@@ -405,7 +438,7 @@ public class Main extends Application {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Classe existante");
                     String typeClasse = classe.getTypeClasseString();
-                    if (typeClasse.equals("interface")) {
+                    if (typeClasse.equals(Classe.INTERFACE)) {
                         typeClasse = "L'interface";
                     } else {
                         typeClasse = "La " + typeClasse;
@@ -454,6 +487,9 @@ public class Main extends Application {
 
         // Vérification et ajout des relations d'héritage ou d'implémentation
         for (Classe parent : nouvelleClasse.getParents()) {
+            if (parent == null) {
+                continue;
+            }
             String typeRelation = parent.getType().equals(Classe.INTERFACE) ? "implementation" : "heritage";
 //            if (!diagramme.contientRelation(nouvelleClasse, parent)) {  // TODO - Optimiser la vérification des relations
             if (parent.getLongueur() <= 0 || parent.getLargeur() <= 0) {

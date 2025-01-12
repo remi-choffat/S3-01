@@ -254,84 +254,92 @@ public class Classe implements Sujet, Serializable {
             this.type = CLASS;
         }
 
-        // Remplit la liste des attributs
-        for (Field a : classe.getDeclaredFields()) {
+        try {
+            // Remplit la liste des attributs
+            for (Field a : classe.getDeclaredFields()) {
 
-            String type = a.getGenericType().getTypeName().replaceAll("\\b[a-zA-Z_]+\\.", "");
-            int modAttribut = a.getModifiers();
-            String accesAttribut;
-            if (Modifier.isPublic(modAttribut)) {
-                accesAttribut = PUBLIC;
-            } else if (Modifier.isProtected(modAttribut)) {
-                accesAttribut = PROTECTED;
-            } else if (Modifier.isPrivate(modAttribut)) {
-                accesAttribut = PRIVATE;
-            } else {
-                if (this.type.equals(INTERFACE)) {
-                    accesAttribut = "";
+                String type = a.getGenericType().getTypeName().replaceAll("\\b[a-zA-Z_]+\\.", "");
+                int modAttribut = a.getModifiers();
+                String accesAttribut;
+                if (Modifier.isPublic(modAttribut)) {
+                    accesAttribut = PUBLIC;
+                } else if (Modifier.isProtected(modAttribut)) {
+                    accesAttribut = PROTECTED;
+                } else if (Modifier.isPrivate(modAttribut)) {
+                    accesAttribut = PRIVATE;
                 } else {
-                    accesAttribut = PACKAGE_PRIVATE;
+                    if (this.type.equals(INTERFACE)) {
+                        accesAttribut = "";
+                    } else {
+                        accesAttribut = PACKAGE_PRIVATE;
+                    }
                 }
-            }
 
-            boolean isClassPresent = false;
-            for (Classe c : Diagramme.getInstance().getListeClasses()) {
-                // Vérifie si le type de l'attribut est une classe du diagramme
-                // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
-                if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
-                    this.attributs.add(new AttributClasse(a.getName(), accesAttribut, type, "", "", c, false, false));
-                    isClassPresent = true;
-                    break;
+                boolean isClassPresent = false;
+                for (Classe c : Diagramme.getInstance().getListeClasses()) {
+                    // Vérifie si le type de l'attribut est une classe du diagramme
+                    // ou un ensemble d'objets de cette classe (Set<Classe>, List<Classe>, Classe[], ...)
+                    if (type.matches(".*\\b" + c.getNom() + "\\b.*")) {
+                        this.attributs.add(new AttributClasse(a.getName(), accesAttribut, type, "", "", c, false, false));
+                        isClassPresent = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!isClassPresent) {
-                this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
-            }
+                if (!isClassPresent) {
+                    this.attributs.add(new Attribut(a.getName(), accesAttribut, type));
+                }
 
-            if (Modifier.isStatic(modAttribut)) {
-                this.attributs.getLast().setStaticAttr(true);
-            }
+                if (Modifier.isStatic(modAttribut)) {
+                    this.attributs.getLast().setStaticAttr(true);
+                }
 
+            }
+            // Trie les attributs par nom
+            this.attributs.sort((a1, a2) -> a1.getNom().compareTo(a2.getNom()));
+        } catch (NoClassDefFoundError e) {
+            // Si un attribut n'est pas trouvé, on ne l'ajoute pas
         }
-        // Trie les attributs par nom
-        this.attributs.sort((a1, a2) -> a1.getNom().compareTo(a2.getNom()));
 
-        // Remplit la liste des méthodes
-        for (Method m : classe.getDeclaredMethods()) {
+        try {
+            // Remplit la liste des méthodes
+            for (Method m : classe.getDeclaredMethods()) {
 
-            String acces;
-            int mod = m.getModifiers();
-            if (Modifier.isAbstract(mod)) {
-                acces = ABSTRACT;
-            } else if (Modifier.isPublic(mod)) {
-                acces = PUBLIC;
-            } else if (Modifier.isProtected(mod)) {
-                acces = PROTECTED;
-            } else if (Modifier.isPrivate(mod)) {
-                acces = PRIVATE;
-            } else {
-                if (this.type.equals(INTERFACE)) {
-                    acces = "";
+                String acces;
+                int mod = m.getModifiers();
+                if (Modifier.isAbstract(mod)) {
+                    acces = ABSTRACT;
+                } else if (Modifier.isPublic(mod)) {
+                    acces = PUBLIC;
+                } else if (Modifier.isProtected(mod)) {
+                    acces = PROTECTED;
+                } else if (Modifier.isPrivate(mod)) {
+                    acces = PRIVATE;
                 } else {
-                    acces = PACKAGE_PRIVATE;
+                    if (this.type.equals(INTERFACE)) {
+                        acces = "";
+                    } else {
+                        acces = PACKAGE_PRIVATE;
+                    }
+                }
+                ArrayList<String> parametres = new ArrayList<>();
+                for (Class<?> c : m.getParameterTypes()) {
+                    parametres.add(c.getSimpleName());
+                }
+                this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
+
+                if (Modifier.isStatic(mod)) {
+                    this.methodes.getLast().setStaticMethode(true);
+                }
+                if (Modifier.isAbstract(mod)) {
+                    this.methodes.getLast().setAbstractMethode(true);
                 }
             }
-            ArrayList<String> parametres = new ArrayList<>();
-            for (Class<?> c : m.getParameterTypes()) {
-                parametres.add(c.getSimpleName());
-            }
-            this.methodes.add(new Methode(m.getName(), acces, m.getReturnType().getSimpleName(), parametres));
-
-            if (Modifier.isStatic(mod)) {
-                this.methodes.getLast().setStaticMethode(true);
-            }
-            if (Modifier.isAbstract(mod)) {
-                this.methodes.getLast().setAbstractMethode(true);
-            }
+            // Trie les méthodes par nom
+            this.methodes.sort((m1, m2) -> m1.getNom().compareTo(m2.getNom()));
+        } catch (NoClassDefFoundError e) {
+            // Si une méthode n'est pas trouvée, on ne l'ajoute pas
         }
-        // Trie les méthodes par nom
-        this.methodes.sort((m1, m2) -> m1.getNom().compareTo(m2.getNom()));
 
         // Remplit la liste des classes parentes
 
@@ -340,7 +348,9 @@ public class Classe implements Sujet, Serializable {
             // Vérifie si l'interface est déjà présente dans le diagramme
             boolean isPresent = false;
             for (Classe p : Diagramme.getInstance().getListeClasses()) {
-                if (p.getNom().equals(c.getSimpleName()) && p.getNomPackage().equals(c.getPackageName())) {
+                boolean packageEquals = p.getNomPackage() == null && c.getPackageName().isEmpty() || p.getNomPackage() != null && p.getNomPackage().equals(c.getPackageName());
+                boolean nomEquals = p.getNom().equals(c.getSimpleName());
+                if (packageEquals && nomEquals) {
                     isPresent = true;
                     break;
                 }
@@ -360,7 +370,9 @@ public class Classe implements Sujet, Serializable {
             // Vérifie si la classe parente est déjà présente dans le diagramme
             boolean isPresent = false;
             for (Classe p : Diagramme.getInstance().getListeClasses()) {
-                if (p.getNom().equals(superClass.getSimpleName()) && p.getNomPackage().equals(superClass.getPackageName())) {
+                boolean packageEquals = p.getNomPackage() == null && superClass.getPackageName().isEmpty() || p.getNomPackage() != null && p.getNomPackage().equals(superClass.getPackageName());
+                boolean nomEquals = p.getNom().equals(superClass.getSimpleName());
+                if (packageEquals && nomEquals) {
                     isPresent = true;
                     break;
                 }
