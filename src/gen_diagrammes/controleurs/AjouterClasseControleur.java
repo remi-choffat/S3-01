@@ -1,7 +1,5 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.diagramme.Classe;
-import gen_diagrammes.diagramme.Diagramme;
 import gen_diagrammes.vues.VueDiagramme;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,7 +18,6 @@ import javafx.stage.Stage;
 import java.io.File;
 
 import static gen_diagrammes.Main.ajouterClasseDepuisFichier;
-import static gen_diagrammes.Main.ajouterRelationsPourClasse;
 
 /**
  * Controleur permettant d'ajouter une classe au diagramme
@@ -76,8 +73,7 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
             Stage fileStage = (Stage) btnCenter.getScene().getWindow();
             File file = fileChooser.showOpenDialog(fileStage);
             if (file != null) {
-                Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
-                ajouterRelationsPourClasse(nouvelleClasse);
+                ajouterClasseDepuisFichier(file, stackPane);
             }
         });
 
@@ -90,4 +86,5 @@ public class AjouterClasseControleur implements EventHandler<ActionEvent> {
         StackPane.setMargin(rectangle, new Insets(100, 0, 0, 0));
         stackPane.getChildren().add(rectangle);
     }
+
 }

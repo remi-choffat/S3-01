@@ -71,7 +71,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Plante UML");
         primaryStage.getIcons().add(new Image("file:ressource/logo_PlanteUML.png"));
-        
+
         // Création de la barre de menu
         MenuBar menuBar = new MenuBar();
         Menu menuFichier = new Menu("Fichier");

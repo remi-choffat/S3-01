@@ -1,6 +1,5 @@
 package gen_diagrammes.controleurs;
 
-import gen_diagrammes.diagramme.Classe;
 import gen_diagrammes.vues.VueDiagramme;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gen_diagrammes.Main.ajouterClasseDepuisFichier;
-import static gen_diagrammes.Main.ajouterRelationsPourClasse;
 
 /**
  * Controleur permettant d'ajouter un package (toutes les classes qu'il contient) au diagramme
@@ -70,11 +68,7 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
                 success = true;
                 File selectedDirectory = db.getFiles().get(0);
                 if (selectedDirectory.isDirectory()) {
-                    List<File> files = getClassFilesRecursively(selectedDirectory);
-                    for (File file : files) {
-                        Classe nouvelleClasse = ajouterClasseDepuisFichier(file, stackPane);
-                        ajouterRelationsPourClasse(nouvelleClasse);
-                    }
+                    chargerDossier(selectedDirectory);
                 }
             }
             eventDrop.setDropCompleted(success);
@@ -87,46 +81,7 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
             Stage fileStage = (Stage) btnOpenFolder.getScene().getWindow();
             File selectedDirectory = directoryChooser.showDialog(fileStage);
             if (selectedDirectory != null) {
-                List<File> files = getClassFilesRecursively(selectedDirectory);
-                if (!files.isEmpty()) {
-
-                    ProgressBar progressBar = new ProgressBar(0);
-
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Chargement du package");
-                    alert.setHeaderText("Chargement des classes en cours...");
-                    alert.getDialogPane().setContent(progressBar);
-                    alert.show();
-
-                    Task<Void> task = new Task<>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            for (int i = 0; i < files.size(); i++) {
-                                File file = files.get(i);
-                                Platform.runLater(() -> {
-                                    ajouterClasseDepuisFichier(file, stackPane);
-                                });
-                                updateProgress(i + 1, files.size());
-                                Thread.sleep(75); // Simulate time-consuming task
-                            }
-                            return null;
-                        }
-                    };
-
-                    progressBar.progressProperty().bind(task.progressProperty());
-
-                    task.setOnSucceeded(e -> Platform.runLater(alert::close));
-                    task.setOnFailed(e -> Platform.runLater(alert::close));
-
-                    new Thread(task).start();
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Erreur");
-                    alert.setHeaderText("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName() + ", ni dans ses sous-répertoires.");
-                    alert.showAndWait();
-
-                    System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
-                }
+                chargerDossier(selectedDirectory);
             }
         });
 
@@ -160,6 +115,55 @@ public class AjouterPackageControleur implements EventHandler<ActionEvent> {
             }
         }
         return classFiles;
+    }
+
+
+    /**
+     * Charge toutes les classes contenues dans un répertoire
+     *
+     * @param selectedDirectory Répertoire à charger
+     */
+    private void chargerDossier(File selectedDirectory) {
+        List<File> files = getClassFilesRecursively(selectedDirectory);
+        if (!files.isEmpty()) {
+
+            ProgressBar progressBar = new ProgressBar(0);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Chargement du package");
+            alert.setHeaderText("Chargement des classes en cours...");
+            alert.getDialogPane().setContent(progressBar);
+            alert.show();
+
+            Task<Void> task = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    for (int i = 0; i < files.size(); i++) {
+                        File file = files.get(i);
+                        Platform.runLater(() -> {
+                            ajouterClasseDepuisFichier(file, stackPane);
+                        });
+                        updateProgress(i + 1, files.size());
+                        Thread.sleep(75);
+                    }
+                    return null;
+                }
+            };
+
+            progressBar.progressProperty().bind(task.progressProperty());
+
+            task.setOnSucceeded(e -> Platform.runLater(alert::close));
+            task.setOnFailed(e -> Platform.runLater(alert::close));
+
+            new Thread(task).start();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName() + ", ni dans ses sous-répertoires.");
+            alert.showAndWait();
+
+            System.err.println("Aucun fichier .class trouvé dans le répertoire " + selectedDirectory.getName());
+        }
     }
 
 }
