@@ -65,10 +65,14 @@ public class ChargerDiagrammeControleur implements EventHandler<ActionEvent> {
                 Diagramme.chargerDiagramme(file);
                 Diagramme.getInstance().setFichier(file.getAbsolutePath());
                 Diagramme.getInstance().updateClasses();
-                //Diagramme.getInstance().afficher(stackPane);
                 Diagramme.getInstance().notifierObservateurs();
                 System.out.println("Diagramme chargé depuis " + file.getAbsolutePath());
             } catch (IOException | ClassNotFoundException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Erreur");
+                alert.setHeaderText("Erreur lors du chargement du diagramme");
+                alert.setContentText("Le fichier sélectionné n'est pas un fichier de diagramme valide.");
+                alert.showAndWait();
                 System.err.println("Erreur lors du chargement du diagramme");
             }
         }

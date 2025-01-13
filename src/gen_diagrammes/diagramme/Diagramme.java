@@ -1,5 +1,6 @@
 package gen_diagrammes.diagramme;
 
+import gen_diagrammes.Main;
 import gen_diagrammes.gInterface.Observateur;
 import gen_diagrammes.gInterface.Sujet;
 import lombok.Getter;
@@ -345,6 +346,10 @@ public class Diagramme implements Sujet, Serializable {
     public static void chargerDiagramme(File file) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             instance.listeClasses = (ArrayList<Classe>) ois.readObject();
+            Classe.updateParents();
+            for (Classe c : instance.listeClasses) {
+                Main.ajouterRelationsPourClasse(c);
+            }
         }
     }
 
